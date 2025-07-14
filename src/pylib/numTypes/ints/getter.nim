@@ -7,10 +7,12 @@ import ../reimporter
 template is_integer*(_: NimInt): bool{.pysince(3,12).} = true
 template as_integer_ratio*(self: NimInt): (NimInt, NimInt){.pysince(3,8).} = (self, 1)
 
-
-template bit_length*(self: NimInt): NimInt =
-  bind fastLog2, abs
-  1 + fastLog2 abs(self)
+proc bit_length*(self: NimInt): NimInt =
+  when defined(noUndefinedBitOpts):
+    const BitPerByte = 8
+    sizeof(x) * BitPerByte bitops.countLeadingZeroBits x
+  else:
+    1 + fastLog2 abs(self)
 
 template bit_count*(self: NimInt): NimInt{.pysince(3,10).} =
   self.countSetBits()
