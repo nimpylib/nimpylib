@@ -3,8 +3,8 @@ import std/macros
 import std/strformat
 
 type LLineInfo = object
-  filename: string
-  line, col: int
+  filename*: string
+  line*, col*: int
 
 proc lexLineInfoFrom(l: LineInfo): LLineInfo =
   result.filename = l.filename
@@ -13,36 +13,61 @@ proc lexLineInfoFrom(l: LineInfo): LLineInfo =
 
 # compiler/lineinfos.nim
 type
-  TMsgKind = enum
-    errGenerated
+  TranslateEscapeErr* = enum
+    teeExtBad_uCurly = (-1, "bad hex digit in \\u{...}")  ## Nim's EXT
+    teeBadEscape = "invalid escape sequence"
+    teeBadOct = "invalid octal escape sequence"  ## SyntaxWarning in Python
+    teeUniOverflow = "illegal Unicode character"
+    teeTrunc_x2 = "truncated \\xXX escape"
+    teeTrunc_u4 = "truncated \\uXXXX escape"
+    teeTrunc_U8 = "truncated \\UXXXXXXXX escape"
 
 type
   Token = object     # a Nim token
     literal: string  # the parsed (string) literal
   
-  Lexer = object
+  LexMessage* = proc(L: Lexer, kind: TranslateEscapeErr, arg = $kind)
+  Lexer* = object
     bufLen: int
     bufpos: int
     buf: string
 
-    lineInfo: LLineInfo
+    lineInfo*: LLineInfo
+    lexMessageImpl: LexMessage  # static method no supported by Nim
 
-proc newLexer(s: string): Lexer =
+proc newLexerNoMessager(s: string): Lexer =
   result.buf = s
   result.bufLen = s.len
 
-func lexMessage(L: Lexer, msg: TMsgKind, arg = "") =
+proc newLexer*(s: string, messager: LexMessage): Lexer =
+  result = newLexerNoMessager(s)
+  result.lexMessageImpl = messager
+
+
+func staticLexMessageImpl(L: Lexer, kind: TranslateEscapeErr, arg = $kind){.compileTime.} =
   let info = L.lineInfo
-  # when is multiline string, we cannot know where the position is,
+
+  # XXX: when is multiline string, we cannot know where the position is,
   #  as Nim has been translated multiline as single-line.
-  #let col = info.col+L.bufpos+1  # plus 1 to become 1-based
+  let col = info.col+L.bufpos+1  # plus 1 to become 1-based
+
   let errMsg = '\n' & fmt"""
-File "{info.filename}", line {info.line}
+File "{info.filename}", line {info.line}, col {col}
   {arg}"""
-  if msg == errGenerated:
-    error errMsg
+  case kind
+  of teeBadEscape:
+    warning errMsg
   else:
-    debugEcho errMsg
+    error errMsg
+  #else: debugEcho errMsg
+
+proc newStaticLexer*(s: string): Lexer =
+  ## use Nim-Like error message
+  result = newLexerNoMessager(s)
+  result.lexMessageImpl = staticLexMessageImpl
+
+proc lexMessage(L: Lexer, kind: TranslateEscapeErr, arg = $kind) =
+  L.lexMessageImpl(L, kind, arg)
 
 func handleOctChars(L: var Lexer, xi: var int) =
   ## parse at most 3 chars
@@ -53,9 +78,9 @@ func handleOctChars(L: var Lexer, xi: var int) =
     inc(L.bufpos)
     if L.bufpos == L.bufLen: break
 
-func handleHexChar(L: var Lexer, xi: var int; position: int) =
+proc handleHexChar(L: var Lexer, xi: var int; position: int, eKind: TranslateEscapeErr) =
   template invalid() =
-    lexMessage(L, errGenerated,
+    lexMessage(L, eKind,
       "expected a hex digit, but found: " & L.buf[L.bufpos] &
         "; maybe prepend with 0")
 
@@ -123,10 +148,10 @@ func addUnicodeCodePoint(s: var string, i: int) =
     s[pos+4] = chr(i shr 6 and ones(6) or 0b10_0000_00)
     s[pos+5] = chr(i and ones(6) or 0b10_0000_00)
 
-func getEscapedChar(L: var Lexer, tok: var Token) =
+proc getEscapedChar(L: var Lexer, tok: var Token) =
   inc(L.bufpos)               # skip '\'
   template uniOverErr(curVal: string) =
-    lexMessage(L, errGenerated,
+    lexMessage(L, teeUniOverflow,
       "Unicode codepoint must be lower than 0x10FFFF, but was: " & curVal)
     
   case L.buf[L.bufpos]
@@ -169,8 +194,8 @@ func getEscapedChar(L: var Lexer, tok: var Token) =
   of 'x', 'X':
     inc(L.bufpos)
     var xi = 0
-    handleHexChar(L, xi, 1)
-    handleHexChar(L, xi, 2)
+    handleHexChar(L, xi, 1, teeTrunc_x2)
+    handleHexChar(L, xi, 2, teeTrunc_x2)
     tok.literal.add(chr(xi))
   of 'U':
     # \Uhhhhhhhh
@@ -178,7 +203,7 @@ func getEscapedChar(L: var Lexer, tok: var Token) =
     var xi = 0
     let start = L.bufpos
     for i in 0..7:
-      handleHexChar(L, xi, i)
+      handleHexChar(L, xi, i, teeTrunc_U8)
     if xi > 0x10FFFF:
       uniOverErr L.buf[start..L.bufpos-2]
     addUnicodeCodePoint(tok.literal, xi)
@@ -189,26 +214,24 @@ func getEscapedChar(L: var Lexer, tok: var Token) =
       inc(L.bufpos)
       let start = L.bufpos
       while L.buf[L.bufpos] != '}':
-        handleHexChar(L, xi, 0)
+        handleHexChar(L, xi, 0, teeExtBad_uCurly)
       if start == L.bufpos:
-        lexMessage(L, errGenerated,
+        lexMessage(L, teeExtBad_uCurly,
           "Unicode codepoint cannot be empty")
       inc(L.bufpos)
       if xi > 0x10FFFF:
         uniOverErr L.buf[start..L.bufpos-2]
     else:
-      handleHexChar(L, xi, 1)
-      handleHexChar(L, xi, 2)
-      handleHexChar(L, xi, 3)
-      handleHexChar(L, xi, 4)
+      for i in 1..4:
+        handleHexChar(L, xi, i, teeExtBad_uCurly)
     addUnicodeCodePoint(tok.literal, xi)
   of '0'..'7':
     var xi = 0
     handleOctChars(L, xi)
     tok.literal.add(chr(xi))
-  else: lexMessage(L, errGenerated, "invalid character constant")
+  else: lexMessage(L, teeBadEscape, "invalid character constant")
 
-func getString(L: var Lexer, tok: var Token) =
+proc getString(L: var Lexer, tok: var Token) =
   var pos = L.bufpos
 
   while pos < L.bufLen:
@@ -222,19 +245,21 @@ func getString(L: var Lexer, tok: var Token) =
       pos.inc
   L.bufpos = pos
 
-func getString(L: var Lexer): Token =
+proc getString(L: var Lexer): Token =
   L.getString result
 
-func translateEscape*(pattern: string): string =
-  ## like `translateEscapeWithErr` but without lineInfo error msg
-  var L = newLexer pattern
+proc translateEscape*(L: var Lexer): string =
   L.getString().literal
+
+proc translateEscape*(pattern: static[string]): string =
+  ## like `translateEscapeWithErr` but without lineInfo error msg
+  var L = newStaticLexer pattern
+  L.translateEscape
 
 macro translateEscapeWithErr*(pattern: string): string =
   let info = pattern.lineInfoObj
   let linfo = lexLineInfoFrom info
-  let sPattern = pattern.strVal
-  var L = newLexer sPattern
+  var L = newStaticLexer pattern.strval
   L.lineInfo = linfo
-  let s = L.getString().literal
+  let s = L.translateEscape
   result = newLit s
