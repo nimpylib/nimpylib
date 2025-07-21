@@ -3,12 +3,11 @@ import ./bytesimpl
 import ../translateEscape
 
 func b*(c: char{lit}): PyBytes = pybytes c
-func b*(s: static[string]{lit}): PyBytes =
+proc b*(s: static[string]{lit}): PyBytes =
   ## XXX: Currently
   ## `\Uxxxxxxxx` and `\uxxxx` 
   ## is supported as an extension.
-  const ns = translateEscape s
-  pybytes ns
+  pybytes translateEscape(s, allow_unicode=false)
 
 func br*(s: string{lit}): PyBytes =
   pybytes s

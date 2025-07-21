@@ -1,15 +1,18 @@
 
 import std/macros
+import std/unicode
 import std/strformat
 
-type LLineInfo = object
-  filename*: string
-  line*, col*: int
+const allowNimEscape*{.booldefine: "nimpylibTranslateEscapeAllowNimExt"
+.} = false ## - if false(default), use extract Python's format;  \
+## - if true, allow Nim's escape format like `\u{...}`, `\p`, `\N`
 
-proc lexLineInfoFrom(l: LineInfo): LLineInfo =
-  result.filename = l.filename
-  result.col = l.column
-  result.line = l.line
+when allowNimEscape:
+  template `?+`(bothC, onlyNimC): untyped = {bothC, onlyNimC}
+  template `?+*`(bothC; onlyNimChars): untyped = {bothC} + onlyNimChars
+else:
+  template `?+`(bothC, _): untyped = bothC
+  template `?+*`(bothC; _): untyped = bothC
 
 # compiler/lineinfos.nim
 type
@@ -25,35 +28,42 @@ type
 type
   Token = object     # a Nim token
     literal: string  # the parsed (string) literal
-  
-  LexMessage* = proc(L: Lexer, kind: TranslateEscapeErr, arg = $kind)
-  Lexer* = object
+
+type
+  LexMessage* = proc(info: LineInfo, kind: TranslateEscapeErr, nimStyleErrMsg: string)
+  Lexer*[U: static[bool], M] = object
+    ## `U` means whether supporting escape about unicode;
+    ## `M` is a `proc(LineInfo, TranslateEscapeErr, string)`,
+    ##  leaving as a generic to allow custom pragma like `{.raises: [].}`
     bufLen: int
     bufpos: int
     buf: string
 
-    lineInfo*: LLineInfo
-    lexMessageImpl: LexMessage  # static method no supported by Nim
+    lineInfo*: LineInfo
+    lexMessageImpl: M  # static method no supported by Nim
 
-proc newLexerNoMessager(s: string): Lexer =
+
+proc newLexerNoMessager[U: static[bool], M](s: string): Lexer[U, M] =
   result.buf = s
   result.bufLen = s.len
 
-proc newLexer*(s: string, messager: LexMessage): Lexer =
-  result = newLexerNoMessager(s)
+
+proc newLexerImpl[U: static[bool], M](s: string, messager: M): Lexer[U, M] =
+  result = newLexerNoMessager[U, M](s)
   result.lexMessageImpl = messager
 
+template newLexer*[U: static[bool]](s: string, messager): Lexer =
+  ## create a new lexer with a messager
+  bind newLexerImpl
+  newLexerImpl[U, typeof(messager)](s, messager)
 
-func staticLexMessageImpl(L: Lexer, kind: TranslateEscapeErr, arg = $kind){.compileTime.} =
-  let info = L.lineInfo
+template allow_unicode[U: static[bool], M](L: Lexer[U, M]): bool = U
 
-  # XXX: when is multiline string, we cannot know where the position is,
-  #  as Nim has been translated multiline as single-line.
-  let col = info.col+L.bufpos+1  # plus 1 to become 1-based
 
+proc staticLexMessageImpl(info: LineInfo, kind: TranslateEscapeErr, nimStyleErrMsg: string){.compileTime.} =
   let errMsg = '\n' & fmt"""
-File "{info.filename}", line {info.line}, col {col}
-  {arg}"""
+File "{info.filename}", line {info.line}, col {info.column}
+  {nimStyleErrMsg}"""  # Updated to use nimStyleErrMsg
   case kind
   of teeBadEscape:
     warning errMsg
@@ -61,13 +71,17 @@ File "{info.filename}", line {info.line}, col {col}
     error errMsg
   #else: debugEcho errMsg
 
-proc newStaticLexer*(s: string): Lexer =
+proc newStaticLexer*[U: static[bool]](s: string): Lexer[U, LexMessage]{.compileTime.} =
   ## use Nim-Like error message
-  result = newLexerNoMessager(s)
+  result = newLexerNoMessager[U, LexMessage](s)
   result.lexMessageImpl = staticLexMessageImpl
 
-proc lexMessage(L: Lexer, kind: TranslateEscapeErr, arg = $kind) =
-  L.lexMessageImpl(L, kind, arg)
+proc lexMessage[U: static[bool], M](L: Lexer[U, M], kind: TranslateEscapeErr, nimStyleErrMsg: string) =
+  var info = L.lineInfo
+  # XXX: when is multiline string, we cannot know where the position is,
+  #  as Nim has been translated multiline as single-line.
+  info.column += L.bufpos + 1  # plus 1 to become 1-based
+  L.lexMessageImpl(info, kind, nimStyleErrMsg)
 
 func handleOctChars(L: var Lexer, xi: var int) =
   ## parse at most 3 chars
@@ -79,29 +93,29 @@ func handleOctChars(L: var Lexer, xi: var int) =
     if L.bufpos == L.bufLen: break
 
 proc handleHexChar(L: var Lexer, xi: var int; position: int, eKind: TranslateEscapeErr) =
-  template invalid() =
+  ## parseHex in std/parseutils allows `_` and prefix `0x`, which shall not be allowed here
+  template invalid(c) =
     lexMessage(L, eKind,
-      "expected a hex digit, but found: " & L.buf[L.bufpos] &
+      "expected a hex digit, but found: " & c &
         "; maybe prepend with 0")
-
-  case L.buf[L.bufpos]
+  if L.bufpos == L.bufLen: invalid("END")
+  let c = L.buf[L.bufpos]
+  case c
   of '0'..'9':
-    xi = (xi shl 4) or (ord(L.buf[L.bufpos]) - ord('0'))
+    xi = (xi shl 4) or (ord(c) - ord('0'))
     inc(L.bufpos)
   of 'a'..'f':
-    xi = (xi shl 4) or (ord(L.buf[L.bufpos]) - ord('a') + 10)
+    xi = (xi shl 4) or (ord(c) - ord('a') + 10)
     inc(L.bufpos)
   of 'A'..'F':
-    xi = (xi shl 4) or (ord(L.buf[L.bufpos]) - ord('A') + 10)
+    xi = (xi shl 4) or (ord(c) - ord('A') + 10)
     inc(L.bufpos)
   of '"', '\'':
-    if position <= 1: invalid()
+    if position <= 1: invalid(c)
     # do not progress the bufpos here.
-    if position == 0: inc(L.bufpos)
+    elif position == 0: inc(L.bufpos)
   else:
-    invalid()
-
-template ones(n): untyped = ((1 shl n)-1) # for utf-8 conversion
+    invalid(c)
 
 const
   CR = '\r'
@@ -110,94 +124,73 @@ const
   BACKSPACE = '\b'
   ESC = '\e'
 
-func addUnicodeCodePoint(s: var string, i: int) =
-  let i = cast[uint](i)
-  # inlined toUTF-8 to avoid unicode and strutils dependencies.
-  let pos = s.len
-  if i <= 127:
-    s.setLen(pos+1)
-    s[pos+0] = chr(i)
-  elif i <= 0x07FF:
-    s.setLen(pos+2)
-    s[pos+0] = chr((i shr 6) or 0b110_00000)
-    s[pos+1] = chr((i and ones(6)) or 0b10_0000_00)
-  elif i <= 0xFFFF:
-    s.setLen(pos+3)
-    s[pos+0] = chr(i shr 12 or 0b1110_0000)
-    s[pos+1] = chr(i shr 6 and ones(6) or 0b10_0000_00)
-    s[pos+2] = chr(i and ones(6) or 0b10_0000_00)
-  elif i <= 0x001FFFFF:
-    s.setLen(pos+4)
-    s[pos+0] = chr(i shr 18 or 0b1111_0000)
-    s[pos+1] = chr(i shr 12 and ones(6) or 0b10_0000_00)
-    s[pos+2] = chr(i shr 6 and ones(6) or 0b10_0000_00)
-    s[pos+3] = chr(i and ones(6) or 0b10_0000_00)
-  elif i <= 0x03FFFFFF:
-    s.setLen(pos+5)
-    s[pos+0] = chr(i shr 24 or 0b111110_00)
-    s[pos+1] = chr(i shr 18 and ones(6) or 0b10_0000_00)
-    s[pos+2] = chr(i shr 12 and ones(6) or 0b10_0000_00)
-    s[pos+3] = chr(i shr 6 and ones(6) or 0b10_0000_00)
-    s[pos+4] = chr(i and ones(6) or 0b10_0000_00)
-  elif i <= 0x7FFFFFFF:
-    s.setLen(pos+6)
-    s[pos+0] = chr(i shr 30 or 0b1111110_0)
-    s[pos+1] = chr(i shr 24 and ones(6) or 0b10_0000_00)
-    s[pos+2] = chr(i shr 18 and ones(6) or 0b10_0000_00)
-    s[pos+3] = chr(i shr 12 and ones(6) or 0b10_0000_00)
-    s[pos+4] = chr(i shr 6 and ones(6) or 0b10_0000_00)
-    s[pos+5] = chr(i and ones(6) or 0b10_0000_00)
+template uncheckedAddUnicodeCodePoint(s: var string, i: int) =
+  ## add a Unicode codepoint to the string, assuming `i` is a valid codepoint
+  s.add cast[Rune](i)
+
 
 proc getEscapedChar(L: var Lexer, tok: var Token) =
   inc(L.bufpos)               # skip '\'
-  template uniOverErr(curVal: string) =
-    lexMessage(L, teeUniOverflow,
-      "Unicode codepoint must be lower than 0x10FFFF, but was: " & curVal)
+  when L.allow_unicode:
+    template uniOverErr(curVal: string) =
+      lexMessage(L, teeUniOverflow,
+        "Unicode codepoint must be lower than 0x10FFFF, but was: " & curVal)
     
-  case L.buf[L.bufpos]
-  of 'n', 'N':
+  template invalidEscape() =
+    lexMessage(L, teeBadEscape, "invalid character constant")
+
+  template doIf(cond, body) =
+    when cond: body
+    else: invalidEscape()
+
+  template addTokLitOnAllowNim(cOrS) =
+    doIf allowNimEscape:
+      tok.literal.add(cOrS)
+      inc(L.bufpos)
+  let c = L.buf[L.bufpos]
+  case c
+  of 'n' ?+ 'N':
     tok.literal.add('\L')
     inc(L.bufpos)
   of 'p', 'P':
-    tok.literal.add("\p")
-    inc(L.bufpos)
-  of 'r', 'R', 'c', 'C':
+    addTokLitOnAllowNim("\p")
+  of 'r' ?+* {'R', 'c', 'C'}:
     tok.literal.add(CR)
     inc(L.bufpos)
-  of 'l', 'L':
+  of 'l' ?+ 'L':
     tok.literal.add(LF)
     inc(L.bufpos)
-  of 'f', 'F':
+  of 'f' ?+ 'F':
     tok.literal.add(FF)
     inc(L.bufpos)
   of 'e', 'E':
-    tok.literal.add(ESC)
-    inc(L.bufpos)
-  of 'a', 'A':
+    addTokLitOnAllowNim(ESC)
+  of 'a' ?+ 'A':
     tok.literal.add('\a')
     inc(L.bufpos)
-  of 'b', 'B':
+  of 'b' ?+ 'B':
     tok.literal.add(BACKSPACE)
     inc(L.bufpos)
-  of 'v', 'V':
+  of 'v' ?+ 'V':
     tok.literal.add('\v')
     inc(L.bufpos)
-  of 't', 'T':
+  of 't' ?+ 'T':
     tok.literal.add('\t')
     inc(L.bufpos)
   of '\'', '\"':
-    tok.literal.add(L.buf[L.bufpos])
+    tok.literal.add(c)
     inc(L.bufpos)
   of '\\':
     tok.literal.add('\\')
     inc(L.bufpos)
-  of 'x', 'X':
+  of 'x' ?+ 'X':
     inc(L.bufpos)
     var xi = 0
     handleHexChar(L, xi, 1, teeTrunc_x2)
     handleHexChar(L, xi, 2, teeTrunc_x2)
     tok.literal.add(chr(xi))
   of 'U':
+   doIf L.allow_unicode:
     # \Uhhhhhhhh
     inc(L.bufpos)
     var xi = 0
@@ -206,30 +199,39 @@ proc getEscapedChar(L: var Lexer, tok: var Token) =
       handleHexChar(L, xi, i, teeTrunc_U8)
     if xi > 0x10FFFF:
       uniOverErr L.buf[start..L.bufpos-2]
-    addUnicodeCodePoint(tok.literal, xi)
+    uncheckedAddUnicodeCodePoint(tok.literal, xi)
   of 'u':
+   doIf L.allow_unicode:
     inc(L.bufpos)
     var xi = 0
-    if L.buf[L.bufpos] == '{':
-      inc(L.bufpos)
-      let start = L.bufpos
-      while L.buf[L.bufpos] != '}':
-        handleHexChar(L, xi, 0, teeExtBad_uCurly)
-      if start == L.bufpos:
-        lexMessage(L, teeExtBad_uCurly,
-          "Unicode codepoint cannot be empty")
-      inc(L.bufpos)
-      if xi > 0x10FFFF:
-        uniOverErr L.buf[start..L.bufpos-2]
-    else:
+    template handle4Hex =
       for i in 1..4:
-        handleHexChar(L, xi, i, teeExtBad_uCurly)
-    addUnicodeCodePoint(tok.literal, xi)
+        handleHexChar(L, xi, i, teeTrunc_u4)
+    when allowNimEscape:
+      if L.buf[L.bufpos] == '{':
+        inc(L.bufpos)
+        let start = L.bufpos
+        while L.buf[L.bufpos] != '}':
+          handleHexChar(L, xi, 0, teeExtBad_uCurly)
+        if start == L.bufpos:
+          lexMessage(L, teeExtBad_uCurly,
+            "Unicode codepoint cannot be empty")
+        inc(L.bufpos)
+        if xi > 0x10FFFF:
+          uniOverErr L.buf[start..L.bufpos-2]
+      else: handle4Hex
+    else: handle4Hex
+    uncheckedAddUnicodeCodePoint(tok.literal, xi)
   of '0'..'7':
     var xi = 0
     handleOctChars(L, xi)
     tok.literal.add(chr(xi))
-  else: lexMessage(L, teeBadEscape, "invalid character constant")
+  else:
+    invalidEscape()
+    tok.literal.add('\\')
+    inc(L.bufpos)
+    tok.literal.add(c)
+    inc(L.bufpos)
 
 proc getString(L: var Lexer, tok: var Token) =
   var pos = L.bufpos
@@ -251,15 +253,28 @@ proc getString(L: var Lexer): Token =
 proc translateEscape*(L: var Lexer): string =
   L.getString().literal
 
-proc translateEscape*(pattern: static[string]): string =
+proc translateEscape*(pattern: static[string],
+  allow_unicode: static[bool] = true,
+): string{.compileTime.} =
   ## like `translateEscapeWithErr` but without lineInfo error msg
-  var L = newStaticLexer pattern
+  var L = newStaticLexer[allow_unicode](pattern)
   L.translateEscape
 
-macro translateEscapeWithErr*(pattern: string): string =
-  let info = pattern.lineInfoObj
-  let linfo = lexLineInfoFrom info
-  var L = newStaticLexer pattern.strval
-  L.lineInfo = linfo
-  let s = L.translateEscape
-  result = newLit s
+macro getLineInfoObj(n): LineInfo =
+  ## get the line info from a node
+  let linfo = n.lineInfoObj
+  result = nnkObjConstr.newTree(bindSym"LineInfo",
+    nnkExprColonExpr.newTree(ident"filename", newLit linfo.filename),
+    nnkExprColonExpr.newTree(ident"line", newLit linfo.line),
+    nnkExprColonExpr.newTree(ident"column", newLit linfo.column)
+  )
+
+template translateEscapeWithErr*(pattern: static[string],
+  allow_unicode: static[bool] = true,
+): string =
+  bind newStaticLexer, getLineInfoObj, translateEscape
+  const res = block:
+    var L = newStaticLexer[allow_unicode](pattern)
+    L.lineInfo = pattern.getLineInfoObj
+    L.translateEscape 
+  res
