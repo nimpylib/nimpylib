@@ -85,8 +85,10 @@ proc printImpl(objects: PriArgs; sep:char|string=' ', endl:char|string='\n',
                 notImpl "JavaScript"
               proc (objects: PriArgs) = console.log("%s", cstring objects.join(sep))
             else:
-              proc denoStdoutWriteSync(s: cstring){.importjs:"Deno.stdout.writeSync(#)".}
-              proc (objects: PriArgs) = denoStdoutWriteSync(cstring(objects.join(sep) & endl))
+              proc denoStdoutWriteSync(s: JsObject#[ArrayBufferView]#){.importjs:"Deno.stdout.writeSync(#)".}
+              var TextEncoder{.importcpp.}: JsObject
+              let encoder = jsNew TextEncoder
+              proc (objects: PriArgs) = denoStdoutWriteSync(encoder.encode(objects.join(sep) & endl))
 
         when file is NoneType:
           when compiles(sys.stdout):
