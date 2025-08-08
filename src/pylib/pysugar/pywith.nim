@@ -19,8 +19,9 @@ macro with*(args: varargs[untyped]): untyped =
   ## variants Python with statement supports. Context managers
   ## are supported but need to use `enter()` and `exit()` or `open()`
   ## and `close()` instead of the underscored names.
+  let hi = args.len - 1
   # Body of the with statement
-  let body = args[^1]
+  let body = args[hi]
 
   # Code to be inserted before the body
   var beforeStmt = newStmtList()
@@ -28,31 +29,31 @@ macro with*(args: varargs[untyped]): untyped =
   var finallyStmt = newStmtList()
 
   # Skip last element (the body)
-  for i in 0 ..< args.len - 1:
+  for i in 0 ..< hi:
     let arg = args[i]
-    # nnkInfix -> "with A() as a:"
-    # nnkIdent -> "with something:"
-    # otherwise - calls like "with myCall():", etc
-    let (name, exp) = 
-      if arg.kind == nnkInfix: (arg[2], arg[1])
-      elif arg.kind == nnkIdent: (newEmptyNode(), arg)
-      else: (newEmptyNode(), arg)
-    
-    # Variable name for the context manager itself (if it exists)
-    var ctx = 
-      if exp.kind == nnkIdent: exp 
-      else: genSym(nskVar, "ctxMgr")
-    
     # Variable name for the injected variable. If the name is empty, then
     # the user won't see it, but we generate it anyway so that you can
     # "discard" context managers or values in `with` as in Python
-    var varName = 
-      if name.kind != nnkEmpty: name
-      else: genSym(nskVar, "injectedVar")
+    template genVarName: NimNode = genSym(nskVar, "injectedVar")
+    # nnkInfix -> "with A() as a:"
+    # nnkIdent -> "with something:"
+    # otherwise - calls like "with myCall():", etc
+    let (varName, exp) = 
+      if arg.kind == nnkInfix and arg[0].eqIdent"as":
+        (arg[2], arg[1])
+      elif arg.kind == nnkInfix: (genVarName(), arg)
+      else: (genVarName(), arg)
+
+    # Variable name for the context manager itself (if it exists)
+    let ctx = 
+      if exp.kind == nnkIdent: exp 
+      else: genSym(nskVar, "ctxMgr")
     
     # Cache if this expression is a context manager (python style or normal)
-    var isCtxOpen = genSym(nskConst, $ctx & "IsOpen")
-    var isCtxEnter = genSym(nskConst, $ctx & "IsEnter")
+    let
+      sctx = $ctx
+      isCtxOpen = genSym(nskConst, sctx & "IsOpen")
+      isCtxEnter = genSym(nskConst, sctx & "IsEnter")
 
     # If it's a context manager, we create an additional variable for it
     # and get the variable via the open call
@@ -72,10 +73,9 @@ macro with*(args: varargs[untyped]): untyped =
     # Use insert instead of add so that finally statements are inserted
     # in the reverse order - consistent with what Python does
     finallyStmt.insert(0, quote do:
-      when `isCtxOpen` or `isCtxEnter`:
-        when `isCtxOpen`: `ctx`.close() else: `ctx`.exit()
-      else:
-        `varName`.close()
+      when `isCtxOpen`: `ctx`.close()
+      elif `isCtxEnter`: `ctx`.exit()
+      else: `varName`.close()
     )
   
   result = quote do:
