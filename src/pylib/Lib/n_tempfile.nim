@@ -297,6 +297,9 @@ proc close*(self: TemporaryDirectoryWrapper) =
   try: self.cleanup()
   except Exception: discard
 
+proc enter*(t: TemporaryDirectoryWrapper): PyStr = str t.name
+proc exit*(t: TemporaryDirectoryWrapper) = t.close()
+
 template sinceNim(ma, mi, pa): bool =
   (NimMajor, NimMinor, NimPatch) >= (ma, mi, pa)
 const Js = defined(js)
