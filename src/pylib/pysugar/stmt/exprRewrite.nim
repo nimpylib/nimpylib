@@ -234,15 +234,16 @@ proc callToPyExpr*(mparser; e): NimNode =
   case callee.kind
   of nnkIdent: newCls = callee.preNew
   of nnkDotExpr:
-    if callee[1].len == 0:
+    let rhs = callee[1]
+    if rhs.kind == nnkIdent:
       var lhs = callee[0]
       # in case `module.cls`
-      newCls = newDotExpr(lhs, callee[1].preNew)
+      newCls = newDotExpr(lhs, rhs.preNew)
       while true:
         if lhs.eqIdent"self":
           # assume no module named self
           retAfterAddOriCall
-        elif lhs.len == 0:
+        elif lhs.kind == nnkIdent:
           break
         elif lhs.kind != nnkDotExpr or lhs[1].kind != nnkIdent:
           retAfterAddOriCall
