@@ -40,6 +40,9 @@ proc expandChainImpl(resStmt: NimNode, cExp: NimNode): NimNode =
 proc expandChainImpl*(cExp: NimNode): NimNode =
   result = newStmtList()
   result.add expandChainImpl(result, cExp)
+  if result.len == 1:
+    result = result[0]
+    # ensure `.. as ..` Infix not to become StmtList
 
 macro expandChain*(cExp): bool =
   expectKind cExp, nnkInfix
