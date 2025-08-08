@@ -37,15 +37,17 @@ template strIterImpl*(itExpr: typed{~atom}; strProc;
 
 template gen(name; strProcType){.dirty.} =
   template name(Coll; start, stop: char|string;
-      strProc: strProcType; linear = false; useIter = true){.dirty.} =
+      strProc: strProcType; linear = false; useIter = true) =
     bind strIterImpl
-    template repr*(self: Coll): string{.dirty.} =
-      bind strIterImpl
+    proc strIter_repr(self: Coll): string{.genSym.} =
       strIterImpl self, strProc, start, stop, linear, useIter
 
+    # XXX:NIM-BUG: template ... `bind strIter_repr` not compile:
+    #  `Error: undeclared identifier: 'strIter_repr'`
+    template repr*(self: Coll): string =
+      strIter_repr self
     template `$`*(self: Coll): string =
-      bind repr
-      repr self
+      strIter_repr self
 
 gen genDollarRepr, typed
 gen genDollarReprAux, untyped
