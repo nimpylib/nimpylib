@@ -16,6 +16,7 @@ addPatch((2,1,1), true):
   
   proc setLenUninit*[T](s: var seq[T], newlen: Natural) = s.setLen newLen
 
-when (defined(js) or defined(nims)) and
-    not declared(setLenUninit):  # XXX: currently (as of 2.3.1), no such for JS
+when not declared(setLenUninit):  # XXX: currently (as of 2.3.1), no such for JS
+  # system only declares it
+  #  `when defined(nimHasSetLengthSeqUninitMagic)`
   proc setLenUninit*[T](s: var seq[T], newlen: Natural) = s.setLen newLen
