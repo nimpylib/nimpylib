@@ -4,10 +4,14 @@ from pylib/Lib/time import sleep
 from pylib/Lib/sys import nil  # like python's `import sys`
 from pylib/Lib/platform import nil  # like python's `import platform`
 import pylib/Lib/tempfile
+import pylib/Lib/os
 # like python's `import tempfile; from tempfile import *`
 # more python-stdlib in pylib/Lib/...
 
+# from now on, we use `>` appended `#` to mean output
+
 print 42  # print can be used with and without parenthesis too, like Python2.
+#> 42
 
 # NOTE: from now on, the following is just valid Python3 code!
 # only add the following to make it Python:
@@ -16,17 +20,18 @@ print 42  # print can be used with and without parenthesis too, like Python2.
 # from time import sleep
 # from tempfile import NamedTemporaryFile, TemporaryDirectory
 print( f"{9.0} Hello {42} World {1 + 2}" ) # Python-like string interpolation
+#> 9.0 Hello 42 World 3
 
 class O:
   @staticmethod
   def f():
     print("O.f")
 
-O.f()
+O.f()  #> O.f
 
 def show_range_list():
   python_like_range = range(0, -10, -2)
-  print(list(python_like_range)[1:-1]) # [-2, -4, -6]
+  print(list(python_like_range)[1:-1]) #> [-2, -4, -6]
 show_range_list()
 
 # Why using so many `def`s?
@@ -71,14 +76,14 @@ show_literals()
 type Number = float | int  # which is originally supported by nim-lang itself, however ;) 
 
 for i in range(10):
-  # 0 1 2 3 4 5 6 7 8 9
   print(i, endl=" ")
 print("done!")
+#> 0 1 2 3 4 5 6 7 8 9 done!
 
 # Python-like variable unpacking
 def show_unpack():
   data = list(range(3, 15, 2))
-  (first, second, *rest, last) = data
+  (first, second, *_, last) = data
   assert (first + second + last) == (3 + 5 + 13)
 
 show_unpack()
@@ -86,14 +91,12 @@ show_unpack()
 if (a := 6) > 5:
   assert a == 6
 
-print("a".center(9)) # "    a    "
+print(repr("a".center(9))) #> '    a    '
 
-print("" or "b") # "b"
-print("a" or "b") # "a"
+print("" or "b") #> b
+print("a" or "b") #> a
 
-print(not "") # True
-
-print("Hello,", input("What is your name? "), endl="\n~\n")
+print(not "") #> True
 
 def show_divmod_and_unpack(integer_bytes):
   (kilo, bite) = divmod(integer_bytes, 1_024)
@@ -106,16 +109,17 @@ def lambda_closure(arg):
   return anno()
 assert lambda_closure("world") == "hello world"
 
-print(sys.platform) # "linux"
-
-print(platform.machine) # "x86_64"
+# if on Linux:
+#assert sys.platform == "linux"
+# if on x86_64:
+#platform.machine == "x86_64"
 
 def allAny():
   truty = all([True, True, False])
-  print(truty) # False
+  print(truty) #> False
 
   truty = any([True, True, False])
-  print(truty) # True
+  print(truty) #> True
 allAny()
 
 def a_little_sleep():
@@ -129,23 +133,28 @@ assert timeit(a_little_sleep, number=1000) > 1.0
 # Support for Python-like with statements
 # All objects are closed at the end of the with statement
 def test_open():
-  with open("some_file.txt", 'w') as file:
+  fn = "nimpylib_test_open_some_file.txt"
+  with open(fn, 'w') as file:
     _ = file.write("hello world!")
 
-  with open("some_file.txt", 'r') as file:
+  with open(fn, 'r') as file:
     while True:
       s = file.readline()
       if s == "": break
       print(s)
+  
+  os.remove(fn)
 
-test_open()
+test_open()  #> hello world!
 
 def show_tempfile():
   with NamedTemporaryFile() as file:
     _ = file.write(b"test!")  # in binary mode
 
+  s=""
   with TemporaryDirectory() as name:
-    print(name)
+    s = name
+  assert len(s) != 0
 
 show_tempfile()
 
@@ -168,4 +177,4 @@ def exa():
   e = Example(5, 3)
   print(e.stopit(5))
 
-exa()
+exa() #> 5

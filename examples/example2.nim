@@ -1,7 +1,9 @@
 import pylib
+#[
 type Customer = ref object
   name: string
   balance: float
+]#
 
 class Customer(object):
   """A customer of ABC Bank with a checking account. Customers have the
@@ -11,6 +13,8 @@ class Customer(object):
       name: A string representing the customer's name.
       balance: A float tracking the current balance of the customer's account.
   """
+  name: str
+  balance: float
 
   def init(self, name, balance=0.0):
       """Return a Customer object whose name is *name* and starting
@@ -32,10 +36,15 @@ class Customer(object):
       self.balance += amount
       return self.balance
 
-let c = newCustomer("Jack", 500.0)
-print("Took 250, new balance is $1.".format(c.withdraw(250.0)))
-print("Added 1337, new balance is $1.".format(c.deposit(1337.0)))
-
+def t_customer():
+  c = Customer("Jack", 500.0)
+  n1 = 250.0
+  print("Took {}, new balance is {}.".format(n1, c.withdraw(n1)))
+  n2 = 1337.0
+  print("Added {}, new balance is {}.".format(n2, c.deposit(n2)))
+t_customer()
+#> Took 250.0, new balance is 250.0.
+#> Added 1337.0, new balance is 1587.0.
 
 type Shape = ref object
   x, y: float
@@ -65,5 +74,7 @@ class Shape:
     self.x = self.x * scale
     self.y = self.y * scale
 
-let sh = newShape(5.0, 15.3)
-print("Area is {}".format(sh.area()))
+def t_Shape():
+  sh = Shape(5.0, 15.3)
+  print("Area is {}".format(sh.area()))
+t_Shape()  #> Area is 76.5
