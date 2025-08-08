@@ -4,6 +4,11 @@ import std/macros
 import std/typetraits
 import ../../Lib/typing_impl/easyImpl as typing
 
+proc toPyType(n: NimNode): NimNode =
+  # XXX: a ugly workaround
+  if n.eqIdent"str": ident"PyStr"
+  else: n
+
 template emptyn: NimNode = newEmptyNode()
 proc parseDeclWithType*(def: NimNode): tuple[name, typ, val: NimNode] =
   ## a: int     -> a int <EmptyNode>
@@ -20,7 +25,7 @@ proc parseDeclWithType*(def: NimNode): tuple[name, typ, val: NimNode] =
   else: #  a: int
     (inner, emptyn)
   result.name = name
-  result.typ = typ
+  result.typ = typ.toPyType
   result.val = defVal
 
 # we wanna type in st of `tonimDecl` to be resolved(typed) while others are untyped,
