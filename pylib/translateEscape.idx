@@ -1,3 +1,18 @@
 nimTitle	translateEscape	pylib/translateEscape.html	module src/pylib/translateEscape		0
-nim	translateEscape	pylib/translateEscape.html#translateEscape,string	proc translateEscape(pattern: string): string		228
-nim	translateEscapeWithErr	pylib/translateEscape.html#translateEscapeWithErr.m,string	macro translateEscapeWithErr(pattern: string): string		233
+nim	allowNimEscape	pylib/translateEscape.html#allowNimEscape	const allowNimEscape		6
+nim	teeExtBad_uCurly	pylib/translateEscape.html#teeExtBad_uCurly	TranslateEscapeErr.teeExtBad_uCurly		19
+nim	teeBadEscape	pylib/translateEscape.html#teeBadEscape	TranslateEscapeErr.teeBadEscape		19
+nim	teeBadOct	pylib/translateEscape.html#teeBadOct	TranslateEscapeErr.teeBadOct		19
+nim	teeUniOverflow	pylib/translateEscape.html#teeUniOverflow	TranslateEscapeErr.teeUniOverflow		19
+nim	teeTrunc_x2	pylib/translateEscape.html#teeTrunc_x2	TranslateEscapeErr.teeTrunc_x2		19
+nim	teeTrunc_u4	pylib/translateEscape.html#teeTrunc_u4	TranslateEscapeErr.teeTrunc_u4		19
+nim	teeTrunc_U8	pylib/translateEscape.html#teeTrunc_U8	TranslateEscapeErr.teeTrunc_U8		19
+nim	TranslateEscapeErr	pylib/translateEscape.html#TranslateEscapeErr	enum TranslateEscapeErr		19
+nim	LexMessage	pylib/translateEscape.html#LexMessage	type LexMessage		33
+nim	Lexer	pylib/translateEscape.html#Lexer	object Lexer		34
+nim	newLexer	pylib/translateEscape.html#newLexer.t,string,	template newLexer[U: static[bool]](s: string; messager): Lexer		55
+nim	newStaticLexer	pylib/translateEscape.html#newStaticLexer,string	proc newStaticLexer[U: static[bool]](s: string): Lexer[U, LexMessage]		74
+nim	translateEscape	pylib/translateEscape.html#translateEscape,Lexer	proc translateEscape(L: var Lexer): string		253
+nim	translateEscape	pylib/translateEscape.html#translateEscape,static[string],static[bool]	proc translateEscape(pattern: static[string]; allow_unicode: static[bool] = true): string		256
+nim	translateEscapeWithErr	pylib/translateEscape.html#translateEscapeWithErr.t,static[string],static[bool]	template translateEscapeWithErr(pattern: static[string];\n                       allow_unicode: static[bool] = true): string		272
+nimgrp	translateescape	pylib/translateEscape.html#translateEscape-procs-all	proc		253

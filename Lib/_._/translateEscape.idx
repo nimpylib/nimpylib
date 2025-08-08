@@ -1,3 +1,18 @@
 nimTitle	translateEscape	_._/translateEscape.html	module src/pylib/translateEscape		0
-nim	translateEscape	_._/translateEscape.html#translateEscape,string	proc translateEscape(pattern: string): string		228
-nim	translateEscapeWithErr	_._/translateEscape.html#translateEscapeWithErr.m,string	macro translateEscapeWithErr(pattern: string): string		233
+nim	allowNimEscape	_._/translateEscape.html#allowNimEscape	const allowNimEscape		6
+nim	teeExtBad_uCurly	_._/translateEscape.html#teeExtBad_uCurly	TranslateEscapeErr.teeExtBad_uCurly		19
+nim	teeBadEscape	_._/translateEscape.html#teeBadEscape	TranslateEscapeErr.teeBadEscape		19
+nim	teeBadOct	_._/translateEscape.html#teeBadOct	TranslateEscapeErr.teeBadOct		19
+nim	teeUniOverflow	_._/translateEscape.html#teeUniOverflow	TranslateEscapeErr.teeUniOverflow		19
+nim	teeTrunc_x2	_._/translateEscape.html#teeTrunc_x2	TranslateEscapeErr.teeTrunc_x2		19
+nim	teeTrunc_u4	_._/translateEscape.html#teeTrunc_u4	TranslateEscapeErr.teeTrunc_u4		19
+nim	teeTrunc_U8	_._/translateEscape.html#teeTrunc_U8	TranslateEscapeErr.teeTrunc_U8		19
+nim	TranslateEscapeErr	_._/translateEscape.html#TranslateEscapeErr	enum TranslateEscapeErr		19
+nim	LexMessage	_._/translateEscape.html#LexMessage	type LexMessage		33
+nim	Lexer	_._/translateEscape.html#Lexer	object Lexer		34
+nim	newLexer	_._/translateEscape.html#newLexer.t,string,	template newLexer[U: static[bool]](s: string; messager): Lexer		55
+nim	newStaticLexer	_._/translateEscape.html#newStaticLexer,string	proc newStaticLexer[U: static[bool]](s: string): Lexer[U, LexMessage]		74
+nim	translateEscape	_._/translateEscape.html#translateEscape,Lexer	proc translateEscape(L: var Lexer): string		253
+nim	translateEscape	_._/translateEscape.html#translateEscape,static[string],static[bool]	proc translateEscape(pattern: static[string]; allow_unicode: static[bool] = true): string		256
+nim	translateEscapeWithErr	_._/translateEscape.html#translateEscapeWithErr.t,static[string],static[bool]	template translateEscapeWithErr(pattern: static[string];\n                       allow_unicode: static[bool] = true): string		272
+nimgrp	translateescape	_._/translateEscape.html#translateEscape-procs-all	proc		253

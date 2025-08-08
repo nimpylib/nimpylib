@@ -105,6 +105,14 @@
 <li><a class="reference" href="#close%2CTemporaryFileCloser%5BIO%5D" title="close[IO](self: TemporaryFileCloser[IO]; unlink = os.removeFile)">close[IO](self: TemporaryFileCloser[IO]; unlink = os.removeFile)</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">enter
+  <li><a class="reference" href="#enter%2CTemporaryDirectoryWrapper" title="enter(t: TemporaryDirectoryWrapper): PyStr">enter(t: TemporaryDirectoryWrapper): PyStr</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">exit
+  <li><a class="reference" href="#exit%2CTemporaryDirectoryWrapper" title="exit(t: TemporaryDirectoryWrapper)">exit(t: TemporaryDirectoryWrapper)</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">flush
   <li><a class="reference" href="#flush%2CTemporaryFileWrapper%5BIO%5D" title="flush[IO](self: TemporaryFileWrapper[IO])">flush[IO](self: TemporaryFileWrapper[IO])</a></li>
 
@@ -297,8 +305,8 @@
   <dd>
     
     
-    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/n_tempfile.nim#L307" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/n_tempfile.nim#L307" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/n_tempfile.nim#L310" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/n_tempfile.nim#L310" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -347,6 +355,34 @@
     
     <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/n_tempfile.nim#L209" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/n_tempfile.nim#L209" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+
+</div>
+<div id="enter-procs-all">
+  <div id="enter,TemporaryDirectoryWrapper">
+  <dt><pre><span class="Keyword">proc</span> <a href="#enter%2CTemporaryDirectoryWrapper"><span class="Identifier">enter</span></a><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="n_tempfile.html#TemporaryDirectoryWrapper"><span class="Identifier">TemporaryDirectoryWrapper</span></a><span class="Other">)</span><span class="Other">:</span> <a href="strimpl.html#PyStr"><span class="Identifier">PyStr</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    
+    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/n_tempfile.nim#L300" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/n_tempfile.nim#L300" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+
+</div>
+<div id="exit-procs-all">
+  <div id="exit,TemporaryDirectoryWrapper">
+  <dt><pre><span class="Keyword">proc</span> <a href="#exit%2CTemporaryDirectoryWrapper"><span class="Identifier">exit</span></a><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="n_tempfile.html#TemporaryDirectoryWrapper"><span class="Identifier">TemporaryDirectoryWrapper</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteDirEffect</span><span class="Other">,</span> <span class="Identifier">ReadDirEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    
+    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/n_tempfile.nim#L301" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/n_tempfile.nim#L301" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -592,7 +628,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-12 19:38:27 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-08-08 14:45:02 UTC</small>
       </div>
     </div>
   </div>

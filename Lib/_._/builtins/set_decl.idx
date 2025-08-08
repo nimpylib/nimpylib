@@ -14,10 +14,10 @@ nim	newPyFrozenSet	_._/builtins/set_decl.html#newPyFrozenSet	proc newPyFrozenSet
 nim	incl	_._/builtins/set_decl.html#incl,SomePySet[H],H	proc incl[H](self: var SomePySet[H]; x: H)		26
 nim	excl	_._/builtins/set_decl.html#excl,SomePySet[H],H	proc excl[H](self: var SomePySet[H]; x: H)		27
 nim	len	_._/builtins/set_decl.html#len,SomePySet	proc len(self: SomePySet): int		29
-nim	repr	_._/builtins/set_decl.html#repr.t,PySet	template repr(self: PySet): string		42
-nim	`$`	_._/builtins/set_decl.html#$.t,PySet	template `$`(self: PySet): string		31
-nim	repr	_._/builtins/set_decl.html#repr.t,PyFrozenSet	template repr(self: PyFrozenSet): string		42
-nim	`$`	_._/builtins/set_decl.html#$.t,PyFrozenSet	template `$`(self: PyFrozenSet): string		32
+nim	repr	_._/builtins/set_decl.html#repr.t,PySet	template repr(self`gensym1: PySet): string		47
+nim	`$`	_._/builtins/set_decl.html#$.t,PySet	template `$`(self`gensym1: PySet): string		31
+nim	repr	_._/builtins/set_decl.html#repr.t,PyFrozenSet	template repr(self`gensym3: PyFrozenSet): string		47
+nim	`$`	_._/builtins/set_decl.html#$.t,PyFrozenSet	template `$`(self`gensym3: PyFrozenSet): string		32
 nim	`$`	_._/builtins/set_decl.html#$.t,SomePySet	template `$`(self: SomePySet): string		34
 nim	clear	_._/builtins/set_decl.html#clear,PySet	proc clear(self: var PySet): int		38
 nim	`==`	_._/builtins/set_decl.html#==,SomePySet,SomePySet	proc `==`(self, o: SomePySet): int		39
@@ -29,5 +29,5 @@ nim	items	_._/builtins/set_decl.html#items.i,SomePySet[H]	iterator items[H](self
 nimgrp	ashashset	_._/builtins/set_decl.html#asHashSet-procs-all	proc		17
 nimgrp	newpyfrozenset	_._/builtins/set_decl.html#newPyFrozenSet-procs-all	proc		20
 nimgrp	newpyset	_._/builtins/set_decl.html#newPySet-procs-all	proc		19
-nimgrp	$	_._/builtins/set_decl.html#$-templates-all	template		46
-nimgrp	repr	_._/builtins/set_decl.html#repr-templates-all	template		42
+nimgrp	$	_._/builtins/set_decl.html#$-templates-all	template		49
+nimgrp	repr	_._/builtins/set_decl.html#repr-templates-all	template		47
