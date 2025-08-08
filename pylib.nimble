@@ -17,12 +17,26 @@ requires "nim > 2.0.4"
 # 2.0.4: `Lib/sys_impl/getencodings` `template importPython(submod, sym) = from ../../Python/submod import sym` doesn't work
 
 import std/os
+const commentestPath = "./tools/tests/commentest"
+const gorgeExRemainTailingNL = (NimMajor, NimMinor, NimPatch) > (2, 3, 1)
+when gorgeExRemainTailingNL:
+  import std/macros
+  macro impS =
+    quote do: import `commentestPath.strVal`
+  impS
 
 proc runTestament(targets = "c") =
   for path in listDirs("./tests/testaments"):
     if path.lastPathPart in ["nimcache", "testresults"]:
       continue
     exec "testament --targets:" & targets.quoteShell &  " pat " & quoteShell path
+
+proc runExamples(targets: openArray[string]) =
+  let exDir = "./examples"
+  when gorgeExRemainTailingNL:
+    testAllNimFiles(exDir, targets)
+  else:
+    selfExec " r --hints:off " & commentestPath & ' ' & exDir & ' ' & targets.join " "
 
 func getArgs(taskName: string): seq[string] =
   ## cmdargs: 1 2 3 4 5 -> 1 4 3 2 5
@@ -59,6 +73,11 @@ taskWithArgs testament, "Testament":
   var targets = args.quoteShellCommand
   if targets.len == 0: targets = "c js"
   runTestament targets
+
+taskWithArgs testExamples, "run tests for example":
+  var targets = args.quoteShellCommand
+  if targets.len == 0: targets = #["c js"]# "c"  # TODO
+  runExamples targets.split ' '
 
 let
   libDir = srcDir / "pylib/Lib"
@@ -122,6 +141,7 @@ task testBackends, "Test C, Js, ..":
   testCTask()
   # Test JS
   testJsTask()
+  testExamplesTask()
 
 task test, "Runs the test suite":
   testBackendsTask()
@@ -142,19 +162,6 @@ printPkgInfo() failed.
   
   exec "nimble install"
 
-func stripLfOrCrlf(s: var string) =
-  ## Copied from strutils.stripLineEnd
-  if s.len > 0:
-    case s[^1]
-    of '\n':
-      if s.len > 1 and s[^2] == '\r':
-        s.setLen s.len-2
-      else:
-        s.setLen s.len-1
-    # of '\r', '\v', '\f': s.setLen s.len-1
-    else:
-      discard
-
 taskWithArgs changelog, "output for changelog files":
   if args.len == 0:
     args.add "HEAD"
@@ -168,7 +175,7 @@ taskWithArgs changelog, "output for changelog files":
         assert lastTagExecRes.exitCode == 0
         var lastTag = lastTagExecRes.output
         # XXX: On Windows it ends with \r\n. But nothing on Linux
-        lastTag.stripLfOrCrlf
+        lastTag.stripLineEnd
         catRng(lastTag, arg)
     else:
       let
