@@ -2,6 +2,7 @@
 
 import std/math
 import std/bitops
+from ../numTypes/ints/getter import bit_length
 
 func long_invmod(aa, nn: int): int =
 
@@ -43,9 +44,6 @@ type Digit = uint8
 
 const BitPerByte = 8
 
-func bit_length(x: SomeInteger): int =
-  sizeof(x) * BitPerByte - bitops.countLeadingZeroBits x
-  
 # Py_SIZE
 template get_ob_size(x): int = ceilDiv(x.bit_length(), sizeof(Digit)*BitPerByte)
 

@@ -24,8 +24,8 @@
 
 import ../nimpatch/nansign
 import std/math
-import std/bitops
 import std/macros
+from ../numTypes/ints/getter import bit_lengthUsingBitops
 from ./math_impl/platformUtils import CLike, clikeOr, impJsOrC
 from ./math_impl/errnoUtils import
   prepareRWErrno, prepareROErrno, setErrno, setErrno0, getErrno, isErr, isErr0
@@ -621,9 +621,6 @@ func factorial*(x: Natural): int =
 
 expM sqrt
 
-const BitPerByte = 8
-func bit_length(x: SomeInteger): int =
-  sizeof(x) * BitPerByte - bitops.countLeadingZeroBits x
 
 func isqrtPositive*(n: Positive): int{.inline.} =
   ## EXT: isqrt for Positive only,
