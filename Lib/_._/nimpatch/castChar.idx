@@ -1,0 +1,5 @@
+nimTitle	castChar	_._/nimpatch/castChar.html	module src/pylib/nimpatch/castChar		0
+nim	FixedVer	_._/nimpatch/castChar.html#FixedVer	const FixedVer		12
+nim	BeforeFixedVer	_._/nimpatch/castChar.html#BeforeFixedVer	const BeforeFixedVer		13
+nim	hasBug	_._/nimpatch/castChar.html#hasBug	const hasBug		15
+nim	castChar	_._/nimpatch/castChar.html#castChar.t,SomeInteger	template castChar(i: SomeInteger): char		7

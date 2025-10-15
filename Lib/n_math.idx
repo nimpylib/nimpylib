@@ -44,10 +44,10 @@ nim	comb	n_math.html#comb,int,int	proc comb(n, k: int): int		602
 nim	perm	n_math.html#perm,int	proc perm(n: int): int		608
 nim	perm	n_math.html#perm,Natural,Natural	proc perm(n, k: Natural): int		612
 nim	factorial	n_math.html#factorial,Natural	proc factorial(x: Natural): int		619
-nim	isqrtPositive	n_math.html#isqrtPositive,Positive	proc isqrtPositive(n: Positive): int		628
-nim	isqrt	n_math.html#isqrt,Natural	proc isqrt(n: Natural): int		648
-nim	isqrt	n_math.html#isqrt,T	proc isqrt[T: SomeFloat](x: T): int		678
-nimgrp	isqrt	n_math.html#isqrt-procs-all	proc		648
+nim	isqrtPositive	n_math.html#isqrtPositive,Positive	proc isqrtPositive(n: Positive): int		679
+nim	isqrt	n_math.html#isqrt,Natural	proc isqrt(n: Natural): int		716
+nim	isqrt	n_math.html#isqrt,T	proc isqrt[T: SomeFloat](x: T): int		746
+nimgrp	isqrt	n_math.html#isqrt-procs-all	proc		716
 nimgrp	hypot	n_math.html#hypot-procs-all	proc		201
 nimgrp	perm	n_math.html#perm-procs-all	proc		608
 nimgrp	log	n_math.html#log-procs-all	proc		569

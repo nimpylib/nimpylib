@@ -33,9 +33,9 @@ nim	rindex	pylib/pybytes/bytesmeth.html#rindex,PyBytes,PyBytes,int	proc rindex(a
 nim	contains	pylib/pybytes/bytesmeth.html#contains,PyBytes,PyBytes	proc contains(a: PyBytes; o: PyBytes): bool		111
 nim	contains	pylib/pybytes/bytesmeth.html#contains,PyBytes,int	proc contains(a: PyBytes; o: int): bool		112
 nim	isascii	pylib/pybytes/bytesmeth.html#isascii,PyBytes	proc isascii(a: PyBytes): bool		117
-nim	isspace	pylib/pybytes/bytesmeth.html#isspace,PyBytes	proc isspace(a`gensym41: PyBytes): bool		118
-nim	isalpha	pylib/pybytes/bytesmeth.html#isalpha,PyBytes	proc isalpha(a`gensym42: PyBytes): bool		119
-nim	isdigit	pylib/pybytes/bytesmeth.html#isdigit,PyBytes	proc isdigit(a`gensym43: PyBytes): bool		120
+nim	isspace	pylib/pybytes/bytesmeth.html#isspace,PyBytes	proc isspace(a`gensym46: PyBytes): bool		118
+nim	isalpha	pylib/pybytes/bytesmeth.html#isalpha,PyBytes	proc isalpha(a`gensym47: PyBytes): bool		119
+nim	isdigit	pylib/pybytes/bytesmeth.html#isdigit,PyBytes	proc isdigit(a`gensym48: PyBytes): bool		120
 nim	islower	pylib/pybytes/bytesmeth.html#islower,PyBytes	proc islower(a: PyBytes): bool		125
 nim	isupper	pylib/pybytes/bytesmeth.html#isupper,PyBytes	proc isupper(a: PyBytes): bool		126
 nim	istitle	pylib/pybytes/bytesmeth.html#istitle,PyBytes	proc istitle(a: PyBytes): bool		127
