@@ -307,25 +307,29 @@ suite "ldexp":
       ldexp(INF, 30) == INF
       ldexp(NINF, -213) == NINF
       isnan(ldexp(NAN, 0))
-  when c_int is int32:
-    test "large second arg":
-      # the following code from CPython is only for
-      # platform where c_int is int32
-      for f in [1e5, 1e10]:
-        let n = int(f)
-        check:
-          ldexp(INF, -n) ==  INF
-          ldexp(NINF, -n) ==  NINF
-          ldexp(1.0, -n) ==  0.0
-          ldexp(-1.0, -n) ==  -0.0
-          ldexp(0.0, -n) ==  0.0
-          ldexp(-0.0, -n) ==  -0.0
-          isnan(math.ldexp(NAN, -n))
-        expect OverflowDefect: discard ldexp(1.0, n)
-        expect OverflowDefect: discard ldexp(-1.0, n)
-        check:
-          ldexp(0.0, n) == 0.0
-          ldexp(-0.0, n) == -0.0
-          ldexp(INF, n) == INF
-          ldexp(NINF, n) == NINF
-          isnan(ldexp(NAN, n))
+  test "large second arg":
+    const si = sizeof(system.int)
+    var ints: seq[float]
+    if si == 1: discard
+    if si >= 2: ints.add 1e5
+    if si >= 4: ints.add 1e9  # 1e10 is bigger than int32.high
+    if si >= 8: ints.add 1e18 # 1e20 is bigger than int64.high
+
+    for f in ints:
+      let n = int f
+      check:
+        ldexp(INF, -n) ==  INF
+        ldexp(NINF, -n) ==  NINF
+        ldexp(1.0, -n) == 0.0
+        ldexp(-1.0, -n) == -0.0
+        ldexp(0.0, -n) == 0.0
+        ldexp(-0.0, -n) == -0.0
+        isnan(math.ldexp(NAN, -n))
+      expect OverflowDefect: discard ldexp(1.0, n)
+      expect OverflowDefect: discard ldexp(-1.0, n)
+      check:
+        ldexp(0.0, n) == 0.0
+        ldexp(-0.0, n) == -0.0
+        ldexp(INF, n) == INF
+        ldexp(NINF, n) == NINF
+        isnan(ldexp(NAN, n))
