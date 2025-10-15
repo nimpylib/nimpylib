@@ -311,7 +311,9 @@ genTypeCodeGetters()
 
 func buffer_info*[T](arr: PyArray[T]): tuple[
     address: int, length: int] = # maybe the address shall be pointer or ptr T?
+  {.push boundChecks: off.} #XXX: assuming cap is alloc
   result.address = cast[typeof result.address](arr[0].addr)
+  {.pop.}
   result.length = arr.len
 
 

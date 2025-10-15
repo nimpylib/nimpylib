@@ -73,13 +73,15 @@ when have_getrandom_syscall:
     if size < 0:
       #$setErrno EINVAL
       raiseErrno EINVAL
+    if size == 0: return
     
     var n: int
     result = newSeqUninit[uint8](size)
 
     while true:
       n = syscall(SYS_getrandom,
-        result[0].addr,
+        result[0].addr,  # here if result is empty, IndexDefect will be raised
+                         #  so we `if size == 0: return` ahead (see above)
         result.len,
         flags
       )
