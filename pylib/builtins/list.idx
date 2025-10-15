@@ -17,6 +17,7 @@ nim	`+=`	pylib/builtins/list.html#+=,PyList[T],PyList[T]	proc `+=`[T](self: var 
 nim	`[]`	pylib/builtins/list.html#[],PyList[T],HSlice	proc `[]`[T](self: PyList[T]; s: HSlice): PyList[T]		85
 nim	`[]`	pylib/builtins/list.html#[],PyList[T],BackwardsIndex	proc `[]`[T](self: PyList[T]; s: BackwardsIndex): T		87
 nim	`[]`	pylib/builtins/list.html#[],PyList[T],PySlice	proc `[]`[T](self: PyList[T]; s: PySlice): PyList[T]		90
+nim	contains	pylib/builtins/list.html#contains,PyList[T],T	proc contains[T](self: PyList[T]; ele: T): bool		98
 nim	reverse	pylib/builtins/list.html#reverse,PyList	proc reverse(self: var PyList)		100
 nim	pop	pylib/builtins/list.html#pop,PyList[T]	proc pop[T](self: var PyList[T]): T		102
 nim	pop	pylib/builtins/list.html#pop,PyList[T],int	proc pop[T](self: var PyList[T]; index: int): T		103

@@ -96,7 +96,8 @@
   <dl class="item">
     <div id="stat-procs-all">
   <div id="stat">
-  <dt><pre><span class="Keyword">proc</span> <a href="#stat"><span class="Identifier">stat</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="types.html#Path"><span class="Identifier">Path</span></a><span class="Other">)</span><span class="Other">:</span> <a href="../os_impl/posix_like/stat.html#stat_result"><span class="Identifier">stat_result</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#stat"><span class="Identifier">stat</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="types.html#Path"><span class="Identifier">Path</span></a><span class="Other">)</span><span class="Other">:</span> <a href="../os_impl/posix_like/stat.html#stat_result"><span class="Identifier">stat_result</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">PyOSError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -123,7 +124,7 @@
 </div>
 <div id="unlink-procs-all">
   <div id="unlink">
-  <dt><pre><span class="Keyword">proc</span> <a href="#unlink"><span class="Identifier">unlink</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="types.html#Path"><span class="Identifier">Path</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">PyOSError</span><span class="Other">,</span> <span class="Identifier">NotImplementedError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#unlink"><span class="Identifier">unlink</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="types.html#Path"><span class="Identifier">Path</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">NotImplementedError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
                           <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -145,7 +146,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-10-15 12:34:42 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-10-15 23:55:14 UTC</small>
       </div>
     </div>
   </div>

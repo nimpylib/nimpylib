@@ -1402,6 +1402,8 @@ else:
           <li><a class="reference external"
           data-doc-search-tag="dict: proc contains[T](t: PyDictValueView[auto, T]; x: T): bool" href="_._/builtins/dict.html#contains%2CPyDictValueView%5Bauto%2CT%5D%2CT">dict: proc contains[T](t: PyDictValueView[auto, T]; x: T): bool</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="list: proc contains[T](self: PyList[T]; ele: T): bool" href="_._/builtins/list.html#contains%2CPyList%5BT%5D%2CT">list: proc contains[T](self: PyList[T]; ele: T): bool</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="pyrange: proc contains[T](x: PyRange[T]; y: T): bool" href="_._/builtins/pyrange.html#contains%2CPyRange%5BT%5D%2CT">pyrange: proc contains[T](x: PyRange[T]; y: T): bool</a></li>
           <li><a class="reference external"
           data-doc-search-tag="set_decl: proc contains[H](self: SomePySet[H]; x: H): bool" href="_._/builtins/set_decl.html#contains%2CSomePySet%5BH%5D%2CH">set_decl: proc contains[H](self: SomePySet[H]; x: H): bool</a></li>
@@ -4454,7 +4456,9 @@ else:
           </ul></dd>
 <dt><a name="listdir" href="#listdir"><span>listdir:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="listdirx: proc listdir[T](p: PathLike[T] = &quot;.&quot;): PyList[T]" href="os_impl/listdirx.html#listdir%2CPathLike%5BT%5D">listdirx: proc listdir[T](p: PathLike[T] = &quot;.&quot;): PyList[T]</a></li>
+          data-doc-search-tag="listdirx: proc listdir(): PyList[PyStr]" href="os_impl/listdirx.html#listdir">listdirx: proc listdir(): PyList[PyStr]</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="listdirx: proc listdir[T](p: PathLike[T]): PyList[T]" href="os_impl/listdirx.html#listdir%2CPathLike%5BT%5D">listdirx: proc listdir[T](p: PathLike[T]): PyList[T]</a></li>
           </ul></dd>
 <dt><a name="ljust" href="#ljust"><span>ljust:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -7892,7 +7896,7 @@ else:
           </ul></dd>
 <dt><a name="toNimSlice" href="#toNimSlice"><span>toNimSlice:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="pyslice: proc toNimSlice(s: PySlice1): Slice[int]" href="_._/builtins/pyslice.html#toNimSlice%2CPySlice1">pyslice: proc toNimSlice(s: PySlice1): Slice[int]</a></li>
+          data-doc-search-tag="pyslice: converter toNimSlice(s: PySlice1): Slice[int]" href="_._/builtins/pyslice.html#toNimSlice.c%2CPySlice1">pyslice: converter toNimSlice(s: PySlice1): Slice[int]</a></li>
           </ul></dd>
 <dt><a name="toNimStr" href="#toNimStr"><span>toNimStr:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -8602,7 +8606,7 @@ else:
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-10-15 12:34:48 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-10-15 23:55:19 UTC</small>
       </div>
     </div>
   </div>
