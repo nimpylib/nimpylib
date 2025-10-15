@@ -31,7 +31,7 @@ func slice*(stop: int): PySlice1 = slice(0, stop)
 converter toPySlice*(s: PySlice1): PySlice =
   result = PySlice(start: s.start, stop: s.stop, step: 1)
 
-proc toNimSlice*(s: PySlice1): Slice[int] =
+converter toNimSlice*(s: PySlice1): Slice[int] =
   result.b = s.stop - 1
   result.a = s.start
   assert result.a >= 0 and result.b >= 0
