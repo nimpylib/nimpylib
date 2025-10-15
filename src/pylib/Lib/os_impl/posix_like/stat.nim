@@ -34,6 +34,7 @@ const DWin = defined(windows)
 when InJs:
   import std/jsffi
   import ./jsStat
+  from ../../stat_impl/types import Mode
   template impStatTAttr[T](attr; dstAttr; cvt: typed) =
     func attr*(self: Stat): T =
       let res = self.dstAttr
@@ -50,7 +51,7 @@ when InJs:
     impStatTAttr[typ](attr, dstAttr)
   template impStatIAttr(attr; dstAttr) = impStatTAttr[cdouble](attr, dstAttr)
   impStatIAttr st_ino,    ino,    Ino
-  impStatIAttr st_mode,   mode,   Mode
+  impStatTAttr[Mode] st_mode,   mode
   impStatIAttr st_nlink,  nlink,  Nlink
   impStatIAttr st_uid,    uid,    Uid
   impStatIAttr st_gid,    gid,    Gid
@@ -205,21 +206,27 @@ func to_result(s: sink Stat): stat_result =
 
 when InJs:
   proc statAux(st: var Stat, path: int|string) =
+    var sst: Stat
     catchJsErrAndRaise:
-      st =
+      sst =
         when path is int:
           fstatSync(path.cint)
         else:
           let cs = cstring(path)
           statSync(cs)
+    st = sst
   proc fstatAux(st: var Stat, fd: int) =
+    var sst: Stat
     catchJsErrAndRaise:
-      st = fstatSync(fd.cint)
+      sst = fstatSync(fd.cint)
+    st = sst
   proc lstatAux(st: var Stat, path: PathLike) =
+    var sst: Stat
     catchJsErrAndRaise:
-      st = block:
+      sst = block:
         let cs = cstring($path)
         lstatSync(cs)
+    st = sst
 
 template statAttr*(path: PathLike|int, attr: untyped): untyped =
   ## stat(`path`).`attr`

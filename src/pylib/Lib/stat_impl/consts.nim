@@ -3,9 +3,20 @@
 import ./defines
 import ../../pyconfig/util
 
-
+const
+  Js = defined(js)
+  Node = defined(nodejs)
+when Node:
+  import std/jsffi
 template genIntImpl(name, cname; defval: int, header = SYS_STAT_H) =
-  const name = from_c_int(cname, defval, header)
+  when defined(nodejs):
+    #let `tmp c name`{.importjs: "require('node:fs').constants." & astToStr(cname).}: JsObject
+    let `tmp c name` = require("node:fs").constants.cname
+    let name = if `tmp c name`.isUndefined: defval else: `tmp c name`.to cint
+  elif Js:
+    const name = defval
+  else:
+    const name = from_c_int(cname, defval, header)
 
 template genInt(name; defval: int, header = SYS_STAT_H) =
   genIntImpl(name, name, defval, header)
@@ -76,7 +87,7 @@ genInt UF_COMPRESSED, 0x00000020
 genInt UF_TRACKED, 0x00000040
 genInt UF_DATAVAULT, 0x00000080
 genInt UF_HIDDEN, 0x00008000
-when not APPLE:
+when not APPLE and not defined(js):
   genInt SF_SETTABLE, 0xffff0000
 genInt SF_ARCHIVED, 0x00010000
 genInt SF_IMMUTABLE, 0x00020000
