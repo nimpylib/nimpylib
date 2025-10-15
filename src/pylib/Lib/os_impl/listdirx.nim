@@ -3,7 +3,7 @@ import std/os
 import ./common
 import ./listcommon
 
-proc listdir*[T](p: PathLike[T] = "."): PyList[T] =
+proc listdir*[T](p: PathLike[T] = "."): PyList[T]{.raises: [OSError].} =
   sys.audit("os.listdir", p)
   result = newPyList[T]()
   p.tryOsOp:

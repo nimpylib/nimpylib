@@ -12,7 +12,7 @@ when InJs:
     const `HAVE f` = val
   decl unlinkat, false
 
-proc unlink*[T](p: PathLike[T], dir_fd=DEFAULT_DIR_FD) =
+proc unlink*[T](p: PathLike[T], dir_fd=DEFAULT_DIR_FD){.raises: [OSError, NotImplementedError].} =
   sys.audit("os.remove", p, if dir_fd==DEFAULT_DIR_FD: -1 else: dir_fd)
   var res: cint
   with_Py_SUPPRESS_IPH:
