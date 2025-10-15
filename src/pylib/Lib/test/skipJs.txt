@@ -1,4 +1,5 @@
 
 tempfile
+resource
 os_nojs
 pathlib_nojs
