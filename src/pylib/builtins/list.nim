@@ -95,7 +95,7 @@ func `[]`*[T](self: PyList[T], s: PySlice): PyList[T] =
   for i in pyrange.range(s.start, s.stop, s.step):
     result.append self[i]
 
-
+proc contains*[T](self: PyList[T]; ele: T): bool = self.asSeq.contains ele
 
 func reverse*(self: var PyList) = reverse(self.asSeq)
 

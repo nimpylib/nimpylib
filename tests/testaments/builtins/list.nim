@@ -7,6 +7,7 @@ test "list shallow":
   var ls = list([1,2,3])
   var ls1 = ls
   ls1[0] = 3
+  check 2 in ls
   check ls[0] == 3
 
 test "list.sort":
