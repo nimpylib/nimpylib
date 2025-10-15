@@ -64,7 +64,7 @@ func fromU32sImpl[S: seq[U8]|string](res: var S; wordarray: openArray[uint32]){.
   when declared(copyMem):
     copyMem(res[0].addr, wordarray[0].addr, res.len)
   else:
-    when PyLittleEndian:
+    when PyLittleEndian and not defined(js):
       template rng: untyped = 0..wordarray.high
       template `[]=`(res; i, o, v): untyped = res[i + (3 - o)] = v
     else:
@@ -76,7 +76,7 @@ func fromU32sImpl[S: seq[U8]|string](res: var S; wordarray: openArray[uint32]){.
       let u = wordarray[i]
       type T = typeof(res[0])
       template asgnPart(o) =
-        res[ii, o] = cast[T](u shr (8 * o))
+        res[ii, o] = cast[T]((u shr (8 * o)) and uint32 T.high)
       asgnPart 0
       asgnPart 1
       asgnPart 2
@@ -116,6 +116,7 @@ genGbls:
     ## `return self.getrandbits(n * 8).to_bytes(n, 'little')`
     ## here we use `_random_Random_getrandbits_impl`
     result.fromU32s self.getrandbits_impl n*8
+    result.setLen n
 
   method getrandbits*(self; k: int): int{.base.} =
     ## `_random_Random_getrandbits_impl`
