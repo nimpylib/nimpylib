@@ -654,6 +654,8 @@ proc do_stat_impl(result: var Stat; function_name: string, path: string|int, dir
           doFstatat
       else:
         doFstatat
+  if res != 0:
+    raiseExcWithPath path
 
 template withSt(body): stat_result{.dirty.} =
   bind to_result, Stat

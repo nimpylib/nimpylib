@@ -59,7 +59,7 @@ template gen_invalid(a, b; msg: string){.dirty.} =
   proc `a and b invalid`*(function_name: string, a; b): bool{.discardable.} =
     if `valid a`(a) and `valid b`(b):
       raise newException(ValueError, function_name & ": " & msg)
-    return true
+    return
   template `a and b invalid`*(a; b): untyped{.dirty.} =
     bind getProcName
     `a and b invalid`(getProcName(), a, b)
