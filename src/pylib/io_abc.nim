@@ -8,9 +8,16 @@ func fspath*(c: char): PyStr = str c
 
 type
   FsPath = PyStr|PyBytes
+
+when defined(js) and NimMajor == 2 and NimMinor < 3:
+  type PathLike*[T: FsPath] = T  ## os.PathLike, repr in nim-lang/Nim#25043, fixed in Nim#25044
+else:
+ type
   PathLike*[T: FsPath] = concept self  ## os.PathLike
     T  # XXX: still to prevent wrong compiler hint: `T is not used`
     self.fspath is T
+
+type
   CanIOOpenT*[T] = int | PathLike[T]
 
 
