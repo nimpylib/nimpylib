@@ -1,6 +1,8 @@
 
 template pyimport*(nam) =
   import ../nam
+template pyimport*(nam; sym) =
+  from ../nam import sym
 
 template importPyLib* = import ../../../pylib
 
