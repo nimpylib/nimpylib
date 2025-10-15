@@ -3,6 +3,7 @@ from std/math import ceilDiv
 import ./decl
 import ./nint_proto
 import ../reimporter
+import ../../nimpatch/castChar
 const weridTarget = defined(js) or defined(nimscript)
 
 func parseByteOrder(byteorder: string): Endianness =
@@ -28,7 +29,7 @@ when arrNotCvtableInt:
       # (and converting it to int results in a negative int)
       char cast[uint8](i)
     else:
-      cast[char](i)
+      castChar(i)
   template loopRangeWithIt(bHi: int, byteorder: Endianness, body: untyped){.dirty.} =
     if byteorder == bigEndian:
       for it{.inject.} in countdown(bHi, 0): body

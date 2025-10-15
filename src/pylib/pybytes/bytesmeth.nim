@@ -5,7 +5,7 @@ import ./strip, ./split/[split, rsplit]
 export strip, split, rsplit
 import ../stringlib/meth
 import ../version
-
+import ../nimpatch/castChar
 
 template `*`*(a: PyBytes; i: int): PyBytes =
   bind repeat, PyBytes
@@ -26,7 +26,7 @@ func count*(a: PyBytes, sub: PyBytes, start=0, `end`: int): int =
 template chkChr(i): char =
   if i not_in 0..256:
     raise newException(ValueError, "ValueError: byte must be in range(0, 256)")
-  cast[char](i)
+  castChar(i)
 func count*(a: PyBytes, sub: int): int = count($a, chkChr sub)
 func count*(a: PyBytes, sub: int, start: int): int =
   count(($a)[start..^1], chkChr sub)

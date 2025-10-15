@@ -62,7 +62,8 @@ const bytePerWord = 4
 type U8 = uint8 | char
 func fromU32sImpl[S: seq[U8]|string](res: var S; wordarray: openArray[uint32]){.inline.} =
   when declared(copyMem):
-    copyMem(res[0].addr, wordarray[0].addr, res.len)
+    if wordarray.len > 0:
+      copyMem(res[0].addr, wordarray[0].addr, res.len)
   else:
     when PyLittleEndian and not defined(js):
       template rng: untyped = 0..wordarray.high

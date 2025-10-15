@@ -14,6 +14,7 @@ import ./consts
 include ./unicase/[
   toUpperMapper, casefoldMapper
 ]
+import ../nimpatch/castChar
 
 const
   OneUpperToMoreTable = toTable OneUpperToMoreTableLit
@@ -127,7 +128,7 @@ proc py_toTitle(r: Rune): Rune =
   ##  not respect ascii
   var c = RuneImpl(r)
   if c <= RuneImpl high char:
-    return cast[char](c).toUpperAscii.Rune
+    return castChar(c).toUpperAscii.Rune
   result = r.toTitle()
   if result == r:
     # Nim's toTitle only convert those whose titlecase differs uppercase.

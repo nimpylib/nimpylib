@@ -5,7 +5,7 @@ import ./collections_abc, ./mutSeqSliceOp
 import std/strutils
 
 import ./stringlib/percent_format
-
+import ./nimpatch/castChar
 # Begin impl
 type
   PyByteArray* = ref object
@@ -80,7 +80,7 @@ iterator items*(self): int =
 
 func len*(self): int = self.asNim.len
 when defined(danger):
-  template chkChar(c: int): char = cast[char](c)
+  template chkChar(c: int): char = castChar(c)
 elif defined(release):
   template chkChar(c: int): char = char(c)
 else:

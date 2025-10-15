@@ -6,6 +6,7 @@ import std/strformat
 import std/typetraits
 import ../nimpatch/typeinfo
 import ../nimpatch/anydollar
+import ../nimpatch/castChar
 
 import std/macros except `$`, `[]`
 
@@ -193,7 +194,7 @@ template getAsChar(s: char): char = s
 proc getAsChar(s: SomeInteger): char =
   s.chkInRange 256:
     raise_TypeError(rng256ErrMsg)
-  cast[char](s)
+  castChar(s)
 
 proc getAsChar(s: string|cstring): char =
   s.len.chkLen1
