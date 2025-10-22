@@ -2,6 +2,7 @@
 
 import std/os
 import std/strutils
+import ../private/envvarsCompat
 
 using name: string
 func toAllUpper(name): string {.inline.} =
@@ -11,7 +12,7 @@ func toAllUpper(name): string {.inline.} =
     else: discard # '_' is discarded, so for other chars
 func toPyEnv*(name): string {.inline.} = "PYTHON" & name.toAllUpper
 proc ib_i*[T](name; flagInit: T): T =
-  let v = getEnv(name)
+  let v = getEnvCompat(name)
   if v.len == 0: return
   max(flagInit, T(
     try:
@@ -20,6 +21,6 @@ proc ib_i*[T](name; flagInit: T): T =
       else: val
     except ValueError: 1
   ))
-proc ib_e*[T](name; flagInit: T): T = flagInit or T existsEnv name
+proc ib_e*[T](name; flagInit: T): T = flagInit or T existsEnvCompat name
 proc ib_b*(name; flagInit: int): int = min 1, ib_i(name, flagInit)
 proc ib_b*(name; flagInit: bool): bool = ib_i(name, flagInit)

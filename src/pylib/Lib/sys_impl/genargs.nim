@@ -1,13 +1,14 @@
 
-import std/os
-when defined(js):
+import ./cmdlineCompat
+const InJs = defined(js)
+when InJs:
   import ../../jsutils/denoAttrs
 
 const
-  hasArgn = declared(paramCount)
-  hasArgs = declared(paramStr)
+  hasArgn = declared(paramCountCompat)
+  hasArgs = declared(paramStrCompat)
 
-when defined(js):
+when InJs:
   when defined(nodejs):
     let execPath{.importjs: "process.execPath".}: cstring
   else:
@@ -22,13 +23,13 @@ when defined(js):
 
 template genArgs*(St, Ls; S; lsCopy, lsOfCap){.dirty.} =
   bind hasArgn, hasArgs,
-    paramCount, paramStr
+    paramCountCompat, paramStrCompat
 
   when hasArgn and hasArgs:
     ## under shared lib in POSIX, paramStr and paramCount are not available
 
     let
-      argn = paramCount()
+      argn = paramCountCompat()
       argc = argn + 1
     var
       orig_argv* = lsOfCap[St](argc)  ##\
@@ -39,7 +40,7 @@ template genArgs*(St, Ls; S; lsCopy, lsOfCap){.dirty.} =
       argv*: Ls[St]
 
     for i in 0..argn:
-      orig_argv.append S paramStr i
+      orig_argv.append S paramStrCompat i
     when defined(nimscript):
       if argn > 0:
         argv =
@@ -55,8 +56,10 @@ template genArgs*(St, Ls; S; lsCopy, lsOfCap){.dirty.} =
     template executable*: St = S getCurrentCompilerExe()
   elif defined(js):
     template executable*: St =
-      let execPath{.importByNodeOrDeno("process?.execPath", "execPath()")}: cstring
-      S $execPath
+      S $(
+        when defined(nodejs): execPath
+        else: getExecPath()
+      )
   else:
     template executable*: St =
       ## returns:
@@ -67,3 +70,4 @@ template genArgs*(St, Ls; S; lsCopy, lsOfCap){.dirty.} =
       ##     - on NodeJS/Deno: executable path of Node/Deno
       ##   - otherwise, it's the path of current app/exe.
       S getAppFilename()
+
