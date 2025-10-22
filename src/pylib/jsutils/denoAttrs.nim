@@ -23,7 +23,7 @@ when defined(js):
         when defined(nodejs):  # fast-path when defined nodejs
           nodeExpr
         else:
-          DenoDetectedJsExpr & ("?$1:$2" % [denoExpr, nodeExpr])
+          '(' & DenoDetectedJsExpr & ( "?$1:$2)" % [denoExpr, nodeExpr] )
     template JsPragma: NimNode =  # lazy eval on `JsExpr`
       nnkExprColonExpr.newTree(ident"importjs", JsExpr)
 
