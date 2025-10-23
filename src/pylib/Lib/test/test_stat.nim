@@ -126,8 +126,7 @@ class TestFilemodeStat(unittest.TestCase):
         create_writable_file(chmodTESTFN)
         #with open(chmodTESTFN, "w"): pass
         os_name = getattr(os, "name", "")
-        if os_name == "posix" or (
-          os_name == "" and os.uname().sysname == "Linux"): # JS on Linux
+        if os_name == "posix":
             os.chmod(chmodTESTFN, 0o700)
 
             (st_mode, modestr) = self.get_mode(chmodTESTFN)

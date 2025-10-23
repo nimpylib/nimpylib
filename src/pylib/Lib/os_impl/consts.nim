@@ -25,6 +25,7 @@ let
   sep* = str DirSep
 
 const DW = defined(windows)
+const Js = defined(js)
 
 when defined(nimdoc):
   const
@@ -41,19 +42,28 @@ when defined(nimdoc):
 ]##
 
 else:
+  template win2: untyped =
+    (str "nul", str ".;C:\\bin")
+  template posix2: untyped =
+    (str "/dev/null", str "/bin:/usr/bin")
   when DW:
     const
       name* = str "nt"
-      devnull* = str "nul"
-      defpath* = str ".;C:\\bin"
+      (devnull*, defpath*) = win2()
   else:
     when defined(posix):
       const name* = str "posix"
     elif defined(pylibOsName):
       const name* = str hostOs
-    const
-      devnull* = str "/dev/null"
-      defpath* = str "/bin:/usr/bin"
+    elif Js:
+      let platform{.importjs: "process.platform".}: cstring
+      let inWin = platform == cstring"win32"
+      let name* = if inWin: str"nt"
+      else: str"posix"
+    when Js:
+      let (devnull*, defpath*) = if inWin: win2() else: posix2()
+    else:
+      const (devnull*, defpath*) = posix2()
 
 macro pwULexp(i; header: string = "<fcntl.h>") =
   ## POSIX/Windows `importc` and export
