@@ -220,11 +220,11 @@ when InJs:
     catchJsErrAndRaise:
       sst = fstatSync(fd.cint)
     st = sst
-  proc lstatAux(st: var Stat, path: PathLike) =
+  proc lstatAux(st: var Stat, path: string) =
     var sst: Stat
     catchJsErrAndRaise:
       sst = block:
-        let cs = cstring($path)
+        let cs = cstring(path)
         lstatSync(cs)
     st = sst
 
