@@ -1,5 +1,11 @@
 
-import std/terminal
+when defined(js):
+  import std/jsffi
+  let process{.importjs.}: JsObject
+  template terminalWidth: int = process.stdout.columns.to int
+  template terminalHeight: int = process.stdout.rows.to int
+else:
+  import std/terminal
 
 # Nim consider it's the same as os.terminal_size,
 # as they are both tuple of Nim

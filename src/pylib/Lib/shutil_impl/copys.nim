@@ -10,7 +10,9 @@ const COPY_BUFSIZE = when defined(windows): 64 * 1024 else: 16 * 1024
 # Python uses as followings, but it seems too large
 # when defined(windows): 1024 * 1024 else: 64 * 1024
 
-proc copyfileobjImpl(s, d: File, length=COPY_BUFSIZE) =
+const HasIO = not defined(js)#TODO:io
+when HasIO:
+ proc copyfileobjImpl(s, d: File, length=COPY_BUFSIZE) =
   ## shutil.copyfileobj but for Nim's `File`, here length must be positive
   let bufferSize = length
   # The following is modified from Nim-2.1.1/Lib/std/private/osfiles.nim L241
@@ -33,7 +35,7 @@ proc copyfileobjImpl(s, d: File, length=COPY_BUFSIZE) =
   dealloc(buf)
   flushFile(d)
 
-proc copyfileobj*(s, d: File, length=COPY_BUFSIZE) =
+ proc copyfileobj*(s, d: File, length=COPY_BUFSIZE) =
   ## shutil.copyfileobj but for Nim's `File`
   ## 
   ## if `length` is negative, it means copying the data
@@ -46,7 +48,9 @@ proc copyfileobj*(s, d: File, length=COPY_BUFSIZE) =
 type
   Error = object of PyOSError  ## python's shutil.Error
   SameFileError* = object of Error
-template copyFileImpl(src, dst: string; options: CopyFlag) =
+
+when HasIO:
+ template copyFileImpl(src, dst: string; options: CopyFlag) =
   ## called by copyfile
   bind copyFile, copyfileobjImpl
   when defined(windows):
@@ -67,7 +71,7 @@ template copyFileImpl(src, dst: string; options: CopyFlag) =
   else:
     copyFile(src, dst, options)
 
-template copyGen(pyname, impl) =
+ template copyGen(pyname, impl) =
   proc pyname*[T](src, dst: PathLike[T], follow_symlinks=true) =
     sys.audit("shutil.copyfile", src, dst)
     let
@@ -78,9 +82,9 @@ template copyGen(pyname, impl) =
       raise newException(SameFileError, pth)
     tryOsOp(src, dst): impl(ssrc, sdst, options=cpOptions)
 
-copyGen copyfile, copyFileImpl
+ copyGen copyfile, copyFileImpl
 
-proc copyWithPermissions(src, dst: string,
+ proc copyWithPermissions(src, dst: string,
     options={cfSymlinkFollow}) =
   let dstFile = if dst.dirExists: dst / src.lastPathPart
                 else: dst
@@ -88,4 +92,5 @@ proc copyWithPermissions(src, dst: string,
       false,  # we do not `ignorePermissionErrors`
       options)
 
-copyGen copy, copyWithPermissions
+ copyGen copy, copyWithPermissions
+

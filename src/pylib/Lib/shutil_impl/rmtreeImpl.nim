@@ -33,6 +33,8 @@ template isinstance(e; t): bool = e of t
 const
   False = false
 template pass = discard
+template `is`(a, _: NoneType): bool = true
+template `is`(a: auto; _: NoneType): bool = a.isNil
 template `is`(a, b: Path1ProcKind): bool = a == b
 template `is_not`(a, b: Path1ProcKind): bool = a != b
 #template `is`(a: DirEntry, b: NoneType): bool = a.isNone
@@ -42,8 +44,6 @@ when use_fd_functions:
   type List[T] = seq[T]
   template append[T](s: seq[T]; e: T) = s.add e
   template list(s): untyped = toSeq(s)
-  const
-    None = nil
   proc rmtree_safe_fd_step(stack: var Stack[P]; onexc) =
     # Each stack item has four elements:
     # * func: The first operation to perform: os.lstat, os.close or os.rmdir.
@@ -112,7 +112,7 @@ when use_fd_functions:
                 unlink(entry.name, dir_fd=topfd)
             except FileNotFoundError:
                 continue
-            except OSError as err:
+            except system.OSError as err:
                 onexc(os_unlink, fullname, err)
     except FileNotFoundError as err:
         if orig_entry is None or fun is os_close:
@@ -125,13 +125,15 @@ when use_fd_functions:
         onexc(fun, path, err)
 
   # _rmtree_safe_fd
-  proc rmtreeImpl[P](path: P, dir_fd: int, onexc) =
+  proc rmtreeImpl(path: P, dir_fd: int|NoneType, onexc) =
     ## Version using fd-based APIs to protect against races
     # While the unsafe rmtree works fine on bytes, the fd based does not.
     #if isinstance(path, bytes):
     when P is_not string:
       let path = os.fsdecode(path)
-    var stack: Stack[P] = @[(os_lstat, dir_fd, path, DirEntry[int](None))]
+    when dir_fd is None:
+      let dir_fd = -1
+    var stack: Stack[P] = @[(os_lstat, dir_fd, path, DirEntry[int](nil))]
     try:
         while len(stack) != 0:
             rmtree_safe_fd_step(stack, onexc)
@@ -156,11 +158,14 @@ else:
         return stat.S_ISLNK(st.st_mode)
 
   # _rmtree_unsafe
-  proc rmtreeImpl[P](path: P, dir_fd: int, onexc) =
+  proc rmtreeImpl(path: P, dir_fd: int|NoneType, onexc) =
     when dir_fd is_not NoneType:
       static:
         raise newException(NotImplementedError, "dir_fd unavailable on this platform")
-    var st: stat_result
+    var
+      st: stat_result
+      fullname: P
+
     try:
         st = os.lstat(path)
     except OSError as err:
@@ -174,12 +179,11 @@ else:
         onexc(os_path_islink, path, err)
         # can't continue even if onexc hook returns
         return
-    proc onerror(err) =
+    proc onerror(err: ref oserror_decl.PyOSError) =
         if not isinstance(err, FileNotFoundError):
             onexc(os_scandir, err.filename, err)
-    results = os.walk(path, topdown=False, onerror=onerror, 
-      followlinks=os.walk_symlinks_as_files)
-    for (dirpath, dirnames, filenames) in results:
+    for (dirpath, dirnames, filenames) in os.walk(path, topdown=False, onerror=onerror, 
+              followlinks=os.walk_symlinks_as_files):
         for name in dirnames:
             fullname = os.path.join(dirpath, name)
             try:
@@ -187,15 +191,15 @@ else:
             except FileNotFoundError:
                 continue
             except OSError as err:
-                onexc(os.rmdir, fullname, err)
+                onexc(os_rmdir, fullname, err)
         for name in filenames:
             fullname = os.path.join(dirpath, name)
             try:
-                os.unlink(fullname)
+                unlink(fullname)
             except FileNotFoundError:
                 continue
             except OSError as err:
-                onexc(os.unlink, fullname, err)
+                onexc(os_unlink, fullname, err)
     try:
         os.rmdir(path)
     except FileNotFoundError:
@@ -204,10 +208,10 @@ else:
         onexc(os_rmdir, path, err)
 
 
-proc rmtree*(path: string, ignore_errors=false;
+proc rmtree*(path: P, ignore_errors=false;
     onerror: OnExc=nil;  # deprecated
     onexc: OnExc = nil,
-    dir_fd = -1
+    dir_fd: typeof(None) = None
   ) =
   sys.audit("shutil.rmtree", path, dir_fd)
   template defonexc(body){.dirty.} =
@@ -240,3 +244,4 @@ proc rmtree*(path: string, ignore_errors=false;
               let exc_info = exc
               onerror(fun, path, exc_info)
   rmtreeImpl(path, dir_fd, onexc)
+
