@@ -14,9 +14,7 @@ when HAVE_FDOPENDIR:
 when InJs:
   import std/jsffi
   import ./links
-  type
-    Dir = JsObject  ## fs.Dir
-    Dirent = JsObject  ## fs.Dirent
+  import ./scandirJsUtil
   from ./jsStat import Stat, statSync
 elif defined(posix):
   import ./links
@@ -158,12 +156,6 @@ proc is_junction*(self): bool =
   else:
     stat(self).st_reparse_tag == IO_REPARSE_TAG_MOUNT_POINT
 
-when defined(js):
-  # readdirSync returns array, which might be too expensive.
-  proc opendirSync(p: cstring): Dir{.importNode(fs, opendirSync).}
-  proc closeSync(self: Dir){.importcpp.}
-  proc readSync(self: Dir): Dirent{.importcpp.}
-
 when HAVE_FDOPENDIR:
   when HAVE_FDOPENDIR_RUNTIME:
     when not declared(fdopendir):
@@ -233,18 +225,11 @@ template scandirImpl(path){.dirty.} =
       eScandirType()
   else:
     let spath = $path
-    when defined(js):
-      var dir: Dir
+    when InJs:
       let cs = cstring($path)
-      catchJsErrAndRaise:
-        dir = opendirSync(cs)
-      var dirent: Dirent
-      while true:
-        dirent = dir.readSync()
-        if dirent.isNull: break
-        let de = newDirEntry[T](name = $dirent["name"].to(cstring), dir = spath, hasIsFileDir=dirent)
+      for dirent in scandirJs(cs):
+        let de = newDirEntry[T](name = dirent.name, dir = spath, hasIsFileDir=dirent)
         yield de
-      dir.closeSync
 
     else:
       tryOsOp(spath):

@@ -2,6 +2,7 @@
 
 import ./common
 import ./listcommon
+import ../../builtins/iters
 import ./posix_like/scandirImpl
 import ./path
 
@@ -10,31 +11,31 @@ type
   WalkTup[T] = tuple[dirpath: T, dirnames, filenames: PyList[T]]
   ## used for type conversion
   
+when defined(js):
+  type WalkRes*[T] = WalkTup[T] #XXX: NIM-BUG:\
+  # when unpack:  Error: tuple expected for tuple unpacking, but got 'WalkRes[PyStr]'
+else:
   # We use distinct to hook `repr`
-  WalkRes*[T] = distinct WalkTup[T]
-converter toTup*[T](self: WalkRes[T]): WalkTup[T] =
-  ## converts to `tuple[T, list[T], list[T]]`
-  WalkTup[T](self)
+  type WalkRes*[T] = distinct WalkTup[T]
+  converter toTup*[T](self: WalkRes[T]): WalkTup[T] =
+    ## converts to `tuple[T, list[T], list[T]]`
+    WalkTup[T](self)
 template `[]`*[T](self: WalkRes[T], i: static int): untyped =
   bind WalkTup
   const idx =
     if i < 0: 3 - i
     else: i
-  (WalkTup[T](self))[idx]
+  system.`[]`( (WalkTup[T](self)), idx )
 const sep = ", "
 template repr*[T](self: WalkRes[T]): string =
   ## returns `(xx, [xx], [xx])` as Python's
   bind sep
   var result = "("
-  result.add self[0].repr & sep
-  result.add self[1].repr & sep
-  result.add self[2].repr & ')'
+  result.add self[0].repr; result.add sep
+  result.add self[1].repr; result.add sep
+  result.add self[2].repr; result.add ')'
   result
 template `$`*[T](self: WalkRes[T]): string = self.repr
-
-iterator reversed[T](ls: PyList[T]): T =
-  for i in countdown(len(ls)-1, 0):
-    yield ls[i]
 
 const
   shallIgnore*: OnErrorCb = nil
@@ -47,23 +48,24 @@ type
     case isA: bool
     of true:  a: A
     of false: b: B
-  UnionList[A, B] = PyList[UnionItem[A, B]]
-proc newUnionList[A, B](): UnionList[A, B] = list[UnionItem[A, B]]() 
+  UnionList[A, B] = seq[UnionItem[A, B]]
+template append[T](ls: var seq[T], a: T) = ls.add a
+template newUnionList[A, B](): UnionList[A, B] = newSeq[UnionItem[A, B]]() 
 
 func isinstance[A,B](i: UnionItem[A, B], t: typedesc[A|B]): bool =
   when t is A: i.isA
   else: not i.isA
 
-template append[A, B](ls: UnionList[A, B], x: A) =
+template append[A, B](ls: var UnionList[A, B], x: A) =
   ls.append UnionItem[A, B](isA: true, a: x)
-template append[A, B](ls: UnionList[A, B], x: B) =
+template append[A, B](ls: var UnionList[A, B], x: B) =
   ls.append UnionItem[A, B](isA: false, b: x)
 
 type ScanDir[T] = iterator (path: T): DirEntry[T]{.closure.}
 
 type WalkSymlinksAsFiles = distinct proc(){.noconv.}
 converter toBool(self: WalkSymlinksAsFiles): bool{.used.} = true
-let walk_symlinks_as_files* = WalkSymlinksAsFiles proc(){.noconv.} = discard ## _walk_symlinks_as_files
+let walk_symlinks_as_files* = WalkSymlinksAsFiles proc(){.noconv.} = discard ## `_walk_symlinks_as_files`
 
 # translated from CPython-3.13-alpha/Lib/os.py L284
 iterator walk*[T](top: PathLike[T], topdown=True,
@@ -72,7 +74,7 @@ iterator walk*[T](top: PathLike[T], topdown=True,
     sys.audit("os.walk", top, topdown, onerror, followlinks)
     var stack = newUnionList[T, WalkRes[T]]()
     stack.append(fspath(top))
-      
+
     while len(stack) != 0:
         let utop = stack.pop()
         if isinstance(utop, WalkRes[T]):
@@ -93,6 +95,7 @@ iterator walk*[T](top: PathLike[T], topdown=True,
 
         var cont = False
         #with scandir_it:
+        let bfollowlinks = (when followlinks is WalkSymlinksAsFiles: followlinks.toBool else: followlinks)
         when True:
             while True:
                 var entry: DirEntry[T]
@@ -125,7 +128,7 @@ iterator walk*[T](top: PathLike[T], topdown=True,
                     # Bottom-up: traverse into sub-directory, but exclude
                     # symlinks to directories if followlinks is False
                     let walk_into =
-                      if followlinks:
+                      if bfollowlinks:
                         True
                       else:
                         let issymlink =
@@ -153,14 +156,14 @@ iterator walk*[T](top: PathLike[T], topdown=True,
                 # entry.is_symlink() result during the loop on os.scandir() because
                 # the caller can replace the directory entry during the "yield"
                 # above.
-                if followlinks or not islink(new_path):
-                    stack.append(new_path)
+                if bfollowlinks or not islink(new_path):
+                    stack.append(fspath(new_path))
         else:
             # Yield after sub-directory traversal if going bottom up
             stack.append(WalkRes[T]((top, dirs, nondirs)))
             # Traverse into sub-directories
             for new_path in reversed(walk_dirs):
-                stack.append(new_path)
+                stack.append(fspath(new_path))
 
 iterator walk*[T](top: PathLike[T], topdown=True,
       onerror=None, followlinks=False): WalkRes[T] =
@@ -169,13 +172,15 @@ iterator walk*[T](top: PathLike[T], topdown=True,
 
 type WalkIterator[T] = ref object
   iter: iterator(): WalkRes[T]{.closure.}
+iterator items*[T](self: WalkIterator[T]): WalkRes[T] =
+  for i in self.iter(): yield i
 proc walk*[T](top: PathLike[T], topdown=True,
-      onerror=shallIgnore, followlinks=False): WalkIterator[T] =
+      onerror=shallIgnore, followlinks: bool|WalkSymlinksAsFiles=False): WalkIterator[T] =
   new result
   result.iter = iterator(): WalkRes[T] =
     for i in walk(top, topdown, onerror, followlinks): yield i
 proc walk*[T](top: PathLike[T], topdown=True,
-      onerror=None, followlinks=False): WalkIterator[T] =
+      onerror=None, followlinks: bool|WalkSymlinksAsFiles=False): WalkIterator[T] =
   new result
   result.iter = iterator(): WalkRes[T] =
     for i in walk(top, topdown, onerror, followlinks): yield i
