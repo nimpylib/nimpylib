@@ -10,9 +10,9 @@ nim	hexversion	sys.html#hexversion_2	const hexversion		54
 nim	maxsize	sys.html#maxsize_2	const maxsize		56
 nim	byteorder	sys.html#byteorder_2	const byteorder		57
 nim	copyright	sys.html#copyright_2	const copyright		58
-nim	orig_argv	sys.html#orig_argv_2	var orig_argv		34
-nim	argv	sys.html#argv_2	var argv		39
-nim	executable	sys.html#executable.t_2	template executable(): PyStr		61
+nim	orig_argv	sys.html#orig_argv_2	var orig_argv		35
+nim	argv	sys.html#argv_2	var argv		40
+nim	executable	sys.html#executable.t_2	template executable(): PyStr		64
 nim	getfilesystemencoding	sys.html#getfilesystemencoding_2	proc getfilesystemencoding(): PyStr		33
 nim	getdefaultencoding	sys.html#getdefaultencoding_2	proc getdefaultencoding(): PyStr		34
 nim	exit	sys.html#exit,T	proc exit[T](obj: T)		36

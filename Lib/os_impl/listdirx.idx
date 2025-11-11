@@ -1,4 +1,4 @@
 nimTitle	listdirx	os_impl/listdirx.html	module src/pylib/Lib/os_impl/listdirx		0
-nim	listdir	os_impl/listdirx.html#listdir,PathLike[T]	proc listdir[T](p: PathLike[T]): PyList[T]		24
-nim	listdir	os_impl/listdirx.html#listdir	proc listdir(): PyList[PyStr]		31
-nimgrp	listdir	os_impl/listdirx.html#listdir-procs-all	proc		24
+nim	listdir	os_impl/listdirx.html#listdir,PathLike[T]	proc listdir[T](p: PathLike[T]): PyList[T]		17
+nim	listdir	os_impl/listdirx.html#listdir	proc listdir(): PyList[PyStr]		24
+nimgrp	listdir	os_impl/listdirx.html#listdir-procs-all	proc		17

@@ -1,0 +1,4 @@
+nimTitle	cmdlineCompat	pylib/Lib/sys_impl/cmdlineCompat.html	module src/pylib/Lib/sys_impl/cmdlineCompat		0
+nim	paramCountCompat	pylib/Lib/sys_impl/cmdlineCompat.html#paramCountCompat.t	template paramCountCompat(): int		47
+nim	paramStrCompat	pylib/Lib/sys_impl/cmdlineCompat.html#paramStrCompat.t,int	template paramStrCompat(i: int): string		50
+nim	commandLineParamsCompat	pylib/Lib/sys_impl/cmdlineCompat.html#commandLineParamsCompat	proc commandLineParamsCompat(): seq[string]		54

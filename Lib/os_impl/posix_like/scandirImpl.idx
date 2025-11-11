@@ -14,15 +14,15 @@ nim	is_dir	os_impl/posix_like/scandirImpl.html#is_dir	proc is_dir(self: DirEntry
 nim	is_dir	os_impl/posix_like/scandirImpl.html#is_dir,,bool	proc is_dir(self: DirEntry; follow_symlinks: bool): bool		152
 nim	is_junction	os_impl/posix_like/scandirImpl.html#is_junction	proc is_junction(self: DirEntry): bool		154
 nim	fdopendir	os_impl/posix_like/scandirImpl.html#fdopendir,cint	proc fdopendir(fd: cint): ptr DIR		162
-nim	scandir	os_impl/posix_like/scandirImpl.html#scandir.i,PathLike[T]	iterator scandir[T](path: PathLike[T]): DirEntry[T]		247
-nim	scandir	os_impl/posix_like/scandirImpl.html#scandir.i,int	iterator scandir(path: int): DirEntry[int]		248
-nim	scandirIter	os_impl/posix_like/scandirImpl.html#scandirIter.i,T	iterator scandirIter[T](path: T): DirEntry[T]		251
-nim	scandir	os_impl/posix_like/scandirImpl.html#scandir.i	iterator scandir(): DirEntry[PyStr]		255
-nim	scandir	os_impl/posix_like/scandirImpl.html#scandir,PathLike[T]	proc scandir[T](path: PathLike[T]): ScandirIterator[T]		264
-nim	scandir	os_impl/posix_like/scandirImpl.html#scandir,int	proc scandir(path: int): ScandirIterator[int]		266
-nim	scandir	os_impl/posix_like/scandirImpl.html#scandir	proc scandir(): ScandirIterator[PyStr]		270
+nim	scandir	os_impl/posix_like/scandirImpl.html#scandir.i,PathLike[T]	iterator scandir[T](path: PathLike[T]): DirEntry[T]		240
+nim	scandir	os_impl/posix_like/scandirImpl.html#scandir.i,int	iterator scandir(path: int): DirEntry[int]		241
+nim	scandirIter	os_impl/posix_like/scandirImpl.html#scandirIter.i,T	iterator scandirIter[T](path: T): DirEntry[T]		244
+nim	scandir	os_impl/posix_like/scandirImpl.html#scandir.i	iterator scandir(): DirEntry[PyStr]		248
+nim	scandir	os_impl/posix_like/scandirImpl.html#scandir,PathLike[T]	proc scandir[T](path: PathLike[T]): ScandirIterator[T]		257
+nim	scandir	os_impl/posix_like/scandirImpl.html#scandir,int	proc scandir(path: int): ScandirIterator[int]		259
+nim	scandir	os_impl/posix_like/scandirImpl.html#scandir	proc scandir(): ScandirIterator[PyStr]		263
 nimgrp	close	os_impl/posix_like/scandirImpl.html#close-procs-all	proc		54
-nimgrp	scandir	os_impl/posix_like/scandirImpl.html#scandir-procs-all	proc		264
+nimgrp	scandir	os_impl/posix_like/scandirImpl.html#scandir-procs-all	proc		257
 nimgrp	isdir	os_impl/posix_like/scandirImpl.html#is_dir-procs-all	proc		152
 nimgrp	isfile	os_impl/posix_like/scandirImpl.html#is_file-procs-all	proc		151
-nimgrp	scandir	os_impl/posix_like/scandirImpl.html#scandir-iterators-all	iterator		247
+nimgrp	scandir	os_impl/posix_like/scandirImpl.html#scandir-iterators-all	iterator		240

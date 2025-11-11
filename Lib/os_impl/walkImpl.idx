@@ -1,15 +1,16 @@
 nimTitle	walkImpl	os_impl/walkImpl.html	module src/pylib/Lib/os_impl/walkImpl		0
-nim	OnErrorCb	os_impl/walkImpl.html#OnErrorCb	type OnErrorCb		9
-nim	WalkRes	os_impl/walkImpl.html#WalkRes	type WalkRes		14
-nim	toTup	os_impl/walkImpl.html#toTup.c,WalkRes[T]	converter toTup[T](self: WalkRes[T]): WalkTup[T]		15
-nim	`[]`	os_impl/walkImpl.html#[].t,WalkRes[T],staticint	template `[]`[T](self: WalkRes[T]; i: static int): untyped		18
-nim	repr	os_impl/walkImpl.html#repr.t,WalkRes[T]	template repr[T](self: WalkRes[T]): string		25
-nim	`$`	os_impl/walkImpl.html#$.t,WalkRes[T]	template `$`[T](self: WalkRes[T]): string		33
-nim	shallIgnore	os_impl/walkImpl.html#shallIgnore	const shallIgnore		40
-nim	walk_symlinks_as_files	os_impl/walkImpl.html#walk_symlinks_as_files	let walk_symlinks_as_files		66
-nim	walk	os_impl/walkImpl.html#walk.i,PathLike[T]	iterator walk[T](top: PathLike[T]; topdown = True; onerror = shallIgnore;\n        followlinks: bool | WalkSymlinksAsFiles = False): WalkRes[T]		69
-nim	walk	os_impl/walkImpl.html#walk.i,PathLike[T]_2	iterator walk[T](top: PathLike[T]; topdown = True; onerror = None; followlinks = False): WalkRes[\n    T]		165
-nim	walk	os_impl/walkImpl.html#walk,PathLike[T]	proc walk[T](top: PathLike[T]; topdown = True; onerror = shallIgnore;\n        followlinks = False): WalkIterator[T]		172
-nim	walk	os_impl/walkImpl.html#walk,PathLike[T]_2	proc walk[T](top: PathLike[T]; topdown = True; onerror = None; followlinks = False): WalkIterator[\n    T]		177
-nimgrp	walk	os_impl/walkImpl.html#walk-procs-all	proc		172
-nimgrp	walk	os_impl/walkImpl.html#walk-iterators-all	iterator		69
+nim	OnErrorCb	os_impl/walkImpl.html#OnErrorCb	type OnErrorCb		10
+nim	WalkRes	os_impl/walkImpl.html#WalkRes	type WalkRes		19
+nim	toTup	os_impl/walkImpl.html#toTup.c,WalkRes[T]	converter toTup[T](self: WalkRes[T]): WalkTup[T]		20
+nim	`[]`	os_impl/walkImpl.html#[].t,WalkRes[T],staticint	template `[]`[T](self: WalkRes[T]; i: static int): untyped		23
+nim	repr	os_impl/walkImpl.html#repr.t,WalkRes[T]	template repr[T](self: WalkRes[T]): string		30
+nim	`$`	os_impl/walkImpl.html#$.t,WalkRes[T]	template `$`[T](self: WalkRes[T]): string		38
+nim	shallIgnore	os_impl/walkImpl.html#shallIgnore	const shallIgnore		41
+nim	walk_symlinks_as_files	os_impl/walkImpl.html#walk_symlinks_as_files	let walk_symlinks_as_files		68
+nim	walk	os_impl/walkImpl.html#walk.i,PathLike[T]	iterator walk[T](top: PathLike[T]; topdown = True; onerror = shallIgnore;\n        followlinks: bool | WalkSymlinksAsFiles = False): WalkRes[T]		71
+nim	walk	os_impl/walkImpl.html#walk.i,PathLike[T]_2	iterator walk[T](top: PathLike[T]; topdown = True; onerror = None; followlinks = False): WalkRes[\n    T]		168
+nim	items	os_impl/walkImpl.html#items.i,WalkIterator[T]	iterator items[T](self: WalkIterator[T]): WalkRes[T]		175
+nim	walk	os_impl/walkImpl.html#walk,PathLike[T]	proc walk[T](top: PathLike[T]; topdown = True; onerror = shallIgnore;\n        followlinks: bool | WalkSymlinksAsFiles = False): WalkIterator[T]		177
+nim	walk	os_impl/walkImpl.html#walk,PathLike[T]_2	proc walk[T](top: PathLike[T]; topdown = True; onerror = None;\n        followlinks: bool | WalkSymlinksAsFiles = False): WalkIterator[T]		182
+nimgrp	walk	os_impl/walkImpl.html#walk-procs-all	proc		177
+nimgrp	walk	os_impl/walkImpl.html#walk-iterators-all	iterator		71

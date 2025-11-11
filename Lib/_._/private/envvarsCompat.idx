@@ -1,0 +1,5 @@
+nimTitle	envvarsCompat	_._/private/envvarsCompat.html	module src/pylib/private/envvarsCompat		0
+nim	getEnvCompat	_._/private/envvarsCompat.html#getEnvCompat.t,string	template getEnvCompat(s: string): string		28
+nim	existsEnvCompat	_._/private/envvarsCompat.html#existsEnvCompat.t,string	template existsEnvCompat(s: string): bool		31
+nim	putEnvCompat	_._/private/envvarsCompat.html#putEnvCompat.t,string,string	template putEnvCompat(s: string; val: string)		34
+nim	delEnvCompat	_._/private/envvarsCompat.html#delEnvCompat.t,string	template delEnvCompat(s: string)		37
