@@ -1,6 +1,6 @@
 
 import std/options
-from std/os import fileExists
+import ./n_os  ## path.isfile
 import ./n_tempfile
 export n_tempfile except mktemp, mkdtemp, name, templ, gettempdir, gettempprefix
 import ../pystring/strimpl
@@ -10,12 +10,13 @@ import ../version
 
 # TODO: SpooledTemporaryFile
 
-proc mktemp*(suffix="", prefix=templ, dir: PyStr|NoneType = "", checker=fileExists): PyStr =
+proc mktemp*(suffix="", prefix=templ, dir: PyStr|NoneType = "", checker=n_os.path.isfile): PyStr =
   when dir is NoneType:
     let dir = ""
   str n_tempfile.mktemp(suffix, prefix, dir, checker)
 
-template name*(self: TemporaryFileWrapper): PyStr =
+when declared(TemporaryFileWrapper):
+ template name*(self: TemporaryFileWrapper): PyStr =
   bind str, name
   str name self
 

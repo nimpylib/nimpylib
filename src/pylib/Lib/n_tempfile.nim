@@ -1,13 +1,15 @@
 
-import std/os
+import std/os except fileExists, dirExists
 import std/random
 import std/options
 
+import ../private/envvarsCompat
 import ./n_os
 import ../pyerrors/oserr
 
-when defined(js): {.error: "pylib tempfile not support JS currently".}
-import ./io
+const hasIO = not defined(js)  #TODO:io
+when hasIO:
+  import ./io
 
 const
   True = true
@@ -40,7 +42,7 @@ iterator items(self: var RandomNameSequence, times: int): string =
 
 const templ* = "tmp"  # Py's `tempfile.template`
 
-proc mktempWithChecker(suffix="", prefix=templ, dir = "", checker: proc (s: string): bool=fileExists): string =
+proc mktempWithChecker(suffix="", prefix=templ, dir = "", checker: proc (s: string): bool=n_os.path.isfile): string =
   for name in name_sequence.items(times=TMP_MAX):
     let file = dir / prefix & name & suffix
     if not checker file:
@@ -50,7 +52,7 @@ proc mktempWithChecker(suffix="", prefix=templ, dir = "", checker: proc (s: stri
 proc mktemp*(suffix="", prefix=templ, dir = ""): string =
   ## User-callable function to return a unique temporary file/dir name.  The
   ##  file/dir is not created.
-  mktempWithChecker(suffix, prefix, dir, fileExists)
+  mktempWithChecker(suffix, prefix, dir, n_os.path.isfile)
 
 
 proc candidate_tempdir_list(): seq[string] =
@@ -63,9 +65,9 @@ proc candidate_tempdir_list(): seq[string] =
         if dirname.len > 0: result.add dirname
 
     # Failing that, try OS-specific locations.
-    when n_os.name == "nt":
-        result.add [ expandTilde(r"~\AppData\Local\Temp"),
-                     getenv("SYSTEMROOT")/"Temp",
+    if n_os.name == "nt":
+        result.add [ getEnvCompat("USERPROFILE") / r"AppData\Local\Temp",
+                     getEnvCompat("SYSTEMROOT")/"Temp",
                      r"c:\temp", r"c:\tmp", r"\temp", r"\tmp" ]
     else:
         result.add [ "/tmp", "/var/tmp", "/usr/tmp" ]
@@ -107,13 +109,11 @@ proc get_default_tempdir(): string =
 
     var namer: RandomNameSequence
     namer.initRandomNameSequence()
-    var dirlist = candidate_tempdir_list()
+    let dirlist = candidate_tempdir_list()
 
     for ori_dir in dirlist:
-        let dir = if ori_dir != n_os.curdir:
-          n_os.path.abspath(ori_dir)
-        else:
-          ori_dir
+        let dir = if ori_dir == n_os.curdir: ori_dir
+        else: n_os.path.abspath(ori_dir)
         # Try only a few names per directory.
         for name in namer.items 100:
             let filename = path.join(dir, name)
@@ -181,32 +181,33 @@ proc sanitize_params(prefix, suffix, dir: SOption): tuple[prefix, suffix, dir: s
   result.prefix = prefix.get templ
   result.dir = dir.get gettempdir()
 
-type
-  TemporaryFileCloser*[IO: IOBase] = ref object
-    file*: IO
-    name*: string
-    delete, close_called: bool
-  
-  TemporaryFileWrapper*[IO] = object
-    closer: TemporaryFileCloser[IO]
+when hasIO:
+  type
+    TemporaryFileCloser*[IO: IOBase] = ref object
+      file*: IO
+      name*: string
+      delete, close_called: bool
+    
+    TemporaryFileWrapper*[IO] = object
+      closer: TemporaryFileCloser[IO]
 
-template name*(self: TemporaryFileWrapper): string = self.closer.name
+  template name*(self: TemporaryFileWrapper): string = self.closer.name
 
-import std/macros
-macro gen(opName: untyped): untyped =
-  let selfId = ident"self"
-  quote do:
-    template `opName`*[IO](`selfId`: TemporaryFileWrapper[IO],
-    args: varargs[typed]): untyped = unpackVarargs `selfId`.closer.file.`opName`, args
+  import std/macros
+  macro gen(opName: untyped): untyped =
+    let selfId = ident"self"
+    quote do:
+      template `opName`*[IO](`selfId`: TemporaryFileWrapper[IO],
+      args: varargs[typed]): untyped = unpackVarargs `selfId`.closer.file.`opName`, args
 
-gen write
-proc flush*[IO](self: TemporaryFileWrapper[IO]) = flush(self.closer.file)
-gen read
-gen readline
-gen seek
-gen tell
+  gen write
+  proc flush*[IO](self: TemporaryFileWrapper[IO]) = flush(self.closer.file)
+  gen read
+  gen readline
+  gen seek
+  gen tell
 
-proc close*[IO](self: TemporaryFileCloser[IO], unlink=os.removeFile) =
+  proc close*[IO](self: TemporaryFileCloser[IO], unlink=os.removeFile) =
     try:
         var f = self.file
         f.close()
@@ -214,22 +215,23 @@ proc close*[IO](self: TemporaryFileCloser[IO], unlink=os.removeFile) =
         if self.delete:
             unlink(self.name)
 
-proc close*(t: TemporaryFileWrapper) =
-  t.closer.close()
+  proc close*(t: TemporaryFileWrapper) =
+    t.closer.close()
 
 
-proc newTemporaryFileCloser[IO](file: IO, name: string, delete=True): TemporaryFileCloser[IO] =
-  new result
-  result.file = file
-  result.name = name
-  result.delete = delete
-  result.close_called = false
+  proc newTemporaryFileCloser[IO](file: IO, name: string, delete=True): TemporaryFileCloser[IO] =
+    new result
+    result.file = file
+    result.name = name
+    result.delete = delete
+    result.close_called = false
 
 
-proc newTemporaryFileWrapper[IO](closer: TemporaryFileCloser[IO]): TemporaryFileWrapper[IO] =
-  result.closer = closer
+  proc newTemporaryFileWrapper[IO](closer: TemporaryFileCloser[IO]): TemporaryFileWrapper[IO] =
+    result.closer = closer
 
-template NamedTemporaryFile*(mode: static[string|char] = "w+b", buffering = -1,
+when hasIO:
+ template NamedTemporaryFile*(mode: static[string|char] = "w+b", buffering = -1,
     encoding=DefEncoding,
     newline=DefNewLine, suffix=sNone, prefix=sNone,
     dir=sNone, delete=True, errors=DefErrors): TemporaryFileWrapper =
@@ -264,7 +266,7 @@ type TemporaryDirectoryWrapper* = object
 
 proc auditThenDirExists(s: string): bool =
   sys.audit("tempfile.mkdtemp", s)
-  dirExists(s)
+  n_os.path.isdir(s)
 
 proc mkdtemp*(suffix=sNone, prefix=sNone, dir=sNone): string =
   let tup = sanitize_params(prefix=prefix, suffix=suffix, dir=dir)
@@ -283,13 +285,13 @@ proc TemporaryDirectory*(suffix=sNone, prefix=sNone, dir=sNone, ignore_cleanup_e
   result.name = mkdtemp(suffix=tup.suffix, prefix=tup.prefix, dir=tup.dir)
   result.delete = delete
   result.ignore_cleanup_errors = ignore_cleanup_errors
-  createDir result.name
+  mkdir result.name
 
 
 proc cleanup*(self: TemporaryDirectoryWrapper) =
   if self.delete:
     tryOsOp not self.ignore_cleanup_errors:
-      removeDir self.name
+      rmdir self.name
     # XXX: see Py's TemporaryDirectory._rmtree for real impl
 
 proc close*(self: TemporaryDirectoryWrapper) =
