@@ -7,6 +7,8 @@ importPyLib sys
 pyimport unittest
 from std/unittest import suiteStarted,  TestStatus, testStarted, suiteEnded, checkpoint, fail, TestResult,
   suite, test, check, expect
+import std/options
+import std/strformat
 
 const
   NINF = NegInf
@@ -15,6 +17,131 @@ const
   F_INF = Inf
   F_NINF = NegInf
   F_NAN = NaN
+
+proc to_ulps(x: float): int64 =
+  ##[Convert a non-NaN float x to an integer, in such a way that
+  adjacent floats are converted to adjacent integers.  Then
+  abs(ulps(x) - ulps(y)) gives the difference in ulps between two
+  floats.
+
+  The results from this function will only make sense on platforms
+  where native doubles are represented in IEEE 754 binary64 format.
+
+  Note: 0.0 and -0.0 are converted to 0 and -1, respectively.
+  ]##
+  result = cast[int64](x) #struct.unpack("<q", struct.pack("<d", x))[0]
+  if result < 0:
+      result = cast[int64](not (cast[uint64](result) + (1u64 shl 63)))
+
+const None = none string
+proc ulp_abs_check(expected, got: float, ulp_tol: int, abs_tol: float): Option[string] =
+  ##[Given finite floats `expected` and `got`, check that they're
+  approximately equal to within the given number of ulps or the
+  given absolute tolerance, whichever is bigger.
+
+  Returns None on success and an error message on failure.
+  ]##
+  let
+    ulp_error = abs(to_ulps(expected) - to_ulps(got))
+    abs_error = abs(expected - got)
+
+  # Succeed if either abs_error <= abs_tol or ulp_error <= ulp_tol.
+  if abs_error <= abs_tol or ulp_error <= ulp_tol:
+      return None
+  else:
+      return some fmt("error = {abs_error:.3g} ({ulp_error} ulps); " &
+             "permitted error = {abs_tol:.3g} or {ulp_tol} ulps")
+
+template isinstance(e; T): bool = system.`is` e, system.T
+proc result_check[T, U](expected: T, got: U, ulp_tol=5, abs_tol=0.0): Option[string] =
+  # Common logic of MathTests.(ftest, test_testcases, test_mtestcases)
+  ##[Compare arguments expected and got, as floats, if either
+  is a float, using a tolerance expressed in multiples of
+  ulp(expected) or absolutely (if given and greater).
+
+  As a convenience, when neither argument is a float, and for
+  non-finite floats, exact equality is demanded. Also, nan==nan
+  as far as this function is concerned.
+
+  Returns None on success and an error message on failure.
+  ]##
+  template pass = discard
+
+  # Check exactly equal (applies also to strings representing exceptions)
+  when system.`is`(T, U):
+    if got == expected:
+      when system.`is`(T, SomeFloat):
+        if got == 0.0 and expected == 0.0:
+          if math.copysign(1.0, got) != math.copysign(1.0, expected):
+            return some fmt"expected {expected}, got {got} (zero has wrong sign)"
+        return None
+
+  var failure = some"not equal"
+
+  # Turn mixed float and int comparison (e.g. floor()) to all-float
+  when isinstance(expected, float) and isinstance(got, int):
+    let got = float(got)
+  elif isinstance(got, float) and isinstance(expected, int):
+    let expected = float(expected)
+
+  when isinstance(expected, float) and isinstance(got, float):
+    if math.isnan(expected) and math.isnan(got):
+      # Pass, since both nan
+      failure = None
+    elif math.isinf(expected) or math.isinf(got):
+      # We already know they're not equal, drop through to failure
+      pass
+    else:
+      # Both are finite floats (now). Are they close enough?
+      failure = ulp_abs_check(expected, got, ulp_tol, abs_tol)
+
+  # arguments are not equal, and if numeric, are too far apart
+  if failure != None:
+    var fail_msg = fmt"expected {repr(expected)}, got {repr(got)}"
+    fail_msg &= fmt" ({failure})"
+    return some fail_msg
+  else:
+    return None
+
+proc ftest(self: auto, name: string, got: auto, expected: auto; ulp_tol=5, abs_tol=0.0) =
+  ##[Compare arguments expected and got, as floats, if either
+  is a float, using a tolerance expressed in multiples of
+  ulp(expected) or absolutely, whichever is greater.
+
+  As a convenience, when neither argument is a float, and for
+  non-finite floats, exact equality is demanded. Also, nan==nan
+  in this function.
+  ]##
+  let failure = result_check(expected, got, ulp_tol, abs_tol)
+  if failure != None:
+      let msg = fmt"{name}: {failure}"
+      when nimvm: doAssert false, msg
+      else: fail(msg)
+
+template ftest(self: untyped, got, expected; ulp_tol=5, abs_tol=0.0) =
+  self.ftest(astToStr(got), got, expected, ulp_tol, abs_tol)
+
+suite "cbrt":
+  test "cpython:test_math.testCbrt":
+    template testCbrt =
+      let self = newTestCase()
+      self.ftest(math.cbrt(0.0), 0)
+      self.ftest(math.cbrt(1.0), 1)
+      self.ftest(math.cbrt(8.0), 2)
+      self.ftest(math.cbrt(0.0), 0.0)
+      self.ftest(math.cbrt(-0.0), -0.0)
+      self.ftest(math.cbrt(1.2), 1.062658569182611)
+      self.ftest(math.cbrt(-2.6), -1.375068867074141)
+      self.ftest(math.cbrt(27.0), 3)
+      self.ftest(math.cbrt(-1.0), -1)
+      self.ftest(math.cbrt(-27.0), -3)
+      assertEqual(math.cbrt(INF), INF)
+      assertEqual(math.cbrt(NINF), NINF)
+      assertTrue(math.isnan(math.cbrt(NAN)))
+    testCbrt()
+    static:
+      testCbrt()
+
 
 suite "gamma":
   test "gamma(-integer)":

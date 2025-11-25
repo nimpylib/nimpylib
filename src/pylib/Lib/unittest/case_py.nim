@@ -20,19 +20,26 @@ import ./case_py/[
 ]
 export types, meth, prc_main, prc_cleanup, meth, skips, sig_exc
 
-template gen1(name, op){.dirty.} =
+template myCheck(x){.dirty.} =
   bind check
+  when nimvm:
+    doAssert x
+  else:
+    check x
+
+template gen1(name, op){.dirty.} =
+  bind myCheck
   template name*(a){.genSelf.} =
-    check op(a)
+    myCheck op(a)
 
 template asis[T](a: T): T = a
 template gen1(name){.dirty.} =
   gen1 name, asis
 
 template gen2(name, op){.dirty.} =
-  bind check
+  bind myCheck
   template name*(a, b){.genSelf.} =
-    check op(a, b)
+    myCheck op(a, b)
 
 export fail
 template fail*(self: TestCase) =
