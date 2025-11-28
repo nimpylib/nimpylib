@@ -8,7 +8,7 @@ import ./dict_decl
 import ./private/strIter
 
 export dict, PyDict
-export emptyPyDict
+export emptyPyDict, newPyDict
 
 type
   PyDictView* = object of RootObj ## .. warning:: currently `mapping` attr
