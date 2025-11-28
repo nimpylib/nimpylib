@@ -4,7 +4,7 @@ import std/macrocache
 from std/strutils import toLowerAscii, normalize
 import ../../pystring/[strimpl, strprefix]
 import ../../builtins/[list_decl, set, dict, pyslice]
-import ./frame, ./chainCmp
+import ./frame, ./chainCmp, ./comprehension, ./utils
 
 const CollectionSyms = CacheSeq"CollectionSyms"
 static:
@@ -15,7 +15,7 @@ static:
 
 using e: NimNode
 using mparser: var PyAsgnRewriter
-proc toPyExpr*(mparser; atm: NimNode): NimNode
+proc toPyExpr*(mparser; atm: NimNode): NimNode{.raises: [].}
 
 template newSlice(a, b: NimNode): NimNode =
   newCall(CollectionSyms[3], a, b)
@@ -93,13 +93,18 @@ func toStr(e): NimNode =
 template asisIfEmpty(e) =
   if e.len == 0: return e
 
-func getTypeof(e: NimNode): NimNode =
-  newCall("typeof", e)
-
 proc rewriteEachEle(mparser; e: NimNode; bracketNode = nnkBracket): NimNode =
   result = newNimNode bracketNode
   for i in e:
     result.add mparser.toPyExpr i
+
+template tryRewriteComprehension(e: NimNode) =
+  let p = addr mparser #[get rid of
+   'mparser' is of type <PyAsgnRewriter> which cannot be captured as it would violate memory safety
+  ]#
+  let compRes = rewriteCompensiveImpl(e, proc (ele: NimNode): NimNode{.raises: [].} = p[].toPyExpr(ele))
+  if compRes.rewriten:
+    return compRes.res
 
 template mapEleCall(mparser;
   initCall, e: NimNode;
@@ -114,6 +119,7 @@ template mapEleCall(mparser;
      with original `PyTComplex` type (a.k.a. being regarded as a new type)
   ]#
   e.asisIfEmpty
+  tryRewriteComprehension e
   let res = mparser.rewriteEachEle(e, bracketNode)
   let eleTyp = getTypeof res[0]
   newCall(
@@ -129,6 +135,7 @@ proc toSet (mparser; e): NimNode = mparser.mapEleCall(CollectionSyms[1], e)
 proc toDict(mparser; e): NimNode =
   e.asisIfEmpty
 
+  tryRewriteComprehension e
   var eles = e.copyNimNode
   for i in e:
     var n = i.copyNimNode
@@ -149,6 +156,7 @@ proc toDict(mparser; e): NimNode =
     ), eles
   )
 proc toTuple(mparser; e): NimNode =
+  tryRewriteComprehension e
   result = newNimNode nnkTupleConstr
   for i in e:
     result.add mparser.toPyExpr i
@@ -173,7 +181,7 @@ proc rewriteInfix(mparser; e; k=nnkAsgn): NimNode =
     return
   result = expandChainImpl(e)
 
-proc callToPyExpr*(mparser; e): NimNode
+proc callToPyExpr*(mparser; e): NimNode{.raises: [].}
 
 template toPyExprImpl(mparser; atm: NimNode; toListCb; equalMinusAs=nnkAsgn): NimNode =
   case atm.kind
