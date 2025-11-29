@@ -1,72 +1,105 @@
 
 ```Nim
 >>> dumpTree:
-...   (i | i in s, i == 1)
+...   (i*2 `for` i in s `if` i == 1)
 ... 
 
-  TupleConstr  # may be `Bracket` for `[...]`; `Curly` for `{...}`
+  Par  # may be `Bracket` for `[...]`; `Curly` for `{...}`
     Infix
-      Ident "in"
-      Infix
-        Ident "|"
-        Ident "i"
-        Ident "i"
-      Ident "s"
-    Infix
-      Ident "=="
+      Ident "*"
       Ident "i"
-      IntLit 1
+      Command
+        IntLit 2
+        Command
+          AccQuoted
+            Ident "for"
+          Infix
+            Ident "in"
+            Ident "i"
+            Command
+              Ident "s"
+              Command
+                AccQuoted
+                  Ident "if"
+                Infix
+                  Ident "=="
+                  Ident "i"
+                  IntLit 1
 ```
 
 
 ```Nim
 >>> dumpTree:
-...   ((i, j) | i in s, j in s2, i == 1)
+...   ((i, j) `for` i in s `for` j in s2 `if` i == 1)
 ... 
 
-  TupleConstr
-    Infix
-      Ident "in"
-      Infix
-        Ident "|"
-        TupleConstr
-          Ident "i"
-          Ident "j"
+  TupleConstr  # may be `Bracket` for `[...]`; `Curly` for `{...}`
+    Command
+      TupleConstr
         Ident "i"
-      Ident "s"
-    Infix
-      Ident "in"
-      Ident "j"
-      Ident "s2"
-    Infix
-      Ident "=="
-      Ident "i"
-      IntLit 1
+        Ident "j"
+      Command
+        AccQuoted
+          Ident "for"
+        Infix
+          Ident "in"
+          Ident "i"
+          Command
+            Ident "s"
+            Command
+              AccQuoted
+                Ident "for"
+              Infix
+                Ident "in"
+                Ident "s2"
+                Command
+                  Ident "n"
+                  Command
+                    AccQuoted
+                      Ident "if"
+                    Infix
+                      Ident "=="
+                      Ident "i"
+                      IntLit 1
+
 ```
 
 var compen = newPyDict
 
 ```Nim
 >>> dumpTree:
-...   {i: j | i in s, j in s2, i == 1}
+...   {i: j+1 `for` i in s `for` j in s2 `if` i == 1}
 ... 
 
   TableConstr
     ExprColonExpr
       Ident "i"
       Infix
-        Ident "in"
-        Infix
-          Ident "|"
-          Ident "j"
-          Ident "i"
-        Ident "s"
-    Infix
-      Ident "in"
-      Ident "j"
-      Ident "s2"
-    Infix
-      Ident "=="
-      Ident "i"
-      IntLit 1
+        Ident "+"
+        Ident "j"
+        Command
+          IntLit 1
+          Command
+            AccQuoted
+              Ident "for"
+            Infix
+              Ident "in"
+              Ident "i"
+              Command
+                Ident "s"
+                Command
+                  AccQuoted
+                    Ident "for"
+                  Infix
+                    Ident "in"
+                    Ident "j"
+                    Command
+                      Ident "s2"
+                      Command
+                        AccQuoted
+                          Ident "if"
+                        Infix
+                          Ident "=="
+                          Ident "i"
+                          IntLit 1
 ```

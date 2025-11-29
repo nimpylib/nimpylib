@@ -1,49 +1,107 @@
 import std/macros
+import ./utils
 import ../../builtins/[list, set, dict]
 
-# We need to identify the structure:
-# (Expr | LoopVar) in Iterable
-# This is parsed as:
-# Infix(Ident("in"), Infix(Ident("|"), Expr, LoopVar), Iterable)
+type
+  ClauseKind = enum ckFor, ckIf
+  Clause = object
+    kind: ClauseKind
+    loopVar: NimNode
+    iterable: NimNode
+    condition: NimNode
 
-func isCompensiveInfix(n: NimNode): bool =
-  if n.kind == nnkInfix and n.len == 3 and n[0].eqIdent("in"):
-    let lhs = n[1]
-    if lhs.kind == nnkInfix and lhs.len == 3 and lhs[0].eqIdent("|"):
-      return true
+func isClauseStart(n: NimNode): bool =
+  if n.kind == nnkCommand and n.len == 2:
+    let head = n[0]
+    if head.kind == nnkAccQuoted and head.len == 1:
+      let ident = head[0]
+      if ident.eqIdent("for") or ident.eqIdent("if"):
+        return true
   return false
 
-proc extractCompensiveParts(n: NimNode): tuple[expr, loopVar, iterable: NimNode] =
-  # n is Infix(in, Infix(|, expr, loopVar), iterable)
-  let lhs = n[1]
-  result.expr = lhs[1]
-  result.loopVar = lhs[2]
-  result.iterable = n[2]
+proc parseChain(n: NimNode): tuple[target: NimNode, clauses: seq[Clause]] =
+  # Base case: The command that starts the chain
+  # We expect n to be Command(Target, ClauseStart)
+  if n.kind == nnkCommand and n.len == 2 and isClauseStart(n[1]):
+    result.target = n[0]
+    var curr = n[1]
+    while curr != nil:
+      # curr is Command(AccQuoted(for/if), Content)
+      let kindIdent = curr[0][0]
+      let content = curr[1]
+      
+      var nextNode: NimNode = nil
+      
+      if kindIdent.eqIdent("for"):
+        # content should be Infix(in, loopVar, iterable)
+        if content.kind == nnkInfix and content.len == 3 and content[0].eqIdent("in"):
+          let loopVar = content[1]
+          let rhs = content[2]
+          var iterable: NimNode
+          
+          # Check if rhs contains next clause
+          if rhs.kind == nnkCommand and rhs.len == 2 and isClauseStart(rhs[1]):
+            iterable = rhs[0]
+            nextNode = rhs[1]
+          else:
+            iterable = rhs
+            nextNode = nil
+            
+          result.clauses.add Clause(kind: ckFor, loopVar: loopVar, iterable: iterable)
+        else:
+          # Invalid for clause, stop parsing or error?
+          # Treat as end of chain?
+          break
+      elif kindIdent.eqIdent("if"):
+        var condition: NimNode
+        if content.kind == nnkCommand and content.len == 2 and isClauseStart(content[1]):
+          condition = content[0]
+          nextNode = content[1]
+        else:
+          condition = content
+          nextNode = nil
+        result.clauses.add Clause(kind: ckIf, condition: condition)
+        
+      curr = nextNode
+    return
 
-proc generateLoops(clauses: openArray[NimNode], innerBody: NimNode): NimNode =
-  # clauses are the remaining children of the constructor
-  # clause can be:
-  # - Infix(in, loopVar, iterable) -> for loop
-  # - Expr -> if condition
+  # Recursive steps for nodes that might contain the chain on the right
+  var childIdx = -1
   
+  case n.kind
+  of nnkInfix: childIdx = 2
+  of nnkPrefix: childIdx = 1
+  of nnkCommand, nnkCall: 
+    if n.len > 0: childIdx = n.len - 1
+  else: discard
+  
+  if childIdx != -1:
+    let sub = parseChain(n[childIdx])
+    if sub.target != nil:
+      # Found chain in child. Reconstruct n.
+      let newNode = n.copyNimNode()
+      for i in 0 ..< n.len:
+        if i == childIdx:
+          newNode.add(sub.target)
+        else:
+          newNode.add(n[i])
+      result.target = newNode
+      result.clauses = sub.clauses
+      return
+
+  # Not a comprehension chain
+  result.target = nil
+
+proc generateLoops(clauses: seq[Clause], innerBody: NimNode): NimNode =
   result = innerBody
-  
-  # We process clauses in reverse order to nest them correctly
+  # Process clauses in reverse order
   for i in countdown(clauses.len - 1, 0):
-    let clause = clauses[i]
-    if clause.kind == nnkInfix and clause.len == 3 and clause[0].eqIdent("in"):
-      # for loop
-      let loopVar = clause[1]
-      let iterable = clause[2]
-      result = newNimNode(nnkForStmt).add(loopVar, iterable, newStmtList(result))
-    else:
-      # if condition
-      result = newIfStmt((clause, newStmtList(result)))
-
-proc generateLoops(loopVar, iterable: NimNode, clauses: openArray[NimNode], innerBody: NimNode): NimNode =
-  # Overload to include the first loop
-  result = generateLoops(clauses, innerBody)
-  result = newNimNode(nnkForStmt).add(loopVar, iterable, newStmtList(result))
+    let c = clauses[i]
+    case c.kind
+    of ckFor:
+      result = newNimNode(nnkForStmt).add(c.loopVar, c.iterable, newStmtList(result))
+    of ckIf:
+      result = newIfStmt((c.condition, newStmtList(result)))
 
 proc rewriteCompensiveImpl*(n: NimNode, toPyExpr: proc (ele: NimNode): NimNode{.raises: [].}): tuple[rewriten: bool, res: NimNode] =
   ## like `rewriteCompensive`_ but no check on kind of `n` and assumes n.len > 0
@@ -51,64 +109,55 @@ proc rewriteCompensiveImpl*(n: NimNode, toPyExpr: proc (ele: NimNode): NimNode{.
     result.res = node
     return
 
+  if n.len != 1:
+    ret n
+
   let first = n[0]
   var 
     targetExpr: NimNode
-    loopVar: NimNode
-    iterable: NimNode
+    clauses: seq[Clause]
     isDict = false
     keyExpr: NimNode # only for dict
 
   if n.kind == nnkTableConstr:
-    # Dict comprehension: {k: v | i in s, ...}
-    # first is ExprColonExpr(k, v_node)
-    # v_node is Infix(in, Infix(|, v, i), s)
+    # Dict comprehension: {k: v for ...}
+    # first is ExprColonExpr(k, v_chain)
     if first.kind == nnkExprColonExpr and first.len == 2:
-      if isCompensiveInfix(first[1]):
+      let parsed = parseChain(first[1])
+      if parsed.target != nil:
         isDict = true
         keyExpr = first[0]
-        let parts = extractCompensiveParts(first[1])
-        targetExpr = parts.expr
-        loopVar = parts.loopVar
-        iterable = parts.iterable
+        targetExpr = parsed.target
+        clauses = parsed.clauses
       else:
         ret n
     else:
       ret n
   else:
     # List/Set/Gen comprehension
-    if isCompensiveInfix(first):
-      let parts = extractCompensiveParts(first)
-      targetExpr = parts.expr
-      loopVar = parts.loopVar
-      iterable = parts.iterable
+    let parsed = parseChain(first)
+    if parsed.target != nil:
+      targetExpr = parsed.target
+      clauses = parsed.clauses
     else:
       ret n
 
   result.rewriten = true
-  iterable = toPyExpr iterable
-  targetExpr = toPyExpr targetExpr
-
-  # Collect subsequent clauses
-  var clauses: seq[NimNode] = @[]
-  # The first clause is the one embedded in the first element
-  # We need to reconstruct it as a standard clause node for generateLoops?
-  # No, generateLoops handles the *additional* clauses.
-  # The first loop is defined by loopVar and iterable extracted above.
   
-  # Wait, the structure is:
-  # [ (x | i in s), (j in s2), (cond) ]
-  # The first element contains the yield expr and the first loop.
-  # Subsequent elements are subsequent clauses.
-  
-  for i in 1 ..< n.len:
-    clauses.add(n[i])
+  # Apply toPyExpr
+  targetExpr = toPyExpr(targetExpr)
+  if isDict:
+    keyExpr = toPyExpr(keyExpr)
+    
+  for i in 0 ..< clauses.len:
+    if clauses[i].kind == ckFor:
+      clauses[i].iterable = toPyExpr(clauses[i].iterable)
+    elif clauses[i].kind == ckIf:
+      clauses[i].condition = toPyExpr(clauses[i].condition)
 
-  # Helper to infer type of an expression within the loop context
-  proc getTypeOf(e: NimNode): NimNode =
-    newCall("typeof", e)
+  # Helper to infer type
   proc inferType(e: NimNode): NimNode =
-    let funcBody = generateLoops(loopVar, iterable, clauses, nnkReturnStmt.newTree(e))
+    let funcBody = generateLoops(clauses, nnkReturnStmt.newTree(e))
     let body = newCall(quote do:
       proc (): auto = `funcBody`
     )
@@ -120,18 +169,17 @@ proc rewriteCompensiveImpl*(n: NimNode, toPyExpr: proc (ele: NimNode): NimNode{.
     let elemType = inferType(targetExpr)
     
     let resSym = genSym(nskVar, "res")
-    let appendStmt = newCall(newDotExpr(resSym, ident("append")), targetExpr)
+    let appendStmt = newCall(newDotExpr(resSym, ident("add")), targetExpr)
     
-    # The outermost loop
-    let outerLoop = generateLoops(loopVar, iterable, clauses, appendStmt)
+    let outerLoop = generateLoops(clauses, appendStmt)
     
     let newListId = bindSym"newPyList"
     
     quote do:
       block:
-        var `resSym` = `newListId`[`elemType`]()
+        var `resSym` = newSeq[`elemType`]()
         `outerLoop`
-        `resSym`
+        `newListId`(`resSym`)
 
   of nnkCurly:
     # Set comprehension
@@ -139,8 +187,8 @@ proc rewriteCompensiveImpl*(n: NimNode, toPyExpr: proc (ele: NimNode): NimNode{.
     
     let resSym = genSym(nskVar, "res")
     let addStmt = newCall(bindSym("add"), resSym, targetExpr)
-    
-    let outerLoop = generateLoops(loopVar, iterable, clauses, addStmt)
+
+    let outerLoop = generateLoops(clauses, addStmt)
 
     let newSetId = bindSym"newPySet"
     quote do:
@@ -151,7 +199,6 @@ proc rewriteCompensiveImpl*(n: NimNode, toPyExpr: proc (ele: NimNode): NimNode{.
 
   of nnkTableConstr:
     # Dict comprehension
-    keyExpr = toPyExpr keyExpr
     let kType = inferType(keyExpr)
     let vType = inferType(targetExpr)
     
@@ -162,7 +209,7 @@ proc rewriteCompensiveImpl*(n: NimNode, toPyExpr: proc (ele: NimNode): NimNode{.
       targetExpr
     )
     
-    let outerLoop = generateLoops(loopVar, iterable, clauses, assignStmt)
+    let outerLoop = generateLoops(clauses, assignStmt)
     
     let newDictId = bindSym"newPyDict"
     quote do:
@@ -171,12 +218,12 @@ proc rewriteCompensiveImpl*(n: NimNode, toPyExpr: proc (ele: NimNode): NimNode{.
         `outerLoop`
         `resSym`
 
-  of nnkTupleConstr:
+  of nnkPar: # not nnkTupleConstr
     # Generator expression
     let elemType = inferType(targetExpr)
     
     let yieldStmt = newNimNode(nnkYieldStmt).add(targetExpr)
-    let outerLoop = generateLoops(loopVar, iterable, clauses, yieldStmt)
+    let outerLoop = generateLoops(clauses, yieldStmt)
     
     let iterSym = genSym(nskIterator, "gen")
     
@@ -188,31 +235,34 @@ proc rewriteCompensiveImpl*(n: NimNode, toPyExpr: proc (ele: NimNode): NimNode{.
     error"unreachable"
 
 proc rewriteCompensive*(n: NimNode; toPyExpr: proc (ele: NimNode): NimNode{.raises: [].}): tuple[rewriten: bool, res: NimNode] =
-  if n.kind notin {nnkBracket, nnkCurly, nnkTableConstr, nnkTupleConstr} or n.len == 0:
+  if n.kind notin {nnkBracket, nnkCurly, nnkTableConstr, nnkPar} or n.len == 0:
     return (false, n)
   rewriteCompensiveImpl(n, toPyExpr)
 
 when isMainModule:
   proc asIs(x: NimNode): NimNode = x
   macro comp(n: untyped): untyped =
-    #echo treeRepr n
     result = rewriteCompensive(n, asIs).res
-    # echo result.repr
+    #echo result.repr
 
-  let l = comp [i | i in [1, 2, 3], i > 1]
+  let l = comp [i `for` i in [1, 2, 3] `if` i > 1]
   assert @l == @[2, 3]
   
-  let s = comp {i | i in [1, 2, 3], i > 1}
+  const tab = [[1,2,-1], [3,4,-3]]
+  let l2 = comp [i+1 `for` row in tab `for` i in row `if` i > 0]
+  assert @l2 == @[2,3,4,5]
+
+  let s = comp {i*2 `for` i in [1, 2, 3] `if` i > 1}
   assert s.len == 2
-  assert 2 in s
-  assert 3 in s
+  assert 4 in s
+  assert 6 in s
 
-  let d = comp {i: i*2 | i in [1, 2, 3], i > 1}
+  let d = comp {i: i+1 `for` i in [1, 2, 3] `if` i > 1}
   assert d.len == 2
-  assert d[2] == 4
-  assert d[3] == 6
+  assert d[2] == 3
+  assert d[3] == 4
 
-  let g = comp (i | i in [1, 2, 3], i > 1)
+  let g = comp (i `for` i in [1, 2, 3] `if` i > 1)
   import std/sequtils
   assert toSeq(g()) == @[2, 3]
   
