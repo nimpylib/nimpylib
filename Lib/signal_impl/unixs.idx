@@ -12,4 +12,4 @@ nim	siginterrupt	signal_impl/unixs.html#siginterrupt,int,int	proc siginterrupt(s
 nim	sigpending	signal_impl/unixs.html#sigpending	proc sigpending(): Set[int]		118
 nim	sigwait	signal_impl/unixs.html#sigwait,Sigset	proc sigwait(sigset: Sigset): int		124
 nim	sigwaitinfo	signal_impl/unixs.html#sigwaitinfo,Sigset	proc sigwaitinfo(sigset: Sigset): struct_siginfo		131
-nim	sigtimedwait	signal_impl/unixs.html#sigtimedwait,Sigset,Timestamp	proc sigtimedwait(sigset: Sigset; timeout: Timestamp): struct_siginfo		152
+nim	sigtimedwait	signal_impl/unixs.html#sigtimedwait,Sigset,Timestamp	proc sigtimedwait(sigset: Sigset; timeout: Timestamp): struct_siginfo		153

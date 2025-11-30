@@ -63,7 +63,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">getsignal
-  <li><a class="reference" href="#getsignal%2Cint" title="getsignal(signalnum: int): PySigHandler">getsignal(signalnum: int): PySigHandler</a></li>
+  <li><a class="reference" href="#getsignal" title="getsignal(signalnum: PySignal): PySigHandler">getsignal(signalnum: PySignal): PySigHandler</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">pidfd_send_signal
@@ -75,7 +75,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">strsignal
-  <li><a class="reference" href="#strsignal%2Cint" title="strsignal(signalnum: int): string">strsignal(signalnum: int): string</a></li>
+  <li><a class="reference" href="#strsignal" title="strsignal(signalnum: PySignal): string">strsignal(signalnum: PySignal): string</a></li>
 
 </ul>
 
@@ -109,22 +109,22 @@
   <dd>
     
     
-    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/signal_impl/signal_util.nim#L50" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/signal_impl/signal_util.nim#L50" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/signal_impl/signal_util.nim#L53" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/signal_impl/signal_util.nim#L53" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 
 </div>
 <div id="getsignal-procs-all">
-  <div id="getsignal,int">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getsignal%2Cint"><span class="Identifier">getsignal</span></a><span class="Other">(</span><span class="Identifier">signalnum</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="../_._/Python/pylifecycle/signal/handler_types.html#PySigHandler"><span class="Identifier">PySigHandler</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <div id="getsignal">
+  <dt><pre><span class="Keyword">proc</span> <a href="#getsignal"><span class="Identifier">getsignal</span></a><span class="Other">(</span><span class="Identifier">signalnum</span><span class="Other">:</span> <a href="../_._/Python/pylifecycle/signal/handler_types.html#PySignal"><span class="Identifier">PySignal</span></a><span class="Other">)</span><span class="Other">:</span> <a href="../_._/Python/pylifecycle/signal/handler_types.html#PySigHandler"><span class="Identifier">PySigHandler</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
-    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/signal_impl/signal_util.nim#L12" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/signal_impl/signal_util.nim#L12" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/signal_impl/signal_util.nim#L13" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/signal_impl/signal_util.nim#L13" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -137,8 +137,8 @@
   <dd>
     
     
-    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/signal_impl/signal_util.nim#L66" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/signal_impl/signal_util.nim#L66" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/signal_impl/signal_util.nim#L69" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/signal_impl/signal_util.nim#L69" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -150,22 +150,22 @@
   <dd>
     
     
-    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/signal_impl/signal_util.nim#L52" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/signal_impl/signal_util.nim#L52" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/signal_impl/signal_util.nim#L55" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/signal_impl/signal_util.nim#L55" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 
 </div>
 <div id="strsignal-procs-all">
-  <div id="strsignal,int">
-  <dt><pre><span class="Keyword">proc</span> <a href="#strsignal%2Cint"><span class="Identifier">strsignal</span></a><span class="Other">(</span><span class="Identifier">signalnum</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <div id="strsignal">
+  <dt><pre><span class="Keyword">proc</span> <a href="#strsignal"><span class="Identifier">strsignal</span></a><span class="Other">(</span><span class="Identifier">signalnum</span><span class="Other">:</span> <a href="../_._/Python/pylifecycle/signal/handler_types.html#PySignal"><span class="Identifier">PySignal</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     returns empty string over <tt class="docutils literal"><span class="pre"><span class="Identifier">None</span></span></tt>
-    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/signal_impl/signal_util.nim#L16" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/signal_impl/signal_util.nim#L16" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/Lib/signal_impl/signal_util.nim#L17" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/Lib/signal_impl/signal_util.nim#L17" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -181,7 +181,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-11-11 10:42:11 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-11-30 07:21:27 UTC</small>
       </div>
     </div>
   </div>

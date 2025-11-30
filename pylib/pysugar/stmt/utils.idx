@@ -1,0 +1,2 @@
+nimTitle	utils	pylib/pysugar/stmt/utils.html	module src/pylib/pysugar/stmt/utils		0
+nim	getTypeof	pylib/pysugar/stmt/utils.html#getTypeof,NimNode	proc getTypeof(e: NimNode): NimNode		3

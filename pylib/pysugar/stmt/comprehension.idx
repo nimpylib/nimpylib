@@ -1,0 +1,3 @@
+nimTitle	comprehension	pylib/pysugar/stmt/comprehension.html	module src/pylib/pysugar/stmt/comprehension		0
+nim	rewriteCompensiveImpl	pylib/pysugar/stmt/comprehension.html#rewriteCompensiveImpl,NimNode,proc(NimNode)	proc rewriteCompensiveImpl(n: NimNode;\n                      toPyExpr: proc (ele: NimNode): NimNode {.raises: [].}): tuple[\n    rewriten: bool, res: NimNode]		106
+nim	rewriteCompensive	pylib/pysugar/stmt/comprehension.html#rewriteCompensive,NimNode,proc(NimNode)	proc rewriteCompensive(n: NimNode;\n                  toPyExpr: proc (ele: NimNode): NimNode {.raises: [].}): tuple[\n    rewriten: bool, res: NimNode]		237
