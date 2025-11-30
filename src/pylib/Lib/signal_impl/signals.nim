@@ -41,9 +41,9 @@ proc signal_handler(sig_num){.noconv.} =
         See Python/pylifecycle.c for the implementation of PyOS_setsig
         which makes this true.  See also issue8354.]#
       if sig_num != SIGCHLD:
-        PyOS_setsig(sig_num, signal_handler)
+        discard PyOS_setsig(sig_num, signal_handler)
     else:
-      PyOS_setsig(sig_num, signal_handler)
+      discard PyOS_setsig(sig_num, signal_handler)
   
   #[Issue #10311: asynchronously executing signal handlers should not
        mutate errno under the feet of unsuspecting C code.]#
