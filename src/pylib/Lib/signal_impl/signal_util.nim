@@ -9,14 +9,15 @@ when HAVE_STRSIGNAL:
 
   proc strstr(s, subs: cstring): ptr char{.importc, header: "<string.h>".}
 
-proc getsignal*(signalnum: int): PySigHandler =
+using signalnum: PySignal
+proc getsignal*(signalnum): PySigHandler =
   signalnum.chkSigRng
-  result = get_handler(cast[cint](signalnum))
+  result = get_handler(CSignal(signalnum))
 
-proc strsignal*(signalnum: int): string =
+proc strsignal*(signalnum): string =
   ## returns empty string over `None`
   signalnum.chkSigRng
-  let signalnum = cast[cint](signalnum)
+  let signalnum = CSignal(signalnum)
   when HAVE_STRSIGNAL:
     setErrno0()
     let res = strsignal(signalnum)
@@ -47,16 +48,17 @@ proc strsignal*(signalnum: int): string =
     else: DEF
 
 
-proc c_raise*(signalnum: cint): cint {.importc: "raise", header: "<signal.h>".}
+when not defined(js):
+  proc c_raise*(signalnum: cint): cint {.importc: "raise", header: "<signal.h>".}
 
-proc raise_signal*(signalnum: int) =
-  let signalnum = cast[cint](signalnum)
-  var err: cint
-  with_Py_SUPPRESS_IPH:
-    err = c_raise(signalnum)
-  if err != 0:
-    raiseErrno()
-  PyErr_CheckSignalsAndRaises()
+  proc raise_signal*(signalnum: int) =
+    let signalnum = cast[cint](signalnum)
+    var err: cint
+    with_Py_SUPPRESS_IPH:
+      err = c_raise(signalnum)
+    if err != 0:
+      raiseErrno()
+    PyErr_CheckSignalsAndRaises()
 
 when defined(linux) and not (
     defined(android) and ANDROID_API < 31):

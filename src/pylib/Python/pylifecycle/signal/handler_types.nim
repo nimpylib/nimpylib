@@ -1,5 +1,12 @@
 
+when defined(js):
+  type CSignal* = cstring
+  type PySignal* = cstring
+else:
+  type CSignal* = cint
+  type PySignal* = int
+
 type
-  PySigHandler* = proc (signalnum: int, frame: PFrame){.closure.}
-  CSigHandler* = proc (signalnum: cint) {.noconv.}  ## PyOS_sighandler_t
-  NimSigHandler* = proc (signalnum: int){.nimcall.}
+  PySigHandler* = proc (signalnum: PySignal, frame: PFrame){.closure.}
+  CSigHandler* = proc (signalnum: CSignal) {.noconv.}  ## PyOS_sighandler_t
+  NimSigHandler* = proc (signalnum: PySignal){.nimcall.}

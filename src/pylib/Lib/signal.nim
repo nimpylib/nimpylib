@@ -28,7 +28,7 @@ proc pthread_sigmask*(how: int, mask: Sigset): PySet[int]{.mayUndef.} =
     result.fromIterable oa
   ]#
 
-proc strsignal*(signalnum: int): OptionalObj[PyStr]{.pysince(3,8).} =
+proc strsignal*(signalnum: PySignal): OptionalObj[PyStr]{.pysince(3,8).} =
   newStrOptionalObj n_signal.strsignal signalnum
 
 when have_valid_signals:

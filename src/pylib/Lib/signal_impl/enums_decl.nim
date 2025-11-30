@@ -1,7 +1,8 @@
 
-template decl(name) =
-  type name* = distinct int
+import ./pylifecycle
+template decl(name; T:untyped=int) =
+  type name* = distinct T
 
-decl Signals
+decl Signals, PySignal
 decl Handlers
 decl Sigmasks

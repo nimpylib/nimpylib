@@ -3,6 +3,7 @@ import ./[pynsig, errutil, state, chk_util, pylifecycle, c_py_handler_cvt, frame
 import ./pyatomic
 
 import ./enums
+export PySignal
 template toPySigHandler(handler: Handlers): PySigHandler =
   toPySigHandler(
     if handler == enums.SIG_DFL:
@@ -11,7 +12,10 @@ template toPySigHandler(handler: Handlers): PySigHandler =
       pylifecycle.SIG_IGN
   )
 
-proc trip_signal(sig_num: cint){.inline.} =
+using
+  sig_num: CSignal
+  signalnum: PySignal
+proc trip_signal(sig_num){.inline.} =
   Py_atomic_store(Handlers[sig_num].tripped, true)
 
   # CPython has to handle Exeption in C level
@@ -22,7 +26,7 @@ proc trip_signal(sig_num: cint){.inline.} =
   Handlers[sig_num].fn(sig_num, getFrameOrNil(2))
 
 
-proc signal_handler(sig_num: cint){.noconv.} =
+proc signal_handler(sig_num){.noconv.} =
   let save_errno = getErrno()
 
   trip_signal(sig_num)
@@ -50,9 +54,8 @@ proc signal_handler(sig_num: cint){.noconv.} =
       setEvent(global_sigint_event)
 
 
-
-proc signal*(signalnum: int, handler: PySigHandler): PySigHandler{.discardable.} =
-  let signalnum = signalnum.cint
+proc signal*(signalnum; handler: PySigHandler): PySigHandler{.discardable.} =
+  let signalnum = signalnum.CSignal
   signalnum.ifInvalidOnVcc:
     raise newException(ValueError, "invalid signal value")
   
@@ -66,18 +69,18 @@ proc signal*(signalnum: int, handler: PySigHandler): PySigHandler{.discardable.}
   result = get_handler(signalnum)
   set_handler(signalnum, handler)
 
-proc signal*(signalnum: int, handler: CSigHandler|NimSigHandler|Handlers
+proc signal*(signalnum; handler: CSigHandler|NimSigHandler|Handlers
 ): PySigHandler{.discardable.} =
   signal(signalnum, handler.toPySighandler)
 
 
-proc default_int_handler*(signalnum: int, frame: PFrame) =
+proc default_int_handler*(signalnum; frame: PFrame) =
   raise newException(KeyboardInterrupt, "")
 
 proc signal_get_set_handlers(state: signal_state_t) =
-  for signum in cint(1)..<Py_NSIG.cint:
+  for signum in SignalRange:
     let c_handler = PyOS_getsig signum
-    let fn = if c_handler == SIG_DFL:
+    let fn = if c_handler.isSIG_DFL:
       state.default_handler
     elif c_handler == SIG_IGN:
       state.ignore_handler
@@ -100,6 +103,6 @@ proc signal_get_set_handlers(state: signal_state_t) =
 
 signal_get_set_handlers signal_global_state
 
-proc set_wakeup_signal*(signalnum: int): int =
+proc set_wakeup_signal*(signalnum): int =
   ## XXX: currently `-1` is always returned
   -1

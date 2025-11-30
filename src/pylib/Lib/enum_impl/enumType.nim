@@ -15,8 +15,12 @@ template GenPyEnumMeth*(Self; Value: typedesc; genObjMeth = true, genInit = fals
   ##   `import std/tables` is a must before using this template.
   bind contains, `[]`
   bind hash, Table, Hash, withValue, `[]=`, `$`, items, len, fmt, formatValue
-  var `Self.names`{.compileTime.}: Table[Value, string]  ## self._name_
-  var `Self.member_map`{.compileTime.}: Table[Str, Self]  ## cls._member_map_
+  when defined(js): #XXX:NIM-BUG: bypass nim-lang/Nim#24696
+    {.pragma: MyCompileTime.}
+  else:
+    {.pragma: MyCompileTime, compileTime.}
+  var `Self.names`{.MyCompileTime.}: Table[Value, string]  ## self._name_
+  var `Self.member_map`{.MyCompileTime.}: Table[Str, Self]  ## cls._member_map_
   bind GenPyEnumInit
 
   using self: Self

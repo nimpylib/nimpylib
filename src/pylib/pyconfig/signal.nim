@@ -32,10 +32,15 @@ sigaction, #sigaltstack \
   sigfillset, siginterrupt, sigpending, #[sigrelse,]# sigtimedwait, sigwait,
   sigwaitinfo)
 AC_CHECK_FUNC(pthread_sigmask)
-const DEF_SIG* = -1  ## CPython checks `SIG*` in [0, NSIG)
+const DEF_SIG* = when defined(js): ""  #TODO:js right?
+else: -1  ## CPython checks `SIG*` in [0, NSIG)
 when not defined(windows):
-  template SIG(sym) =
-    const sym* = from_c_int(sym, "<signal.h>", DEF_SIG)
+  when defined(js):
+    template SIG(sym) =
+      const sym* = cstring astToStr(sym)
+  else:
+    template SIG(sym) =
+      const sym* = from_c_int(sym, "<signal.h>", DEF_SIG)
 
   SIG SIGIOT
   SIG SIGEMT

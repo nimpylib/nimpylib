@@ -146,8 +146,9 @@ proc sigwaitinfo*(sigset: Sigset): struct_siginfo{.mayUndef.} =
 
   fill_siginfo(si)
 
-proc PyTime_AsTimespec(x: TimeStamp): Timespec =
-  x.nPyTime_ObjectToTimeval(result.tv_sec, result.tv_usec, prCeiling)
+when defined(posix):
+  proc PyTime_AsTimespec(x: TimeStamp): Timespec =
+    x.nPyTime_ObjectToTimeval(result.tv_sec, result.tv_usec, prCeiling)
 
 proc sigtimedwait*(sigset: Sigset, timeout: TimeStamp): struct_siginfo{.mayUndef.} =
   var si: SigInfo

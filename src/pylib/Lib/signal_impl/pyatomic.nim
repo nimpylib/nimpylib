@@ -1,7 +1,14 @@
 
+#npython: Include/cpython/pyatomic.nim
+const SingleThread* = defined(js) or not compileOption"threads"
+when SingleThread:
+  template orSingleThrd(body, js): untyped = js
+else:
+  template orSingleThrd(body, js): untyped = body
 
-template Py_atomic_load_ptr*[T](obj: ptr T): T = atomicLoadN(obj, ATOMIC_SEQ_CST)
-template Py_atomic_store_ptr*[T](obj: ptr T, value: T) = atomicStoreN(obj, value, ATOMIC_SEQ_CST)
+template Py_atomic_load_ptr*[T](obj: ptr T): T = orSingleThrd(atomicLoadN(obj, ATOMIC_SEQ_CST), obj[])
+template Py_atomic_store_ptr*[T](obj: ptr T, value: T) = orSingleThrd atomicStoreN(obj, value, ATOMIC_SEQ_CST):
+  obj[] = value
 
 template Py_atomic_load*[T](obj: T): T =
   bind Py_atomic_load_ptr

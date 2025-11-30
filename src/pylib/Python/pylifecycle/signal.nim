@@ -9,7 +9,7 @@ when not HAVE_SIGACTION:
 
 export handler_types
 
-proc PyOS_getsig*(sig: cint): CSighandler =
+proc PyOS_getsig*(sig: CSignal): CSighandler =
   when HAVE_SIGACTION:
     var context: Sigaction
     if sigaction(sig, nil, context) == -1:
@@ -18,12 +18,14 @@ proc PyOS_getsig*(sig: cint): CSighandler =
   else:
     sig.ifInvalidOnVcc:
       return SIG_ERR
+    when defined(js):
+      result = getsignal(sig)
+    else:
+      result = c_signal(sig, SIG_IGN)
+      if result != SIG_ERR:
+        discard c_signal(sig, result)
 
-    result = c_signal(sig, SIG_IGN)
-    if result != SIG_ERR:
-      discard c_signal(sig, result)
-
-proc PyOS_setsig*(sig: cint, handler: CSighandler): CSighandler =
+proc PyOS_setsig*(sig: CSignal, handler: CSighandler): CSighandler =
   ## Python/pylifecycle.c PyOS_setsig
   when HAVE_SIGACTION:
     #[Some code in Modules/signalmodule.c depends on sigaction() being

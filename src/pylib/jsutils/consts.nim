@@ -2,12 +2,24 @@
 const
   InNodeJs = defined(nodejs)
 import std/jsffi
-when InNodeJs:
-  let econsts = require("constants")
-else:
-  let econsts{.importjs: """(await import("node:constants"))""".}: JsObject
+template importjsObject(econsts; name: string) =
+  when InNodeJs:
+    let econsts = require(cstring name)
+  else:
+    let econsts{.importjs: "(await import(\"node:" & name & "\"))".}: JsObject
+template importjsObject(econsts) = importjsObject(econsts, astToStr(econsts))
 
-template from_js_const*(name; defval: int): int =
-  bind econsts, isUndefined, to, `[]`
+template from_js_constImpl[T](econsts; name; defVal: T): T =
+  bind isUndefined, to, `[]`
   let n = econsts[astToStr(name)]
-  if n.isUndefined: defVal else: n.to(int)
+  if n.isUndefined: defVal else: n.to(T)
+
+importjsObject constants
+
+template from_js_const*[T](name; defval: T): T =
+  bind constants
+  from_js_constImpl(constants, name, defval)
+
+importjsObject os, "os"
+let os_constants* = os["constants"]
+assert not os_constants.isUndefined

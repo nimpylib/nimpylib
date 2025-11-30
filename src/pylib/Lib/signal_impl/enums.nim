@@ -14,12 +14,12 @@ Exp ITIMER_REAL
 Exp ITIMER_VIRTUAL
 Exp ITIMER_PROF
 
-template genEnum(name) =
-  GenIntEnumMeth name
-  GenPyEnumInit(name, int, name)
+template genEnum(name; T:untyped=int) =
+  GenIntEnumMeth name, T
+  GenPyEnumInit(name, T, name)
 
 # SIG*
-genEnum Signals
+genEnum Signals, PySignal
 
 template add_enum(E, sym, val) =
   let sym* = enums_decl.E.add_member(astToStr(sym), val)
@@ -77,12 +77,12 @@ when true:  # just convenient for code folding
 # SIG_*
 genEnum Handlers
 
-template add_handler(sym) =
+template add_handler(sym; val: int) =
   when declared(sym):
-    add_enum(Handlers, sym, cast[int](sym))
+    add_enum(Handlers, sym, val)
 
-add_handler SIG_DFL
-add_handler SIG_IGN
+add_handler SIG_DFL, 0
+add_handler SIG_IGN, 1
 
 
 # Sigmasks
