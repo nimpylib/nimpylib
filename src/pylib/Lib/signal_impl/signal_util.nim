@@ -37,15 +37,16 @@ proc strsignal*(signalnum): string =
     of SIGFPE:  "Float-point exception"
     of SIGSEGV: "Segmentation fault"
     of SIGTERM: "Terminated"
-    elif not defined(windows):
-      case signalnum
-      of SIGHUP:  "Hangup"
-      of SIGALRM: "Alarm clock"
-      of SIGPIPE: "Broken pipe"
-      of SIGQUIT: "Quit"
-      of SIGCHLD: "Child exited"
+    else:
+      when not defined(windows) and declared(SIGHUP):
+        case signalnum
+        of SIGHUP:  "Hangup"
+        of SIGALRM: "Alarm clock"
+        of SIGPIPE: "Broken pipe"
+        of SIGQUIT: "Quit"
+        of SIGCHLD: "Child exited"
+        else: DEF
       else: DEF
-    else: DEF
 
 
 when not defined(js):
