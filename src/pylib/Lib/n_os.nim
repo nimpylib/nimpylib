@@ -9,6 +9,10 @@ when not defined(js):
     term, inheritable]
   export term, set_inheritable, get_inheritable
 
+when defined(posix):
+  import ./os_impl/only_posix
+  export only_posix
+
 genUname string
 import ./os_impl/posix_like/sched
 when HAVE_SCHED_SETAFFINITY:
