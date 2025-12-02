@@ -12,6 +12,8 @@ AC_CHECK_FUNCS(
   uname,
   unlinkat,
   fdopendir,
+  getpwnam_r,
+  # get{pw{nam,uid},gr{nam,gid}}_r share the same Feature Test Macro Requirements
 )
 
 check_func_runtime unlinkat, 10.10, 8.0
