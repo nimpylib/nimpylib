@@ -1,6 +1,7 @@
 
 import std/typetraits
 import ../pystring/strimpl
+import ../collections_abc/cmpOA
 type
   list*[T] = ref object
     data: seq[T]
@@ -78,36 +79,19 @@ template checkLenientOps*(A, B) =
       {.error: "once pylibNoLenient is defined, " &
         " mixin ops between types is forbidden".}
 
-template cmpBody(op, a, b) =
-  bind checkLenientOps
-  checkLenientOps A, B
-  const opS = astToStr(op)
-  # Shortcut: if the lengths differ, the arrays differ
-  when opS == "==":
-    if a.len != b.len: return
-  elif opS == "!=":
-    if a.len != b.len: return true
-
-  for i, e in a:
-    if e != b[i]:
-      # We have an item that differs.
-      result = op(e, b[i])
-      return
-  # No more items to compare -- compare sizes
-  result = op(a.len, b.len)
-
-func `<=`[A, B](a: openarray[A], b: openarray[B]): bool = cmpBody `<=`, a, b
-func `<` [A, B](a: openarray[A], b: openarray[B]): bool = cmpBody `<`,  a, b
 
 template genMixCmp(op){.dirty.} =
   func op*[A, B](self: PyList[A], o: PyList[B]): bool{.inline.} =
     bind op
+    checkLenientOps A, B
     op self.asSeq, o.asSeq
   func op*[A, B](self: PyList[A], o: openArray[B]): bool{.inline.} =
     bind op
+    checkLenientOps A, B
     op self.asSeq, o
   template op*[A, B](o: openArray[A], self: PyList[B]): bool =
     bind op
+    checkLenientOps A, B
     op(self, o)
 
 genMixCmp `==`
