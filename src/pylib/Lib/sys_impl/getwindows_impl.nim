@@ -5,6 +5,9 @@ import std/[os,
   winlean, widestrs
 ]
 import ../../pyconfig/pc
+when defined(windows):
+  import ./getwindows/embed_rc
+  {.link: FILENAME_TO_LINK.}
 
 type
   WindowsError = OSError
@@ -23,7 +26,7 @@ type
 type
   WORD = uint16
   WCHAR{.importc, header: "<Windows.h>".} = Utf16Char
-  OSVERSIONINFOEXW{.importc: "OSVERSIONINFOEXW", header: "<Windows.h>"#["<winnt.h>"]#.} = object
+  OSVERSIONINFOEXW{.importc, header: "<Windows.h>"#["<winnt.h>"]#.} = object
     dwOSVersionInfoSize:DWORD
     dwMajorVersion:     DWORD
     dwMinorVersion:     DWORD
@@ -59,11 +62,12 @@ proc sys_getwindowsversion_from_kernel32(): WindowsVersionFromKernel32 =
     # cannot read version info on non-Windows platforms
     raise newException(OSError, "cannot read version info on this platform")
   else:
-    proc GetModuleHandleW(lpModuleName: WideCString): HANDLE {.importc: "GetModuleHandleW", header: "<windows.h>".}
-    proc GetFileVersionInfoSizeW(lptstrFilename: WideCString, lpdwHandle: ptr DWORD): DWORD {.importc: "GetFileVersionInfoSizeW", header: "<windows.h>".}
-    proc GetFileVersionInfoW(lptstrFilename: WideCString, dwHandle: DWORD, dwLen: DWORD, lpData: pointer): WINBOOL {.importc: "GetFileVersionInfoW", header: "<windows.h>".}
-    proc VerQueryValueW(pBlock: pointer, lpSubBlock: WideCString, lplpBuffer: ptr ptr VS_FIXEDFILEINFO, puLen: ptr uint32): WINBOOL {.importc:
-      "VerQueryValueW", header: "<windows.h>".}
+    {.push header: "<Windows.h>".}
+    proc GetModuleHandleW(lpModuleName: WideCString): HANDLE {.importc.}
+    proc GetFileVersionInfoSizeW(lptstrFilename: WideCString, lpdwHandle: ptr DWORD): DWORD {.importc.}
+    proc GetFileVersionInfoW(lptstrFilename: WideCString, dwHandle: DWORD, dwLen: DWORD, lpData: pointer): WINBOOL {.importc.}
+    proc VerQueryValueW(pBlock: pointer, lpSubBlock: WideCString, lplpBuffer: ptr ptr VS_FIXEDFILEINFO, puLen: ptr uint32): WINBOOL {.importc.}
+    {.pop.}
 
     var hKernel32 = default HANDLE
     var kernel32_path: array[MAX_PATH, WCHAR]
