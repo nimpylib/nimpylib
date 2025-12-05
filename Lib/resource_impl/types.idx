@@ -1,3 +1,8 @@
 nimTitle	types	resource_impl/types.html	module src/pylib/Lib/resource_impl/types		0
-nim	struct_rusage	resource_impl/types.html#struct_rusage	type struct_rusage		5
-nim	toPyObject	resource_impl/types.html#toPyObject,Rusage	proc toPyObject(rusage: Rusage): struct_rusage		26
+nim	struct_rusage	resource_impl/types.html#struct_rusage	type struct_rusage		140
+nim	toPyNim	resource_impl/types.html#toPyNim,sinkRusage,struct_rusage	proc toPyNim(cObj: sink Rusage; result: var struct_rusage)		143
+nim	toPyNim	resource_impl/types.html#toPyNim,ptr.Rusage,struct_rusage	proc toPyNim(cObj: ptr Rusage; result: var struct_rusage)		144
+nim	`$`	resource_impl/types.html#$,struct_rusage	proc `$`(nObj: struct_rusage): string		145
+nim	`[]`	resource_impl/types.html#[].m,struct_rusage,	macro `[]`(nObj: struct_rusage; getitemIdx`gensym37: static[int]): untyped		142
+nim	toPyObject	resource_impl/types.html#toPyObject,Rusage	proc toPyObject(rusage: Rusage): struct_rusage		32
+nimgrp	topynim	resource_impl/types.html#toPyNim-procs-all	proc		97

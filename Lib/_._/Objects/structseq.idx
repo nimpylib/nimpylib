@@ -1,0 +1,17 @@
+nimTitle	structseq	_._/Objects/structseq.html	module src/pylib/Objects/structseq		0
+nim	contains	_._/Objects/structseq.html#contains,,	proc contains(self: MapCTypeToNim; key: NimTypeKind): bool		12
+nim	`[]`	_._/Objects/structseq.html#[],,	proc `[]`(self: MapCTypeToNim; key: NimTypeKind): NimNode		13
+nim	`[]=`	_._/Objects/structseq.html#[]=,,,NimNode	proc `[]=`(self: MapCTypeToNim; key: NimTypeKind; val: NimNode)		14
+nim	`[]`	_._/Objects/structseq.html#[],,NimNode	proc `[]`(self: MapCTypeToNim; key: NimNode): NimNode		16
+nim	declMapCTypeToNim	_._/Objects/structseq.html#declMapCTypeToNim.m,,	macro declMapCTypeToNim(mapCTypeToNim; uniqueId = astToStr(mapCTypeToNim);\n                  additionalMaps)		40
+nim	declMapCTypeToNim	_._/Objects/structseq.html#declMapCTypeToNim.t,,typeof(astToStr(mapCTypeToNim))	template declMapCTypeToNim(mapCTypeToNim; uniqueId = astToStr(mapCTypeToNim))		50
+nim	toPyNim	_._/Objects/structseq.html#toPyNim.t,SomeSignedInt,BiggestInt	template toPyNim(i: SomeSignedInt; res: var BiggestInt)		57
+nim	toPyNim	_._/Objects/structseq.html#toPyNim.t,SomeUnsignedInt,BiggestUInt	template toPyNim(i: SomeUnsignedInt; res: var BiggestUInt)		58
+nim	toPyNim	_._/Objects/structseq.html#toPyNim.t,SomeFloat,BiggestFloat	template toPyNim(i: SomeFloat; res: var BiggestFloat)		59
+nim	toPyNim	_._/Objects/structseq.html#toPyNim.t,cstring,string	template toPyNim(s: cstring; res: var string)		60
+nim	genNamedTuple	_._/Objects/structseq.html#genNamedTuple.m,typedesc[T],	macro genNamedTuple[T: object](desc: typedesc[T]; stmtDef)		163
+nim	cstructGenNamedTuple	_._/Objects/structseq.html#cstructGenNamedTuple.m,typedesc[T],static[string],static[bool]	macro cstructGenNamedTuple[T: object](desc: typedesc[T]; genName: static[string];\n                                exported: static[bool] = true)		167
+nim	cstructGenNamedTuple	_._/Objects/structseq.html#cstructGenNamedTuple.m,typedesc[T],static[bool],static[CacheTable]	macro cstructGenNamedTuple[T: object](desc: typedesc[T];\n                                exported: static[bool] = true; mapCTypeToNim: static[\n    MapCTypeToNim] = mapCTypeToNim)		178
+nimgrp	[]	_._/Objects/structseq.html#[]-procs-all	proc		13
+nimgrp	cstructgennamedtuple	_._/Objects/structseq.html#cstructGenNamedTuple-macros-all	macro		167
+nimgrp	topynim	_._/Objects/structseq.html#toPyNim-templates-all	template		56

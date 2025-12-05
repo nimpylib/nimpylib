@@ -1,0 +1,2 @@
+nimTitle	unameAny	platform_impl/unameAny.html	module src/pylib/Lib/platform_impl/unameAny		0
+nim	uname	platform_impl/unameAny.html#uname	proc uname(): UnameResult		37

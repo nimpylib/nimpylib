@@ -62,6 +62,10 @@
   <li><a class="reference" href="#unpack.m%2Cuntyped%2Cvarargs%5Buntyped%5D" title="unpack(data: untyped; values: varargs[untyped]): untyped">unpack(data: untyped; values: varargs[untyped]): untyped</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">unpackValues
+  <li><a class="reference" href="#unpackValues.m%2Cuntyped%2C" title="unpackValues(data: untyped; values)">unpackValues(data: untyped; values)</a></li>
+
+</ul>
 
     </ul>
   </details>
@@ -93,7 +97,14 @@
     
     
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Comment"># Simple unpacking - you need to provide the length to unpack</span>
+<pre class="listing"><span class="Keyword">block</span> <span class="Identifier">lenTooLong</span><span class="Punctuation">:</span>
+  <span class="Keyword">let</span> <span class="Identifier">ls</span> <span class="Operator">=</span> <span class="Operator">@</span><span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="Punctuation">]</span>
+  <span class="Identifier">doAssertRaises</span> <span class="Identifier">IndexDefect</span><span class="Punctuation">:</span>
+    <span class="Keyword">discard</span> <span class="Identifier">ls</span><span class="Operator">.</span><span class="Identifier">unpack</span><span class="Punctuation">(</span><span class="DecNumber">2</span><span class="Punctuation">)</span>
+  <span class="Identifier">doAssertRaises</span> <span class="Identifier">IndexDefect</span><span class="Punctuation">:</span>
+    <span class="Identifier">ls</span><span class="Operator">.</span><span class="Identifier">unpack</span><span class="Punctuation">(</span><span class="Identifier">a</span><span class="Punctuation">,</span> <span class="Identifier">b</span><span class="Punctuation">)</span>
+
+<span class="Comment"># Simple unpacking - you need to provide the length to unpack</span>
 <span class="Keyword">let</span> <span class="Punctuation">(</span><span class="Identifier">a</span><span class="Punctuation">,</span> <span class="Identifier">b</span><span class="Punctuation">,</span> <span class="Identifier">c</span><span class="Punctuation">)</span> <span class="Operator">=</span> <span class="Operator">@</span><span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">]</span><span class="Operator">.</span><span class="Identifier">unpack</span><span class="Punctuation">(</span><span class="DecNumber">3</span><span class="Punctuation">)</span>
 <span class="Identifier">doAssert</span> <span class="Punctuation">(</span><span class="Identifier">a</span> <span class="Operator">+</span> <span class="Identifier">b</span> <span class="Operator">+</span> <span class="Identifier">c</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="DecNumber">6</span>
 
@@ -141,6 +152,22 @@
 </div>
 
 </div>
+<div id="unpackValues-macros-all">
+  <div id="unpackValues.m,untyped,">
+  <dt><pre><span class="Keyword">macro</span> <a href="#unpackValues.m%2Cuntyped%2C"><span class="Identifier">unpackValues</span></a><span class="Other">(</span><span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">;</span> <span class="Identifier">values</span><span class="Other">)</span></pre></dt>
+  <dd>
+    
+    like <a class="reference internal nimdoc" title="macro unpack(data: untyped; values: varargs[untyped]): untyped" href="#unpack.m,untyped,varargs[untyped]">unpack</a> but works with a single <tt class="docutils literal"><span class="pre"><span class="Identifier">values</span></span></tt> argument, see examples:
+<p><strong class="examples_text">Example:</strong></p>
+<pre class="listing"><span class="Operator">@</span><span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">]</span><span class="Operator">.</span><span class="Identifier">unpackValues</span> <span class="Punctuation">(</span><span class="Identifier">a</span><span class="Punctuation">,</span> <span class="Identifier">b</span><span class="Punctuation">,</span> <span class="Identifier">c</span><span class="Punctuation">)</span>
+<span class="Identifier">doAssert</span> <span class="Punctuation">[</span><span class="Identifier">a</span><span class="Punctuation">,</span> <span class="Identifier">b</span><span class="Punctuation">,</span> <span class="Identifier">c</span><span class="Punctuation">]</span> <span class="Operator">==</span> <span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">]</span></pre>
+    <a href="https://github.com/nimpylib/nimpylib/tree/master/src/pylib/pysugar/unpack.nim#L56" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/nimpylib/nimpylib/edit/devel/src/pylib/pysugar/unpack.nim#L56" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+
+</div>
 
   </dl>
 </div>
@@ -151,7 +178,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-11-30 07:56:57 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-12-05 11:50:12 UTC</small>
       </div>
     </div>
   </div>

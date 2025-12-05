@@ -1,0 +1,8 @@
+nimTitle	platform	platform.html	module src/pylib/Lib/platform		0
+nim	version	platform.html#version	proc version(): PyStr		9
+nim	python_implementation	platform.html#python_implementation	proc python_implementation(): PyStr		11
+nim	system	platform.html#system	proc system(): PyStr		12
+nim	node	platform.html#node	proc node(): PyStr		17
+nim	release	platform.html#release	proc release(): PyStr		19
+nim	processor	platform.html#processor	proc processor(): PyStr		20
+nim	machine	platform.html#machine	proc machine(): PyStr		54

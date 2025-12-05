@@ -1,0 +1,20 @@
+nimTitle	ids	os_impl/only_posix/ids.html	module src/pylib/Lib/os_impl/only_posix/ids		0
+nim	getresgid	os_impl/only_posix/ids.html#getresgid	proc getresgid(): tuple[r, e, s: int]		51
+nim	getresuid	os_impl/only_posix/ids.html#getresuid	proc getresuid(): tuple[r, e, s: int]		52
+nim	setgid	os_impl/only_posix/ids.html#setgid,int	proc setgid(rid: int)		61
+nim	setregid	os_impl/only_posix/ids.html#setregid,int,int	proc setregid(rid, eid: int)		63
+nim	setresgid	os_impl/only_posix/ids.html#setresgid,int,int,int	proc setresgid(rid, eid, savedId: int)		70
+nim	setuid	os_impl/only_posix/ids.html#setuid,int	proc setuid(rid: int)		61
+nim	setreuid	os_impl/only_posix/ids.html#setreuid,int,int	proc setreuid(rid, eid: int)		63
+nim	setresuid	os_impl/only_posix/ids.html#setresuid,int,int,int	proc setresuid(rid, eid, savedId: int)		71
+nim	getpgid	os_impl/only_posix/ids.html#getpgid,int	proc getpgid(pid: int): int		73
+nim	setpgid	os_impl/only_posix/ids.html#setpgid,int,int	proc setpgid(pid, id: int)		75
+nim	getpgrp	os_impl/only_posix/ids.html#getpgrp	proc getpgrp(): int		78
+nim	setpgrp	os_impl/only_posix/ids.html#setpgrp	proc setpgrp()		84
+nim	setsid	os_impl/only_posix/ids.html#setsid	proc setsid(): int		87
+nim	getsid	os_impl/only_posix/ids.html#getsid,int	proc getsid(pid: int): int		93
+heading	Overview	os_impl/only_posix/ids.html#overview	  Overview		0
+heading	Function signatures & descriptions	os_impl/only_posix/ids.html#function-signatures-amp-descriptions	  Function signatures &amp; descriptions		0
+heading	for User's Gid and Uid (X = g or u)	os_impl/only_posix/ids.html#function-signatures-amp-descriptions-for-user-s-gid-and-uid-x-eq-g-or-u	   for User's Gid and Uid (X = g or u)		0
+heading	for Process Group	os_impl/only_posix/ids.html#function-signatures-amp-descriptions-for-process-group	   for Process Group		0
+heading	For Session	os_impl/only_posix/ids.html#function-signatures-amp-descriptions-for-session	   For Session		0

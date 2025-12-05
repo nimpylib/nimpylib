@@ -1,0 +1,2 @@
+nimTitle	dos	platform_impl/dos.html	module src/pylib/Lib/platform_impl/dos		0
+nim	private_syscmd_ver	platform_impl/dos.html#private_syscmd_ver,string,string,string	proc private_syscmd_ver(system, release, version = "";\n                   supported_platforms = @["win32", "win16", "dos"]): tuple[\n    system, release, version: string]		21

@@ -1,0 +1,3 @@
+nimTitle	cmpOA	pylib/collections_abc/cmpOA.html	module src/pylib/collections_abc/cmpOA		0
+nim	`<=`	pylib/collections_abc/cmpOA.html#<=,openArray[A],openArray[B]	proc `<=`[A, B](a: openArray[A]; b: openArray[B]): bool		18
+nim	`<`	pylib/collections_abc/cmpOA.html#<,openArray[A],openArray[B]	proc `<`[A, B](a: openArray[A]; b: openArray[B]): bool		19
