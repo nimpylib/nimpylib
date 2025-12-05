@@ -1,6 +1,8 @@
 
 
+import ./platform_impl/unameAny
 import ./private/platformInfo
+import ./sys
 import ../pystring/strimpl
 export strimpl
 
@@ -8,6 +10,14 @@ proc version*(): PyStr = str `platform.version`()
 
 func python_implementation*(): PyStr{.inline.} = str "PyNim"
 func system*(): PyStr{.inline.} = str `platform.system`
+
+template dispatch(attr){.dirty.} =
+  proc attr*(): PyStr{.inline.} = str uname().attr
+
+dispatch(node)
+#dispatch(system)
+dispatch(release)
+dispatch(processor)
 
 const machineS = hostCPU
 #[ doc says:
@@ -50,3 +60,5 @@ func machine*(): PyStr{.inline.} =
     of "arm64": "aarch64"
     else: machineS
 
+when isMainModule:
+  echo uname()
