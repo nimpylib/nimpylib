@@ -18,6 +18,7 @@ impExp sys_impl,
   getencodings,
   sizes,
   flagsImpl,
+  getwindows,
   auditImpl
 
 
