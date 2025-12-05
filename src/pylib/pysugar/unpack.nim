@@ -3,6 +3,13 @@ import ./stmt/unpack
 
 macro unpack*(data: untyped, values: varargs[untyped]): untyped =
   runnableExamples:
+    block lenTooLong:
+      let ls = @[1, ]
+      doAssertRaises IndexDefect:
+        discard ls.unpack(2)
+      doAssertRaises IndexDefect:
+        ls.unpack(a, b)
+
     # Simple unpacking - you need to provide the length to unpack
     let (a, b, c) = @[1, 2, 3, 4].unpack(3)
     doAssert (a + b + c) == 6
@@ -45,3 +52,11 @@ macro unpack*(data: untyped, values: varargs[untyped]): untyped =
 
     doAssert @[ca, cb, cc].join(", ") == "how, are, you"
   result = unpackImpl(data, values)
+
+macro unpackValues*(data: untyped, values) =
+  ## like `unpack`_ but works with a single `values` argument,
+  ##   see examples:
+  runnableExamples:
+    @[1, 2, 3].unpackValues (a, b, c)
+    doAssert [a, b, c] == [1, 2, 3]
+  unpackImpl(data, values)
