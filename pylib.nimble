@@ -6,7 +6,10 @@ when fileExists("./src/pylib/version.nim"):  # when installing
 else:  # after installed
   import "pylib/version" as libver
 
-version       = Version
+import std/macros; macro asgnVer = quote do: version = `Version`
+asgnVer()  # declarative parser of nimble requires version to be literals
+#version       = Version
+
 author        = "Danil Yarantsev (Yardanico), Juan Carlos (juancarlospaco), lit (litlighilit)"
 description   = "Nim library with python-like functions and operators"
 license       = "MIT"
