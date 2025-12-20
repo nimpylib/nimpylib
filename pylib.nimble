@@ -6,7 +6,8 @@ when fileExists("./src/pylib/version.nim"):  # when installing
 else:  # after installed
   import "pylib/version" as libver
 
-import std/macros; macro asgnVer = quote do: version = `Version`
+import std/macros
+macro asgnVer = quote do: version = `Version`
 asgnVer()  # declarative parser of nimble requires version to be literals
 #version       = Version
 
@@ -18,6 +19,18 @@ skipDirs      = @["examples"]
 requires "nim > 2.0.4"
 # 1.6.0: ensure `pydef.nim`c's runnableExamples works
 # 2.0.4: `Lib/sys_impl/getencodings` `template importPython(submod, sym) = from ../../Python/submod import sym` doesn't work
+
+var pylibPre = "https://github.com/nimpylib"
+let envVal = getEnv("NIMPYLIB_PKGS_BARE_PREFIX")
+if envVal != "": pylibPre = ""
+#if pylibPre == Def: pylibPre = ""
+elif pylibPre[^1] != '/':
+  pylibPre.add '/'
+template pylib(x, ver) =
+  requires if pylibPre == "": x & ver
+           else: pylibPre & x
+
+pylib "pyrepr", " ^= 0.1.1"
 
 import std/os
 const commentestPath = "./tools/tests/commentest"

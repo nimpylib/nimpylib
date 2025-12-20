@@ -10,7 +10,6 @@ on:
   workflow_dispatch:
 
 env:
-  nim-version: 'stable'
   git-url-arg: --git.url:https://github.com/${{ github.repository }} --git.commit:master
   deploy-dir: .gh-pages
   lib-deploy-dir: .gh-pages/Lib
@@ -18,45 +17,15 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      pages: write
+      id-token: write
     steps:
     - uses: actions/checkout@v4
-    - name: Cache nimble
-      id: cache-nimble
-      uses: actions/cache@v4
+    - uses: nimpylib/doc-deploy@v0.1.3
       with:
-          path: ~/.nimble
-          key: ${{ runner.os }}-nimble
-    - uses: jiro4989/setup-nim-action@v1
-      with:
-        nim-version: ${{ env.nim-version }}
-    - name: genDoc
-      run: nimble testDoc --index:on --project ${{ env.git-url-arg }} --outdir:${{ env.deploy-dir }} -d:homepage="${{ github.event.repository.homepage }}"
-    - name: genLibDoc
-      run: nimble testLibDoc ${{ env.git-url-arg }} --outdir:${{ env.lib-deploy-dir }}
-    - name: "Copy to index.html"
-      run: |
-        cd ${{ env.deploy-dir }}
-        index_file=${{ github.event.repository.name }}.html
-        # package name is not prefixed with 'nim',
-        # in case repo name is prefixed.
-        [ -f $index_file ] || index_file=${index_file#nim}
-        cp $index_file index.html
-        cd $OLDPWD
-    - name: "CNAME"
-      run: |
-        cname=$(echo ${{ github.event.repository.homepage }} | grep -oP 'https?://\K[^/]+')
-        prefix="docs."
-        # py: if cname.startswith(prefix)
-        # bash: if [[ "${cname}" != $prefix* ]]
-        if [ ${cname##$prefix} = $cname ]; then  
-            cname="${prefix}${cname}"
-        fi
-        echo -n $cname > ${{ env.deploy-dir }}/CNAME
-        # We must re-build CNAME as we use 'peaceiris/actions-gh-pages@v4',
-        # where the old dir (including CNAME) will be purged.
-    - name: Deploy documents
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ${{ env.deploy-dir }}
+        homepage: https://docs.nimpylib.org
+        proj-name: pylib
+        deploy-dir: ${{ env.deploy-dir }}
+        nimble-doc-cmd: |
+          nimble testDoc --index:on --project ${{ env.git-url-arg }} --outdir:${{ env.deploy-dir }} -d:homepage="${{ github.event.repository.homepage }}"
+          nimble testLibDoc ${{ env.git-url-arg }} --outdir:${{ env.lib-deploy-dir }}

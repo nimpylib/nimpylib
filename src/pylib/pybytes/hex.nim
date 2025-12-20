@@ -3,29 +3,7 @@ import ./bytesimpl
 import ../pystring/strimpl
 import std/strutils
 
-const hexChars = "0123456789abcdef"
-
-template setHex(result; c: char, base: int) =
-  var n = ord(c)
-  result[base + 1] = hexChars[n and 0xF]
-  n = n shr 4
-  result[base] = hexChars[n]
-
-func toLowerHex(s: string): string =
-  result = newString(s.len * 2)
-  for pos, c in s:
-    result.setHex c, 2 * pos
-
-func toLowerHex(s: string; sep: char): string =
-  let le = s.len
-  if le == 0: return ""
-  if le == 1: return s.toLowerHex
-  result = newString le * 3 - 1
-  result.setHex s[0], 0
-  for i in 1..<le:
-    let pos = 3 * i
-    result[pos-1] = sep
-    result.setHex s[i], pos
+import pkg/pyrepr
 
 using self: PyBytes
 func hex*(self): PyStr =

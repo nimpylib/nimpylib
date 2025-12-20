@@ -1,6 +1,7 @@
 
 import std/strutils
 from std/unicode import runeAt, utf8, runeLen, Rune, `$`
+import pkg/pyrepr as pyreprLib
 import ./strimpl
 from ../pyerrors import TypeError
 import ../builtins/[reprImpl, asciiImpl]
@@ -88,25 +89,9 @@ template ascii*(a: untyped): PyStr =
   bind pyasciiImpl, str
   str pyasciiImpl(repr(a))
 
-template makeConv(name, call: untyped, len: int, pfix: string) =
-  func `name`*(a: SomeInteger): PyStr =
-    # Special case
-    if a == 0:
-      return `pfix` & "0"
-    var res = call(
-      when a isnot SomeUnsignedInt:
-        abs(a)
-      else:
-        a,
-      `len`).toLowerAscii().strip(chars = {'0'}, trailing = false)
-    # Do it like in Python - add - sign
-    res.insert(`pfix`)
-    when a isnot SomeUnsignedInt: # optimization
-      if a < 0:
-        res.insert "-"
-    result = str res
+template makeConv(name) =
+  func `name`*(a: SomeInteger): PyStr = str pyreprLib.name(a)
 
-# Max length is derived from the max value for uint64
-makeConv(oct, toOct, 30, "0o")
-makeConv(bin, toBin, 70, "0b")
-makeConv(hex, toHex, 20, "0x")
+makeConv oct
+makeConv bin
+makeConv hex
