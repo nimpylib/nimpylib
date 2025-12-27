@@ -9,7 +9,7 @@ elif not defined(js):
 import ./types
 const DEF_INT = low(int)
 when defined(js):
-  import ../../jsutils/consts
+  import pkg/jscompat/utils/consts
   template asgn_cint(name, val){.used.} =
     let name = val
   template decl_c_intImpl(variable, name, _; defval) =

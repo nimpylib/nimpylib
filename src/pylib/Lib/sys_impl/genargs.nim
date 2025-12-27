@@ -2,7 +2,7 @@
 import ./cmdlineCompat
 const InJs = defined(js)
 when InJs:
-  import ../../jsutils/denoAttrs
+  import pkg/jscompat/utils/denoAttrs
 
 const
   hasArgn = declared(paramCountCompat)

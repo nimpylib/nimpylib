@@ -3,7 +3,7 @@ import ./[pylifecycle, pynsig, c_py_handler_cvt]
 import ./pyatomic
 const Js = defined(js)
 when Js:
-  import ../../jsutils/consts
+  import pkg/jscompat/utils/consts
 
 const DWin* = defined(windows)
 when DWin:

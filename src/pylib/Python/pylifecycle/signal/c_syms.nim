@@ -23,7 +23,7 @@ when defined(windows):
     SIG_ERR*{.importc, header: "<signal.h>".}: CSighandler
 elif defined(js):
   import std/jsffi
-  import ../../../jsutils/consts
+  import pkg/jscompat/utils/consts
   type SignalError = object of OSError
   let
     SIG_DFL*: CSighandler = proc (x: CSignal){.noconv.} = discard "DFL"
@@ -66,8 +66,8 @@ when HAVE_SIGACTION:
   ## XXX: posix/winlean's a2 cannot be nil (a var Sigaction)
 
 when defined(js):
-  import ../../../jsutils/denoAttrs
-  import ../../../jsutils/jsarrays
+  import pkg/jscompat/utils/denoAttrs
+  import pkg/jscompat/utils/jsarrays
   proc js_signal(a1: CSignal, a2: CSighandler) {.
     importDenoOrProcess(addSignalListener, addListener)
   .}

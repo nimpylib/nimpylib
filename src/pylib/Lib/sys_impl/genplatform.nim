@@ -5,8 +5,11 @@
 # and MACHDEP is defined in configure.ac L313
 
 import ./util
+const Js = defined(js)
+when Js:
+  import pkg/jscompat/utils/denoAttrs
 
-when defined(js) and not defined(nodejs):
+when Js and not defined(nodejs):
   from std/strutils import toLowerAscii, startsWith
 
 when defined(linux) or defined(aix):
@@ -21,8 +24,9 @@ when defined(linux) or defined(aix):
 proc getPlatform*(): string =
   when defined(js):
     when defined(nodejs):
-      proc `os.platform`(): cstring{.importjs:
-        "require('os').platform()".}
+      #let os{.importjs: awaitImportNodeExpr"os".}: JsObject
+      #return os.platform().to(cstring).`$`
+      proc `os.platform`: cstring{.importNode(os, platform).}
       return `os.platform`().`$`
     else:
       let `navigator.platform`{.importjs: "(navigator.platform||process.platform)".}: cstring

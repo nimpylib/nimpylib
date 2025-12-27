@@ -17,7 +17,7 @@ else:
 
 const InJs = defined(js)
 when InJs:
-  import ./jsoserr
+  import pkg/jscompat/utils/oserr
 
 import ../io_abc
 import ../private/backendMark

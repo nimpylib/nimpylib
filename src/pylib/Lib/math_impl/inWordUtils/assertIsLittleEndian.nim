@@ -10,17 +10,10 @@ when not defined(js):
   func isLittleEndian*: bool{.compileTime.} = compileLittleEndian
     
 elif defined(nodejs):
-    when defined(es6):
-      let jsLittleEndianExpr{.importjs: "(await import('node:os')).endianness() == 'LE'".}: bool
-      let jsLittleEndian = jsLittleEndianExpr  # force no inline in case `await` appears in function
-      func isLittleEndian*: bool =
-        wrapVM:
-          {.noSideEffect.}:
-            jsLittleEndian
-    else:
-      proc os_endianness(): cstring{.importjs: "require('node:os').endianness()".}
-      func isLittleEndian*: bool =
-        wrapVM os_endianness() == "LE"
+    import pkg/jscompat/utils/denoAttrs
+    proc os_endianness(): cstring{.importNode(os, endianness).}
+    func isLittleEndian*: bool =
+      wrapVM os_endianness() == "LE"
 else:
   import ./jsTypedArray
   func isLittleEndian*: bool =

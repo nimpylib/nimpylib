@@ -3,7 +3,7 @@ const InJs = defined(js)
 const NodeJs = defined(nodejs)
 when InJs:
   import std/jsffi
-  import ../jsutils/denoAttrs
+  import pkg/jscompat/utils/denoAttrs
   let js_env{.importDenoOrProcess(env).}: JsObject
   const jsgetExpr = when NodeJs: "[]" else: "get"
 

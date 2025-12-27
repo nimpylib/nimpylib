@@ -4,10 +4,10 @@ import ../sys_impl/auditImpl as sys
 export InJs
 import ../../pyerrors/[oserr, simperr, rterr]
 when defined(js):
-  import ../../pyerrors/jsoserr
+  import pkg/jscompat/utils/oserr as jsoserr
   export jsoserr
 
-  import ../../jsutils/denoAttrs
+  import pkg/jscompat/utils/denoAttrs
   export denoAttrs
 import ../../io_abc
 import ../../noneType
