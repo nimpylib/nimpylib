@@ -32,6 +32,7 @@ template pylib(x, ver) =
 
 pylib "pyrepr", " ^= 0.1.1"
 pylib "jscompat", " ^= 0.1.1"
+pylib "translateEscape", " ^= 0.1.0"
 
 import std/os
 const commentestPath = "./tools/tests/commentest"
