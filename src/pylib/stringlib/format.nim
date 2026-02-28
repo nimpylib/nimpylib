@@ -6,7 +6,7 @@ import std/[
   parseutils, macros,
   tables, hashes
 ]
-import ../nimpatch/typeinfo
+import pkg/nimpatch/typeinfo
 import ./formats
 export formats
 import ./format_utils

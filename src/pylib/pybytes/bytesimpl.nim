@@ -1,6 +1,6 @@
 
 import ../collections_abc
-import ../nimpatch/newUninit
+import pkg/nimpatch/newUninit
 
 type
   PyBytes* = distinct string

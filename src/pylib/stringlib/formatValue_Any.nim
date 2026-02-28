@@ -1,8 +1,8 @@
 ## formatValue for bool, char, cstring and typeinfo.Any
 
 import std/strformat
-import ../nimpatch/typeinfo
-import ../nimpatch/anydollar
+import pkg/nimpatch/typeinfo
+import pkg/nimpatch/anydollar
 
 import std/macros
 template genFormatValue(T){.dirty.} =

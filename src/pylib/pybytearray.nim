@@ -5,7 +5,7 @@ import ./collections_abc, ./mutSeqSliceOp
 import std/strutils
 
 import ./stringlib/percent_format
-import ./nimpatch/castChar
+import pkg/nimpatch/castChar
 # Begin impl
 type
   PyByteArray* = ref object

@@ -22,7 +22,7 @@
 ## 
 ## *NOTE*: Currently int is not acceptable when it comes to float about functions
 
-import ../nimpatch/nansign
+import pkg/nimpatch/nansign
 import std/math
 import std/macros
 from ../numTypes/ints/getter import bit_lengthUsingBitops

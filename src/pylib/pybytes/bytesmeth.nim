@@ -5,7 +5,7 @@ import ./strip, ./split/[split, rsplit]
 export strip, split, rsplit
 import ../stringlib/meth
 import ../version
-import ../nimpatch/castChar
+import pkg/nimpatch/castChar
 
 template `*`*(a: PyBytes; i: int): PyBytes =
   bind repeat, PyBytes

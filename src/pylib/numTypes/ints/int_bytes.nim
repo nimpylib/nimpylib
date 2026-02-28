@@ -3,7 +3,7 @@ from std/math import ceilDiv
 import ./decl
 import ./nint_proto
 import ../reimporter
-import ../../nimpatch/castChar
+import pkg/nimpatch/castChar
 const weridTarget = defined(js) or defined(nimscript)
 
 func parseByteOrder(byteorder: string): Endianness =

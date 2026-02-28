@@ -23,7 +23,7 @@ from ../numTypes/floats/parsefloat import parsePyFloat
 import ../numTypes/utils/stripOpenArray
 from ../noneType import NoneType
 import ../version
-import ../nimpatch/floatdollar
+import pkg/nimpatch/floatdollar
 
 type
   PyTComplex*[T] = distinct Complex[T]  ## generics version of `PyComplex`_

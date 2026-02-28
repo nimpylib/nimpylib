@@ -6,7 +6,7 @@ when NimMajor < 2:
 else:
   import std/oserrors
 
-import ../../nimpatch/newUninit
+import pkg/nimpatch/newUninit
 import ../../pyconfig/bootstrap_hash
 import ./private/defined_macros
 #[

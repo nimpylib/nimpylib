@@ -4,9 +4,9 @@ from std/strutils import toLowerAscii, isDigit # except `%`  # avoid overload
 import std/tables
 import std/strformat
 import std/typetraits
-import ../nimpatch/typeinfo
-import ../nimpatch/anydollar
-import ../nimpatch/castChar
+import pkg/nimpatch/typeinfo
+import pkg/nimpatch/anydollar
+import pkg/nimpatch/castChar
 
 import std/macros except `$`, `[]`
 

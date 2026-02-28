@@ -3,7 +3,7 @@
 import ./parsefloat
 import ../utils/stripOpenArray
 import ../reimporter
-import ../../nimpatch/floatdollar
+import pkg/nimpatch/floatdollar
 
 proc repr*(x: SomeFloat): string =
   floatdollar.`$` x

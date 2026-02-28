@@ -14,7 +14,7 @@ import ./consts
 include ./unicase/[
   toUpperMapper, casefoldMapper
 ]
-import ../nimpatch/castChar
+import pkg/nimpatch/castChar
 
 const
   OneUpperToMoreTable = toTable OneUpperToMoreTableLit

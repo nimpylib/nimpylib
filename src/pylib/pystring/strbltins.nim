@@ -5,7 +5,7 @@ import pkg/pyrepr as pyreprLib
 import ./strimpl
 from ../pyerrors import TypeError
 import ../builtins/[reprImpl, asciiImpl]
-import ../nimpatch/abs
+import pkg/nimpatch/abs
 
 func reversed*(s: PyStr): PyStr =
   unicode.reversed s

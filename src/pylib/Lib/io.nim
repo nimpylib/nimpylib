@@ -46,7 +46,7 @@ import ../pystring/[strimpl, strbltins]
 import ../pybytes/[bytesimpl, bytesbltins]
 import ./warnings
 import ./sys_impl/auditImpl as sys
-import ../nimpatch/winOpenFileHandle
+import pkg/nimpatch/winOpenFileHandle
 
 const
   SEEK_SET* = 0
