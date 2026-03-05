@@ -5,3 +5,6 @@ tester*
 tempfiletest
 /testresults/
 /tools/bin/
+nimble.develop
+nimble.paths
+nimbledeps
