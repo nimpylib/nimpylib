@@ -3,5 +3,6 @@
 
 import ../../private/trans_imp
 
-impExp pymath,
-  short_float_repr
+impExpCwd pymath, [
+  short_float_repr,
+]

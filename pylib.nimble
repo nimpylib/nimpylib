@@ -34,6 +34,7 @@ pylib "pyrepr", " ^= 0.1.1"
 pylib "jscompat", " ^= 0.1.1"
 pylib "nimpatch", " ^= 0.1.0"
 pylib "translateEscape", " ^= 0.1.0"
+pylib "handy_sugars", " ^= 0.1.0"
 
 import std/os
 const commentestPath = "./tools/tests/commentest"

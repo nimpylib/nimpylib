@@ -2,5 +2,6 @@
 
 import ../../private/trans_imp
 
-impExp only_posix,
-  ids
+impExpCwd only_posix, [
+  ids,
+]

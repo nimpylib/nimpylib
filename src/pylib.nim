@@ -46,10 +46,11 @@ when not defined(js) and not defined(nimscript):
   export io
 import pylib/private/trans_imp
 
-impExp pylib,
+impExpCwd pylib, [
   noneType, pybool, builtins,
   ops, pyerrors,
-  pysugar
+  pysugar,
+]
 
 
 template timeit*(repetitions: int, statements: untyped): untyped{.deprecated:

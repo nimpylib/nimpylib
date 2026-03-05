@@ -11,7 +11,7 @@ genInfos(asis, none(string))
 template append(x: seq, y) = x.add y
 genArgs string, seq, asis, asis, newSeqOfCap
 
-impExp sys_impl,
+impExpCwd sys_impl, [
   fenvs,
   stdio,
   exits,
@@ -19,6 +19,7 @@ impExp sys_impl,
   sizes,
   flagsImpl,
   getwindows,
-  auditImpl
+  auditImpl,
+]
 
 

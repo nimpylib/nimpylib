@@ -1,7 +1,8 @@
 
 import ./private/trans_imp
 
-impExp pyerrors,
+impExpCwd pyerrors, [
   oserr, simperr,
   rterr, signals,
-  aritherr, unicode_err
+  aritherr, unicode_err,
+]
