@@ -1,12 +1,4 @@
 
-import std/tables
-import ./errno_impl/[errnoUtils, errnoConsts]
-export errnoUtils except Errno, initErrorcodeMap
+import pkg/errno as errnoLib
+export errnoLib
 
-export errnoConsts
-
-import ./errno_impl/private/singleton_errno
-export errno
-
-declErrorcodeWith[int, string] initTable
-export errorcode

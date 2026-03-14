@@ -1,3 +1,3 @@
 
-import ./private/exportUtils
-exportAllErrnosViaEnumOrImportc()
+import pkg/errno/errnoConsts
+export errnoConsts
