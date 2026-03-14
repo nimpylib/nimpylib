@@ -115,7 +115,7 @@ suite "complex.__repr__":
     assertEqual str(complex(-0.0, NaN)), "(-0+nanj)"
 
 
-type OverflowError = OverflowDefect
+type OverflowError = aritherr.OverflowError
 
 suite "complex.__pow__":
   template assertAlmostEqual(a, b: float) =
