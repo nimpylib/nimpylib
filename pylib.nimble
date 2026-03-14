@@ -36,6 +36,7 @@ pylib "nimpatch", " ^= 0.1.1"
 pylib "translateEscape", " ^= 0.1.0"
 pylib "handy_sugars", " ^= 0.1.0"
 pylib "autoconf_sugars", " ^= 0.1.0"
+pylib "dtoa_c", " ^= 0.1.0"
 
 import std/os
 const commentestPath = "./tools/tests/commentest"
