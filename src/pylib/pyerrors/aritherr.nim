@@ -1,4 +1,3 @@
 
-type
-  ArithmeticError* = object of CatchableError
-  ZeroDivisionError* = object of ArithmeticError
+import pkg/float_utils/aritherr
+export aritherr
