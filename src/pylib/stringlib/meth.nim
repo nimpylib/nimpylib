@@ -5,6 +5,8 @@ import ./replaceWithCount
 import ./errHandle
 import ../pyerrors/simperr
 
+import pkg/unicode_case/utils
+export istitleImpl, allAlpha
 
 template norm_idx(i, s): int =
   if i < 0: len(s) + i
@@ -135,47 +137,6 @@ wrap2 isalpha, isAlphaAscii
 wrap2 isspace, isspaceImpl
 wrap2 isdigit, isdigitImpl
 wrap2 isalnum, isAlphaNumeric
-
-template allAlpha*(a, isWhat, isNotWhat: typed, iter, firstItemGetter) =
-  ## used as func body.
-  ## e.g.
-  ## func isupper(self: PyBytes): bool =
-  ##   self.allAlpha(isUpperAscii, isLowerAscii, items, `[0]`)
-  let le = len(a)
-  if le == 1: return isWhat(a.firstItemGetter)
-  if le == 0: return false
-  var notRes = true
-  for r in a.iter:
-    if r.isNotWhat:
-      return false
-    elif notRes and r.isWhat:
-      notRes = false
-  result = not notRes
-
-template istitleImpl*(a, isupper, islower: typed, iter, firstItemGetter) =
-  let le = len(a)
-  if le == 1:
-    let c = a.firstItemGetter
-    if c.isupper: return true
-    return false
-  if le == 0: return false
-
-  var cased, previous_cased: bool
-
-  for ch in a.iter:
-    if ch.isupper:
-      if previous_cased:
-        return false
-      previous_cased = true
-      cased = true
-    elif ch.islower:
-      if not previous_cased:
-        return false
-      previous_cased = true
-      cased = true
-    else:
-      previous_cased = false
-  result = cased
 
 template retIfWider[S](a: S) =
   if len(a) >= width:

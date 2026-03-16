@@ -1,7 +1,6 @@
 
 import std/unicode except split
 import std/strutils except strip, split, rsplit
-import std/tables
 
 import ./strimpl
 export strimpl  # for runnableExamples
@@ -11,39 +10,9 @@ import ../stringlib/meth
 import ../version
 
 import ./consts
-include ./unicase/[
-  toUpperMapper, casefoldMapper
-]
 import pkg/nimpatch/castChar
-
-const
-  OneUpperToMoreTable = toTable OneUpperToMoreTableLit
-
-type
-  RuneI = int32
-  CasefoldInnerTab[K, V] = Table[K, V]
-  CasefoldTableT = object
-    common: CasefoldInnerTab[RuneI, RuneI]
-    full: CasefoldInnerTab[RuneI, string]
-
-const CasefoldTable = CasefoldTableT(
-  common: toTable CommonMapper,
-  full: toTable FullMapper
-)
-
-func addCasefold(res: var string, k: Rune) =
-  template tab: untyped = CasefoldTable
-  template add(s: var string, ri: RuneI) =
-    s.add Rune ri
-  let runeI = RuneI k
-  template addIfIn(table) =
-    let val = table.getOrDefault runeI
-    if val != default typeof val:
-      res.add val
-      return
-  addIfIn tab.common
-  addIfIn tab.full
-  res.add k
+import pkg/unicode_case
+import pkg/unicode_case/utils
 
 # str.format is in ./format
 
@@ -63,35 +32,13 @@ func count*(a: PyStr, sub: PyStr, start: int): int =
 func count*(a: PyStr, sub: PyStr, start=0, `end`: int): int =
   meth.count(a, sub, start, `end`)
 
-func casefoldImpl(s: string): string =
-  ## Mimics Python str.casefold() -> str
-  for ch in s.runes:
-    result.addCasefold ch
-
 func casefold*(a: PyStr): PyStr{.pysince(3,3).} =
   ## str.casefold()
   ##
   ## `str.lower()` is used for most characters, but, for example,
   ## Cherokee letters is casefolded to their uppercase counterparts,
   ## and some will be converted to their normal case, e.g. "ß" -> "ss"
-  str casefoldImpl $a
-
-func py_toLower(s: string): string =
-  result = newStringOfCap s.len
-  for ch in s.runes:
-    if ch == Rune(304):
-      result.add "i\u0307"
-      continue
-    result.add toLower ch
-
-func py_toUpper(s: string): string =
-  result = newStringOfCap s.len
-  for ch in s.runes:
-    let s = OneUpperToMoreTable.getOrDefault ch.int32
-    if s.len == 0:
-      result.add ch.toUpper
-    else:
-      result.add s
+  str unicode_case.casefold toRunes a
 
 func lower*(a: PyStr): PyStr =
   ## str.lower
@@ -102,7 +49,8 @@ func lower*(a: PyStr): PyStr =
     let dotI = Rune 0x0130  # İ  (LATIN CAPITAL LETTER I WITH DOT ABOVE)
     assert str(dotI).lower() == "i\u0307"  ## i̇ (\u0207 is a upper dot)
     assert dotI.toLower() == Rune('i')
-  str py_toLower $a
+  str unicode_case.toLower toRunes a
+
 func upper*(a: PyStr): PyStr =
   ## str.upper
   ## 
@@ -114,30 +62,8 @@ func upper*(a: PyStr): PyStr =
     assert str(a).upper() == "Α͂Ι"  # 3 chars
     assert a.toUpper() == a   # Nim just maps it as-is.
     # There is more examples... (101 characters in total)
-  str py_toUpper $a
+  str meth.toUpper toRunes a
 
-func isCased(r: Rune): bool =
-  ## Unicode standard 5.0 introduce `isCased`
-  r.isLower or r.isUpper or r.isTitle
-
-type RuneImpl = int32
-proc py_toTitle(r: Rune): Rune =
-  ## unicode.toTitle only respect those whose
-  ## titlecase differs uppercase.
-  ## e.g.
-  ##  not respect ascii
-  var c = RuneImpl(r)
-  if c <= RuneImpl high char:
-    return castChar(c).toUpperAscii.Rune
-  result = r.toTitle()
-  if result == r:
-    # Nim's toTitle only convert those whose titlecase differs uppercase.
-    return r.toUpper()
-    ## when it comes to Ligatures,
-    ##  toUpper() will do what `title()` in Python does
-    ##  for example, `'ῃ'.upper()` gives `'HI'` in Python (length becomes 2)
-    ##  but Nim's `toUpper`'s result is always of 1 length, and
-    ##  `"ῃ".runeAt(0).toUpper` gives `ῌ`, a.k.a. `'ῃ'.title()` in Python. 
 
 func title*(a: PyStr): PyStr =
   ## str.title()
@@ -151,14 +77,8 @@ func title*(a: PyStr): PyStr =
     assert unicode.title(s) == "Ǉ"  # \u01c7
   # currently titleImpl is ok for ascii only.
   #result.titleImpl a, isUpper, isLower, toUpper, toLower, runes, `+=`
-  var previous_is_cased = false
-  var res = newStringOfCap a.byteLen
-  for ch in a.runes:
-    res.add:
-      if previous_is_cased: ch.toLower
-      else: ch.py_toTitle
-    previous_is_cased = ch.isCased
-  result = str res
+  str unicode_case.toTitle toRunes a
+
 
 func capitalize*(a: PyStr): PyStr =
   ## make the first character have title/upper case and the rest lower case.
@@ -166,18 +86,7 @@ func capitalize*(a: PyStr): PyStr =
   ## changed when Python 3.8: the first character will have title case.
   ## 
   ## while Nim's `unicode.capitalize` only make the first character upper-case.
-  let s = $a
-  if len(s) == 0:
-    return ""
-  var
-    rune: Rune
-    i = 0
-  fastRuneAt(s, i, rune, doInc = true)
-  let first = when (PyMajor, PyMinor) < (3,8):
-    py_toUpper(rune)
-  else:
-    py_toTitle(rune)
-  result = $first + substr(s, i).lower()
+  str unicode_case.capitalize toRunes a
 
 
 export strutils.startsWith, strutils.endsWith
@@ -225,14 +134,8 @@ func rindex*(a, b: PyStr, start = 0, `end` = len(a)): int =
 const AsciiOrdRange = 0..0x7F
 func isascii*(a: Rune): bool = ord(a) in AsciiOrdRange
 
-template runeCheck(s: PyStr, runePredict; zeroLenTrue: static[bool]) =
-  ## Common code for isascii and isspace.
-  result = when zeroLenTrue: true
-  else:
-    if s.byteLen == 0: false else: true
-  for r in s.runes:
-    if not runePredict r:
-      return false
+template runeCheck(s: PyStr; runePredict; zeroLenTrue: static[bool]) =
+  runeCheck(s.runes, s.byteLen, runePredict, zeroLenTrue)
 
 func isascii*(a: PyStr): bool{.pysince(3,7).} =
   a.runeCheck isascii, zeroLenTrue=true
