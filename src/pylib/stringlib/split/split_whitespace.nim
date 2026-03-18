@@ -50,10 +50,4 @@ iterator split_whitespace*[S](pystr: S, maxsplit = -1): S =
   for i in pystr.split_whitespace_impl(str_len=str_len, maxsplit=maxcount):
     yield i
 
-proc split_whitespace*[S](pystr: S, maxsplit = -1): PyList[S] =
-  let
-    str_len = len(pystr)
-    maxcount = norm_maxsplit(maxsplit, str_len)
-  result = newPyListOfCap[S](PREPARE_CAP(maxcount))
-  for i in pystr.split_whitespace_impl(str_len=str_len, maxsplit=maxcount):
-    result.append i
+proc_gen_split split_whitespace, PyList, append
