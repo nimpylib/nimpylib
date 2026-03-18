@@ -138,9 +138,6 @@ wrap2 isspace, isspaceImpl
 wrap2 isdigit, isdigitImpl
 wrap2 isalnum, isAlphaNumeric
 
-template retIfWider[S](a: S) =
-  if len(a) >= width:
-    return a
 
 template `*`(c: char, i: int): string =
   bind repeat
@@ -161,15 +158,6 @@ func ljust*(a: string, width: int, fillchar = ' ' ): string =
   alignLeft $a, width, fillchar
 func rjust*(a: string, width: int, fillchar = ' ' ): string =
   align $a, width, fillchar
-
-template chkLen(a): int = 
-  ## 1. returns if wider; 2. raises if not 1 len; 3. length as result
-  retIfWider a
-  let le = len(fillchar)
-  if le != 1:
-    raise newException(TypeError, 
-      "The fill character must be exactly one character long")
-  le
 
 func center*[S](a: S, width: int, fillchar: S = " "): S =
   discard chkLen a
