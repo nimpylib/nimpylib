@@ -40,6 +40,7 @@ pylib "errno", " ^= 0.1.0"
 pylib "float_utils", " ^= 0.1.0"
 pylib "pycomplex", " ^= 0.1.0"
 pylib "unicode_case", " ^= 0.1.0"
+pylib "pyformats", " ^= 0.1.0"
 
 import std/os
 const commentestPath = "./tools/tests/commentest"
