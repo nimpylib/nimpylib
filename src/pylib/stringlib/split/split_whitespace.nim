@@ -50,4 +50,3 @@ iterator split_whitespace*[S](pystr: S, maxsplit = -1): S =
   for i in pystr.split_whitespace_impl(str_len=str_len, maxsplit=maxcount):
     yield i
 
-proc_gen_split split_whitespace, PyList, append

@@ -43,5 +43,3 @@ iterator rsplit_whitespace_impl[S](pystr: S, maxsplit, str_len: int): S =
       SPLIT_ADD pystr, 0, i+1
 
 
-proc_gen_split rsplit_whitespace, PyList, append:
-  result.reverse()
