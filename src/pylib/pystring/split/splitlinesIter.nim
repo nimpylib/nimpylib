@@ -1,7 +1,7 @@
 
 from std/unicode import Rune
 import ./common
-from ./reimporter import splitlines
+import ./reimporter
 
 # Table of https://docs.python.org/3/library/stdtypes.html#str.splitlines
 const LineBreaks = [
@@ -22,6 +22,4 @@ template IS_LINKBREAK(str: PyStr, pos): bool =
 template IS_CAR_NL(s: PyStr, pos, str_len): bool =
   s[pos] == '\r' and pos + 1 < str_len and self[pos+1] == '\n'
 
-iterator splitlines*(self: PyStr, keepends = false): PyStr =
-  for i in splitlines[PyStr](self, keepends):
-    yield i
+gen_splitlines PyStr

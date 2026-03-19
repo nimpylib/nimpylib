@@ -3,7 +3,6 @@ import std/strutils except strip, split, rsplit
 
 import ./replaceWithCount
 import ./errHandle
-import ../pyerrors/simperr
 
 import pkg/unicode_case/utils
 export istitleImpl, allAlpha
