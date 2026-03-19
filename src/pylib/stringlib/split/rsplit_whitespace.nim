@@ -1,6 +1,6 @@
 
 import ./common
-import ./reimporter
+
 # translated from CPython-3.13-alpha.6/Objects/
 #  stringlib/split.h
 #  unicodeobject.c
@@ -9,7 +9,7 @@ import ./reimporter
 
 # split.h split* have param of `PyObject* str_obj, const STRINGLIB_CHAR* str`,
 # where `str` is unicode version of `str_obj`
-iterator rsplit_whitespace_impl[S](pystr: S, maxsplit, str_len: int): S =
+iterator rsplit_whitespace_impl*[S](pystr: S, maxsplit, str_len: int): S =
   ## in reversed order
   ## 
   ## `maxsplit` must be Natural
