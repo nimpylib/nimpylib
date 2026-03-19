@@ -29,9 +29,13 @@ func norm_maxsplit*(maxsplit: int, str_len, sep_len: int): int =
     result = if sep_len == 0: 0 else: (str_len div sep_len) + 1
     if result < 0: result = str_len
 
-template proc_gen_split*(split_name; Seq; append; postdo: untyped =
-      block: discard
-  ){.dirty.} =
+template postdo(split_name) =
+  const name = astToStr(split_name)
+  when name[0] == 'r':  # rsplit[_whitespace]
+    result.reverse()
+
+template proc_gen_split_whitespace*(split_name; Seq; append){.dirty.} =
+  bind postdo
   bind norm_maxsplit, PREPARE_CAP
   proc split_name*[S](pystr: S, maxsplit = -1): Seq[S] =
     let
@@ -40,4 +44,4 @@ template proc_gen_split*(split_name; Seq; append; postdo: untyped =
     result = `new Seq OfCap`[S](PREPARE_CAP(maxcount))
     for i in pystr.`split_name impl`(str_len=str_len, maxsplit=maxcount):
       result.append i
-    postdo
+    postdo split_name
