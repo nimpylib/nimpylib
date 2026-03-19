@@ -6,6 +6,7 @@ export strip, split, rsplit
 import ../stringlib/meth
 import ../version
 import pkg/nimpatch/castChar
+import pkg/pystrutils/finds
 
 template `*`*(a: PyBytes; i: int): PyBytes =
   bind repeat, PyBytes
@@ -95,12 +96,11 @@ func index*(a: PyBytes, b: int, start = 0, `end` = len(a)): int =
 func rindex*(a: PyBytes, b: int, start = 0, `end` = len(a)): int =
   meth.rindex1(a, b, start, `end`)
 
-
 func find*(a: PyBytes, b: PyBytes, start = 0, `end` = len(a)): int =
-  meth.find(a, b, start, `end`)
+  meth.find($a, $b, start, `end`)
 
 func rfind*(a: PyBytes, b: PyBytes, start = 0, `end` = len(a)): int =
-  meth.rfind(a, b, start, `end`)
+  meth.rfind($a, $b, start, `end`)
 
 func index*(a: PyBytes, b: PyBytes, start = 0, `end` = len(a)): int =
   meth.index(a, b, start)
@@ -119,13 +119,9 @@ W isspace
 W isalpha
 W isdigit
 
-template firstChar(s: PyBytes): char = s.getChar 0
-template bytesAllAlpha(s: PyBytes, isWhat, notWhat): untyped =
-  s.allAlpha isWhat, notWhat, chars, firstChar
-func islower*(a: PyBytes): bool = a.bytesAllAlpha isLowerAscii, isUpperAscii
-func isupper*(a: PyBytes): bool = a.bytesAllAlpha isUpperAscii, isLowerAscii
-func istitle*(a: PyBytes): bool =
-  a.istitleImpl isUpperAscii, isLowerAscii, chars, firstChar
+func islower*(a: PyBytes): bool = islower @a
+func isupper*(a: PyBytes): bool = isupper @a
+func istitle*(a: PyBytes): bool = istitle @a
 
 func center*(a: PyBytes, width: int, fillchar = ' '): PyBytes =
   ## Mimics Python bytes.center(width: int, fillchar = b" ") -> bytes
@@ -146,7 +142,7 @@ func rjust*(a: PyBytes, width: int, fillchar: PyBytes ): PyBytes =
   meth.rjust(a, width, fillchar)
 
 func zfill*(a: PyBytes, width: int): PyBytes =
-  PyBytes meth.zfill($a, width)
+  meth.zfill(a, width)
 
 func removeprefix*(a: PyBytes, suffix: PyBytes): PyBytes =
   meth.removeprefix(a, suffix)
@@ -169,10 +165,15 @@ func join*[T](sep: PyBytes, a: openArray[T]): PyBytes =
   ## Mimics Python join() -> bytes
   meth.join(sep, a)
 
+
+template partitionImpl(partition): untyped =
+  let res = meth.partition($a, $sep)
+  (bytes res[0], bytes res[1], bytes res[2])
+
 func partition*(a: PyBytes, sep: PyBytes): tuple[before, sep, after: PyBytes] =
-  meth.partition(a, sep)
+  partitionImpl partition
 
 func rpartition*(a: PyBytes, sep: PyBytes): tuple[before, sep, after: PyBytes] =
-  meth.rpartition(a, sep)
+  partitionImpl rpartition
 
 

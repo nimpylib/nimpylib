@@ -9,10 +9,7 @@ export strip, split, rsplit
 import ../stringlib/meth
 import ../version
 
-import ./consts
 import pkg/nimpatch/castChar
-import pkg/unicode_case
-import pkg/unicode_case/utils
 
 # str.format is in ./format
 
@@ -38,7 +35,7 @@ func casefold*(a: PyStr): PyStr{.pysince(3,3).} =
   ## `str.lower()` is used for most characters, but, for example,
   ## Cherokee letters is casefolded to their uppercase counterparts,
   ## and some will be converted to their normal case, e.g. "ß" -> "ss"
-  str unicode_case.casefold toRunes a
+  str meth.casefold toRunes a
 
 func lower*(a: PyStr): PyStr =
   ## str.lower
@@ -49,7 +46,7 @@ func lower*(a: PyStr): PyStr =
     let dotI = Rune 0x0130  # İ  (LATIN CAPITAL LETTER I WITH DOT ABOVE)
     assert str(dotI).lower() == "i\u0307"  ## i̇ (\u0207 is a upper dot)
     assert dotI.toLower() == Rune('i')
-  str unicode_case.toLower toRunes a
+  str meth.toLower toRunes a
 
 func upper*(a: PyStr): PyStr =
   ## str.upper
@@ -77,7 +74,7 @@ func title*(a: PyStr): PyStr =
     assert unicode.title(s) == "Ǉ"  # \u01c7
   # currently titleImpl is ok for ascii only.
   #result.titleImpl a, isUpper, isLower, toUpper, toLower, runes, `+=`
-  str unicode_case.toTitle toRunes a
+  str meth.toTitle toRunes a
 
 
 func capitalize*(a: PyStr): PyStr =
@@ -86,7 +83,7 @@ func capitalize*(a: PyStr): PyStr =
   ## changed when Python 3.8: the first character will have title case.
   ## 
   ## while Nim's `unicode.capitalize` only make the first character upper-case.
-  str unicode_case.capitalize toRunes a
+  str meth.capitalize toRunes a
 
 
 export strutils.startsWith, strutils.endsWith
@@ -109,49 +106,41 @@ seWith endsWith
 
 func find*(a: PyStr, b: PyStr, start = 0, `end` = len(a)): int =
   if b.len == 1:
-    meth.find1(a, b, start)
+    meth.find1($a, $b, start, `end`)
   else:
-    meth.find(a, b, start)
+    meth.find($a, $b, start, `end`)
 
 func rfind*(a: PyStr, b: PyStr, start = 0, `end` = len(a)): int =
   if b.len == 1:
-    meth.rfind1(a, b, start)
+    meth.rfind1($a, $b, start, `end`)
   else:
-    meth.rfind(a, b, start)
+    meth.rfind($a, $b, start, `end`)
 
 func index*(a, b: PyStr, start = 0, `end` = len(a)): int =
   if b.len == 1:
-    meth.index1(a, b, start)
+    meth.index1($a, $b, start, `end`)
   else:
-    meth.index(a, b, start)
+    meth.index($a, $b, start, `end`)
 
 func rindex*(a, b: PyStr, start = 0, `end` = len(a)): int =
   if b.len == 1:
-    meth.rindex1(a, b, start)
+    meth.rindex1($a, $b, start, `end`)
   else:
-    meth.rindex(a, b, start)
+    meth.rindex($a, $b, start, `end`)
 
-const AsciiOrdRange = 0..0x7F
-func isascii*(a: Rune): bool = ord(a) in AsciiOrdRange
 
-template runeCheck(s: PyStr; runePredict; zeroLenTrue: static[bool]) =
-  runeCheck(s.runes, s.byteLen, runePredict, zeroLenTrue)
+template wrapBool(prc){.dirty.} =
+  func prc*(a: PyStr): bool = meth.prc(toRunes a)
 
-func isascii*(a: PyStr): bool{.pysince(3,7).} =
-  a.runeCheck isascii, zeroLenTrue=true
+wrapBool isspace
+wrapBool isalpha
+wrapBool isdecimal
+func isascii*(a: PyStr): bool{.pysince(3,7).} = meth.isascii(toRunes a)
 
-func isalpha*(a: PyStr): bool = unicode.isAlpha($a)
+wrapBool islower
+wrapBool isupper
+wrapBool istitle
 
-template firstChar(s: PyStr): Rune = s.runeAt 0
-template strAllAlpha(s: PyStr, isWhat, notWhat): untyped =
-  s.allAlpha isWhat, notWhat, runes, firstChar
-func islower*(a: PyStr): bool = a.strAllAlpha isLower, isUpper
-func isupper*(a: PyStr): bool = a.strAllAlpha isUpper, isLower
-func istitle*(a: PyStr): bool =
-  a.istitleImpl isUpper, isLower, runes, firstChar
-
-func isPySpace(r: Rune): bool = r in unicodeSpaces
-func isspace*(a: PyStr): bool = a.runeCheck isPySpace, zeroLenTrue=false
 
 func center*(a: PyStr, width: int, fillchar = ' '): PyStr =
   ## Mimics Python str.center(width: int, fillchar: str=" ") -> str
@@ -172,7 +161,7 @@ func rjust*(a: PyStr, width: int, fillchar: PyStr ): PyStr =
   meth.rjust(a, width, fillchar)
 
 func zfill*(a: PyStr, width: int): PyStr =
-  str meth.zfill($a, width)
+  meth.zfill(a, width)
 
 func removeprefix*(a: PyStr, suffix: PyStr): PyStr =
   meth.removeprefix(a, suffix)
@@ -195,9 +184,12 @@ func join*[T](sep: PyStr, a: openArray[T]): PyStr =
   ## Mimics Python join() -> string
   meth.join(sep, a)
 
+template partitionImpl(partition): untyped =
+  let res = meth.partition($a, $sep)
+  (str res[0], str res[1], str res[2])
+
 func partition*(a: PyStr, sep: PyStr): tuple[before, sep, after: PyStr] =
-  meth.partition(a, sep)
+  partitionImpl partition
 
 func rpartition*(a: PyStr, sep: PyStr): tuple[before, sep, after: PyStr] =
-  meth.rpartition(a, sep)
-
+  partitionImpl rpartition

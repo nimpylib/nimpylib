@@ -1,7 +1,7 @@
 
 import ../strimpl
 export strimpl
-import ../../stringlib/split/[common, gen]
+import pkg/pystrutils/split/[common, gen]
 import ../../stringlib/[splits, errHandle]
 import ../consts
 
