@@ -1,4 +1,0 @@
-
-import ../errHandle
-
-export errHandle

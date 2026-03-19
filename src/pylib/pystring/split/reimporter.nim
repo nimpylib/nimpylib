@@ -1,6 +1,6 @@
 
 
-import ../../stringlib/split/[
+import pkg/pystrutils/split/[
   split_whitespace, rsplit_whitespace, splitlinesIter]
 import ../../stringlib/errHandle
 import ../../builtins/list

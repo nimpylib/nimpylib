@@ -9,6 +9,14 @@ type StringLike* = string | char | PyStr
 
 func str*(self: PyStr): PyStr = self  ## copy
 func str*(`object` = ""): PyStr = PyStr(`object`)
+func str*(self: seq[char]): PyStr =
+  var res = (when declared(newStringUninit): newStringUninit else: newString)(self.len)
+  for i, c in self: res[i] = c
+  str res
+func str*(self: seq[Rune]): PyStr =
+  var res = newStringOfCap(self.len)
+  for c in self: res.add $c
+  str res
 func str*(a: Rune): PyStr = str $a
 func str*(c: char): PyStr = str $c
 

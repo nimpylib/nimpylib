@@ -1,5 +1,3 @@
 
-type
-  TypeError* = object of CatchableError
-
-
+import ./private/utils
+impExp err

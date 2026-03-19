@@ -1,4 +1,4 @@
 ## `__mod__` implementation for `str`, `bytes` or `bytearray`.
 ## 
-import pkg/pyformats/percent
-export percent
+import ./private/utils
+impExp percent_format
