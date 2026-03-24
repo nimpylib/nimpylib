@@ -21,3 +21,10 @@ const
   PyPatch*{.intdefine.} = 0
   PyReleaseLevel* = PyReleaseLevelEnum.final
   PySerial* = 0
+
+const sep = '.'
+template asVersion(major, minor, patch: int): string =
+  $major & sep & $minor & sep & $patch
+
+const
+  Version* = asVersion(Major, Minor, Patch)
