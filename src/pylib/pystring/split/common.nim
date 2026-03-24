@@ -3,7 +3,7 @@ import ../strimpl
 export strimpl
 import pkg/pystrutils/split/[common, gen]
 import ../../stringlib/[splits, errHandle]
-import ../consts
+import pkg/unicode_space_decimal/space
 
 template common_split_whitespace(s, maxsplit): untyped =
   bind split_whitespace
@@ -16,7 +16,7 @@ template common_rsplit_whitespae(s, maxsplit): untyped =
 
 func ISSPACE*(s: PyStr, pos: int): bool =
   ## Checks unicode space at unicode char's `pos`
-  s.runeAtPos(pos) in unicodeSpaces
+  s.runeAtPos(pos).isspace
 
 template proc_gen_split*(split, PyList, PyStr; append){.dirty.} =
   bind norm_maxsplit, PREPARE_CAP

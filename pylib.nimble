@@ -39,6 +39,7 @@ pylib "autoconf_sugars", " ^= 0.1.0"
 pylib "errno", " ^= 0.1.0"
 pylib "float_utils", " ^= 0.1.0"
 pylib "pycomplex", " ^= 0.1.0"
+pylib "unicode_space_decimal", " ^= 0.1.0"
 pylib "pystrutils", " ^= 0.1.0"
 
 import std/os
