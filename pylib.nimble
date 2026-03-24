@@ -1,10 +1,10 @@
 srcDir        = "src"
-when fileExists("./src/pylib/version.nim"):  # when installing
+when fileExists("./src/pylib/versionInfo.nim"):  # when installing
   assert srcDir == "src"
-  import "./src/pylib/version" as libver
+  import "./src/pylib/versionInfo" as libver
   # `import as` to avoid compile error against `version = Version`
 else:  # after installed
-  import "pylib/version" as libver
+  import "pylib/versionInfo" as libver
 
 import std/macros
 macro asgnVer = quote do: version = `Version`
@@ -41,6 +41,7 @@ pylib "float_utils", " ^= 0.1.0"
 pylib "pycomplex", " ^= 0.1.0"
 pylib "unicode_space_decimal", " ^= 0.1.0"
 pylib "pystrutils", " ^= 0.1.0"
+pylib "since_version", " ^= 0.1.0"
 
 import std/os
 const commentestPath = "./tools/tests/commentest"
