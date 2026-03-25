@@ -1,6 +1,6 @@
 
 
-import ./parsefloat
+import pkg/float_utils/parsefloat
 import ../utils/stripOpenArray
 import ../reimporter
 import pkg/nimpatch/floatdollar
