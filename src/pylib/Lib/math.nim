@@ -15,9 +15,9 @@ export pi
 export tau
 export e
 
-from ./math_impl/err import raiseDomainErr, raiseRangeErr
-from ./math_impl/errnoUtils import setErrno0, setErrno, isErr0, EDOM, ERANGE
-from ./math_impl/vec_op/niter_types import toNimIterator, ClosureIter
+from pkg/pymath/err import raiseDomainErr, raiseRangeErr
+from pkg/pymath/errnoUtils import setErrno0, setErrno, isErr0, EDOM, ERANGE
+from pkg/pymath/vec_op/niter_types import toNimIterator, ClosureIter
 
 template checkErrno(result, exc): bool =
   not isErr0() and math_is_error(result, exc)

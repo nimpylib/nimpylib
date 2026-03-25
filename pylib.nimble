@@ -42,6 +42,7 @@ pylib "pycomplex", " ^= 0.1.0"
 pylib "unicode_space_decimal", " ^= 0.1.0"
 pylib "pystrutils", " ^= 0.1.0"
 pylib "since_version", " ^= 0.1.0"
+pylib "pymath", " ^= 0.1.0"
 
 import std/os
 const commentestPath = "./tools/tests/commentest"

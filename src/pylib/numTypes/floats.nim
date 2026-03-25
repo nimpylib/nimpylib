@@ -4,7 +4,7 @@ import ../pystring/strimpl
 import ./floats/[init, floathex]
 export init.float
 import ../ops/chk_shl
-from ../Lib/math_impl/isX import isfinite
+from pkg/float_utils/isX import isfinite
 
 func hex*(x: float): PyStr =
   str x.hexImpl
