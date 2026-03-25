@@ -4,7 +4,7 @@ from std/strutils import find, initSkipTable, isSpaceAscii, toLowerAscii,
   HexDigits
 import std/fenv
 from std/math import frexp, classify, FloatClass
-from ../../Lib/math import ldexp
+from pkg/pymath import ldexp
 import ./parse_inf_nan
 
 #[ we can use sprintf(.., %a ..) here, but it may be less effective and less error-reportable:
@@ -48,7 +48,7 @@ func hex_from_char(c: char): int =
   of 'f', 'F': 15
   else: -1
 
-func normalFloatHexImpl(x: float): string =
+func normalFloatHexImpl[S: string|seq[char]](x: float; result: var S) =
   var (m, e) = frexp(abs(x))
   let shift = 1 - max(DBL_MIN_EXP - e, 0)
   m = ldexp(m, shift)
@@ -85,20 +85,25 @@ func normalFloatHexImpl(x: float): string =
   push $e
 
 
-func hexImpl*(x: float): string =
+func hexImpl*[S: string|seq[char]](x: float; result: var S) =
   let fc = x.classify
+  template res(s) =
+    when S is string: result = s
+    else: result = @ s
   case fc
-  of fcNan: "nan"
-  of fcInf: "inf"
-  of fcNegInf: "-inf"
-  of fcZero: "0x0.0p+0"
-  of fcNegZero: "-0x0.0p+0"
-  of fcNormal, fcSubNormal: normalFloatHexImpl(x)
+  of fcNan:    res "nan"
+  of fcInf:    res "inf"
+  of fcNegInf: res "-inf"
+  of fcZero:   res "0x0.0p+0"
+  of fcNegZero:res "-0x0.0p+0"
+  of fcNormal, fcSubNormal: normalFloatHexImpl(x, result)
+
+func hexImpl*(x: float): string = x.hexImpl result
 
 # ======= fromhex =======
 template IS_SPACE(c): bool = isSpaceAscii(c)
 
-func floatFromhexImpl*(s: string): float =
+func floatFromhexImpl*(s: openArray[char]): float =
   #[For the sake of simplicity and correctness, we impose an artificial
   limit on ndigits, the total number of hex digits in the coefficient
   The limit is chosen to ensure that, writing exp for the exponent,
@@ -201,12 +206,12 @@ func floatFromhexImpl*(s: string): float =
 
   # coefficient: <integer> [. <fraction>]
   let coeff_start = curIdx
-  stepi skipWhile(s, HexDigits, start=curIdx)
+  stepi skipWhile(s.toOpenArray(curIdx, s.high), HexDigits)
   s_store = curIdx
   let coeff_end =
     if inBound and cur == '.':
       step
-      stepi skipWhile(s, HexDigits, start=curIdx)
+      stepi skipWhile(s.toOpenArray(curIdx, s.high), HexDigits)
       curIdx - 1
     else:
       curIdx
@@ -235,7 +240,7 @@ func floatFromhexImpl*(s: string): float =
     while inBound and cur in '0'..'9':
       step 
     let n =
-      when intExp: parseInt(s, exp, exp_start)
+      when intExp: parseInt(s.toOpenArray(exp_start, s.high), exp)
       else: parseBiggestInt(s, exp, exp_start)
     assert n != 0
   else:

@@ -3,15 +3,25 @@ import std/math
 import ../pystring/strimpl
 import ./floats/[init, floathex]
 export init.float
-import ../ops/chk_shl
 from pkg/float_utils/isX import isfinite
+
+func shlByMul[I: SomeInteger](a, b: I): I{.used.} =
+  result = a
+  for _ in 1..b:
+    result *= 2
+
+func checkedShl[I: SomeInteger](a, b: I): I =
+  when compileOption("overflowChecks"): shlByMul(a, b)
+  else: `shl`(a, b)
 
 func hex*(x: float): PyStr =
   str x.hexImpl
+func hex*[S: string|seq[char]](x: float; result: var S) =
+  x.hexImpl(result)
 
-func fromhex*(_: typedesc[float], s: string): float =
+func fromhex*(_: typedesc[float], s: openArray[char]): float =
   floatFromhexImpl s
-func float_fromhex*(s: string): float =
+func float_fromhex*(s: openArray[char]): float =
   floatFromhexImpl s
 
 func is_integer*(self: float): bool =
