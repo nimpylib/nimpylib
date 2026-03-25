@@ -1,5 +1,5 @@
 
-import ../errno_impl/errnoUtils
+import pkg/errno/errnoUtils
 export errnoUtils
-from ../errno_impl/errnoConsts import EDOM, ERANGE
+from pkg/errno/errnoConsts import EDOM, ERANGE
 export EDOM, ERANGE

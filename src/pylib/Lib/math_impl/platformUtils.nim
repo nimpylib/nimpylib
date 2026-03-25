@@ -1,3 +1,3 @@
 
-import ../private/platformUtils
+import pkg/handy_sugars/platformUtils
 export platformUtils
