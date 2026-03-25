@@ -25,7 +25,8 @@
 import pkg/nimpatch/nansign
 import std/math
 import std/macros
-from ../numTypes/ints/getter import bit_lengthUsingBitops
+#from ../numTypes/ints/getter import bit_lengthUsingBitops
+from std/bitops import countLeadingZeroBits
 from ./math_impl/platformUtils import CLike, clikeOr, impJsOrC
 from ./math_impl/errnoUtils import
   prepareRWErrno, prepareROErrno, setErrno, setErrno0, getErrno, isErr, isErr0
@@ -35,10 +36,21 @@ import ./math_impl/expm1_log1p
 export expm1_log1p
 import ./math_impl/frexp as frexpLib
 import ./math_impl/nextafter_ulp
-from ./errno import ERANGE, EDOM
+from pkg/errno/errnoConsts import ERANGE, EDOM
 
 export cbrt
 export nextafter, ulp
+
+proc bit_lengthUsingBitops*(x: SomeInteger): int =
+  ## inner usage.
+  ##
+  ## undefined result if x == 0
+  ## 
+  ## .. note:: though in ArchLinux with `__GNUC__` == 15 the result for x==0 is 0,
+  ##   you cannot tell this behavior reliable.
+  const BitPerByte = 8
+  sizeof(x) * BitPerByte - bitops.countLeadingZeroBits x
+
 
 macro impPatch(sym) =
   #import ./math_impl/patch/sym
@@ -740,7 +752,7 @@ func isqrt*(n: Natural): int{.raises: [].} =
 
         return a - (a*a > n)]#
   if n == 0: 0
-  else: isqrtPositive(n)
+  else: isqrtPositive(cast[Positive](n))
 
 
 func isqrt*[T: SomeFloat](x: T): int{.raises: [].} =
