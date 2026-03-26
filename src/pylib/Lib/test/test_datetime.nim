@@ -524,6 +524,11 @@ suite "date":
     test_fromisocalendar()
 
   test "fromisocalendar_value_errors":
+    const si = sizeof system.int
+    const shift = when si >= 8: 32
+    elif si >= 4: 16
+    elif si >= 2: 13
+    else: 5
     def test_fromisocalendar_value_errors():
         isocals = [
             (2019, 0, 1),
@@ -536,9 +541,9 @@ suite "date":
             (10000, 1, 1),
             (0, 1, 1),
             (9999999, 1, 1),
-            (2<<32, 1, 1),
-            (2019, 2<<32, 1),
-            (2019, 1, 2<<32),
+            (2<<shift, 1, 1),
+            (2019, 2<<shift, 1),
+            (2019, 1, 2<<shift),
         ]
 
         for isocal in isocals:
