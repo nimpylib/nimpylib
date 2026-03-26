@@ -5,13 +5,14 @@ discard """
   # output: ""  this test also uses unittest.task
 """
 
+import pylib/pyimports
 import pylib/builtins # /[round, attr]
 
 
 import pylib/builtins/[pyrange, complex, format]
 import pylib/numTypes/floats
 
-import pylib/Lib/[unittest, math, random, sys]
+pyimportAll unittest, math, random, sys
 import std/unittest as std_unittest
 import ../../utils
 

@@ -4,9 +4,10 @@ discard """
 
   output: ""
 """
+import pylib/pyimports
 import pylib/builtins
 import pylib/ops
-import pylib/Lib/random
+pyimportAll random
 
 import std/unittest
 

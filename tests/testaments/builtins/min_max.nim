@@ -2,13 +2,14 @@
 # XXX:
 #when (NimMajor, NimMajor, NimPatch) < (2, 3, 1): {.error: "".}
 
+import pylib/pyimports
 import pylib/builtins/[min_max
   ,list
   ,iters
   ,pytuple
 ]
 
-import pylib/Lib/unittest
+pyimportAll unittest
 
 import std/sugar
 from std/random as nim_random import nil

@@ -1,11 +1,12 @@
 import pylib
-from pylib/Lib/timeit import timeit
-from pylib/Lib/time import sleep
-from pylib/Lib/sys import nil  # like python's `import sys`
-from pylib/Lib/platform import nil  # like python's `import platform`
-import pylib/Lib/tempfile
-import pylib/Lib/os
-# like python's `import tempfile; from tempfile import *`
+pyimports:
+  from timeit import timeit
+  from time import sleep
+  import sys
+  import platform
+  import *tempfile
+  # like python's `import tempfile; from tempfile import *`
+  import *os
 # more python-stdlib in pylib/Lib/...
 
 # from now on, we use `>` appended `#` to mean output
