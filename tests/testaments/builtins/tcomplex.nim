@@ -1,7 +1,7 @@
 
 
 import pylib
-import pylib/Lib/unittest
+pyimportAll unittest
 import std/unittest
 import std/math except divmod
 proc assertFloatsAreIdentical(x, y: float) =

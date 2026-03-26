@@ -39,7 +39,6 @@ when defined(nimdoc):
   ## .. include:: ../doc/pylib.md
   doc ".. warning:: " & WarnLeniOps
 
-import pylib/Lib/timeit
 
 when not defined(js) and not defined(nimscript):
   import pylib/io
@@ -50,8 +49,10 @@ impExpCwd pylib, [
   noneType, pybool, builtins,
   ops, pyerrors,
   pysugar,
+  pyimports,
 ]
 
+pyimportAll timeit
 
 template timeit*(repetitions: int, statements: untyped): untyped{.deprecated:
     "will be removed from main pylib since 0.10, import it from `pylib/Lib` instead".} =

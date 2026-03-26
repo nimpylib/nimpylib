@@ -15,13 +15,34 @@ import pylib
 ```
 
 ## import Python-like stdlib
-Cheatsheet for rough alternative between pylib and Python
+
+under `pyimports` macro, you can write as if in Python, except for `import *`:
+
+  For star import, use `import *MOD` instead of `from MOD import *`,
+  for example:
+
+  ```Nim
+  pyimports:
+    import *random
+  # or a single line `pyimportAll random`
+  ```
+
+
+### Appendix: Cheatsheet for rough alternative between Nim and Python
+
+> Outside `pyimports` macro, beware you're writing Nim, following is cheatsheet.
 
 | Nim pylib                        | Python                               |
 | --------------------------       | --------------------------           |
-| `from pylib/Lib/LIB import nil`  | `import LIB`                         |
-| `import pylib/Lib/LIB`           | `from LIB import *`                  |
-| `from pylib/Lib/LIB import XXX`  | `import LIB; from LIB import XXX`    |
+| `from demo/LIB import nil`  | `import demo.LIB`                          |
+| `import demo/LIB`           | `from demo.LIB import *`                   |
+| `from demo/LIB import XXX`  | `import demo.LIB; from demo.LIB import XXX`|
+
+### Deprecated stdlib import notations
+The traditional notation for importing pystdlib is deprecated and may be unavailable in the future.
+
+For example, `import pylib/Lib/math`
+shall be replaced with `pyimportAll math`.
 
 ------
 
