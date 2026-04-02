@@ -26,6 +26,7 @@ jobs:
         homepage: https://docs.nimpylib.org
         proj-name: pylib
         deploy-dir: ${{ env.deploy-dir }}
+        nim-version: devel
         nimble-doc-cmd: |
-          nimble testDoc --index:on --project ${{ env.git-url-arg }} --outdir:${{ env.deploy-dir }} -d:homepage="${{ github.event.repository.homepage }}"
-          nimble testLibDoc ${{ env.git-url-arg }} --outdir:${{ env.lib-deploy-dir }}
+          nimble testDoc --hints:off --warnings:off --index:on --project ${{ env.git-url-arg }} --outdir:${{ env.deploy-dir }} -d:homepage="${{ github.event.repository.homepage }}"
+          nimble testLibDoc --hints:off --warnings:off ${{ env.git-url-arg }} --outdir:${{ env.lib-deploy-dir }}
