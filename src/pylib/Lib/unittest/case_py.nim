@@ -9,16 +9,17 @@ import std/macros
 from ../../pyerrors/simperr import TypeError
 export TypeError
 
-import ./case_py/[
+import pkg/handy_sugars/trans_imp
+import ./case_py/[util]
+impExpCwd case_py, [
   types,
-  util,
   prc_main,
   prc_cleanup,
   meth,
   skips,
   sig_exc,
+  almostEqual,
 ]
-export types, meth, prc_main, prc_cleanup, meth, skips, sig_exc
 
 template myCheck(x){.dirty.} =
   bind check

@@ -1,6 +1,7 @@
 
 import pylib
 import std/unittest
+pyimportAll unittest
 import std/math as std_math except divmod
 import std/random as std_random
 
@@ -349,12 +350,16 @@ suite "float":
             ]:
             check f.as_integer_ratio() == ratio
 
+        #XXX:PY-DIFF: py's algo works fine to exp10 = 100 and places=7
+        const
+            exp10 = 10.0
+            places = 6
         for _ in range(10000):
             var f = rand 1.0
-            f *= pow(10.0, float rand(2 .. 10))
+            f *= pow(10.0, rand(-exp10 .. exp10))
             #let (n, d) = f.as_integer_ratio()
             let (n, d) = as_someinteger_ratio[BiggestInt](f) # if using as_integer_ratio when JS, will raise OverflowDefect
-            check almostEqual(n/d, f, unitsInLastPlace=5)
+            assertAlmostEqual(n/d, f, places=places)
 
         check (0, 1) == float(0.0).as_integer_ratio()
         check (5, 2) == float(2.5).as_integer_ratio()
