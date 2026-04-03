@@ -1,9 +1,7 @@
 
 import std/strutils
-
-type
-  UnicodeError* = object of ValueError
-  UnicodeDecodeError* = object of UnicodeError
+import ./util
+impExp unicode_err
 
 func newUnicodeDecodeError*(
   codec: string, src: char,
