@@ -44,6 +44,7 @@ pylib "pystrutils", " ^= 0.1.0"
 pylib "since_version", " ^= 0.1.0"
 pylib "pymath", " ^= 0.1.0"
 pylib "pysimperr", " ^= 0.1.0"
+pylib "pyunittest", " ^= 0.1.0"
 
 import std/os
 const commentestPath = "./tools/tests/commentest"
