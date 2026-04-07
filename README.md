@@ -11,7 +11,7 @@
 
 > Write Python in Nim
 
-Nimpylib is a collection of Python-like operators/functions and libraries as well as syntax sugars.
+Nimpylib is a series of Python-like operators/functions and libraries as well as syntax sugars, with pylib as the main module of them.
 
 
 ---
@@ -26,7 +26,13 @@ Nimpylib is a collection of Python-like operators/functions and libraries as wel
 
 [Lib Docs]: https://nimpylib.github.io/pylib/Lib
 
-## Why NimPyLib?
+## Why PyLib?
+
+> As a sister project, [npython][] serves as a pure-Nim Python interpreter based on [nimpylibs][pylib-dep-nimpylibs]
+
+[npython]: https://github.com/nimpylib/npython
+[pylib-dep-nimpylibs]: https://status.nimpylib.org
+
 It helps you to:
 - use much Python-like out-of-box API in Nim:
   - with no need of any Python dependency (neither dynamic library nor binary).
@@ -45,6 +51,8 @@ It helps you to:
 
 Thanks to Nim supporting multiply backends, pylib currently officially supports
 to compile to C and JavaScript [^JS]. C++ and ObjC backends are currently not tested.
+
+What's more, wasm support is available via [wasm_backend](https://github.com/nimpylib/wasm_backend) (though not tested yet)
 
 [^JS]: Some of features (listed
  [here](./tests/skipJs.txt))
@@ -268,7 +276,7 @@ Uninstall with `nimble uninstall pylib`.
 ## Requisites
 
 - [Nim](https://nim-lang.org)
-
+- [nimpylibs(submodules under nimpylib/)][pylib-dep-nimpylibs]
 
 ## Supported features
 
@@ -350,6 +358,7 @@ See [here](./doc/mustRewriteExtern/) for details and workaround.
 - [py2many/py2many](https://github.com/py2many/py2many): py2nim transpiler in Python.
 - [juancarlospaco/cpython](https://github.com/juancarlospaco/cpython): invoke Python Standard Library API in Nim.
 - [yglukhov/nimpy](https://github.com/yglukhov/nimpy): Python bridge in Nim.
+- [nimpylib/npython][npython]: python interpreter in Nim
 
 ## Tests
 
