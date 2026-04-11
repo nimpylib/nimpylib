@@ -4,18 +4,23 @@ const NodeJs = defined(nodejs)
 when InJs:
   import std/jsffi
   import pkg/jscompat/utils/denoAttrs
+  import pkg/jscompat/utils/dispatch
   let js_env{.importDenoOrProcess(env).}: JsObject
-  const jsgetExpr = when NodeJs: "[]" else: "get"
-
-  proc get(deno_env: JsObject; s: cstring): JsObject #[cstring or undefined]#{.importcpp: jsgetExpr.}
 
 when InJs and not NodeJs:
   proc getEnvCompat(s: string): string =
-    let res = js_env.get cstring s
+    let res = if notDeno: js_env[cstring s] else: js_env.get(cstring s)
     if not res.isUndefined:
       result = $res.to(cstring)
 
-  proc existsEnvCompat(s: string): bool = js_env.has(cstring s).to bool
+  proc existsEnvCompat(s: string): bool =
+    if notDeno:
+      var key2 = s.cstring
+      var ret: bool
+      {.emit: "`ret` = `key2` in process.env;".}
+      result = ret
+    else:
+      result = js_env.has(cstring s).to bool
   proc putEnvCompat(s: string, val: string) =
     js_env.set(cstring s, cstring val)
   proc delEnvCompat(s: string) =
