@@ -39,6 +39,7 @@ import std/macros
 import ./stmt/[pydef, tonim]
 import ./parserWithCfg
 export PySignatureSupportGenerics
+export pydef.await
 
 macro define*(signature, body): untyped =
   ## almost the same as `def`, but is for `template` instead of `proc`

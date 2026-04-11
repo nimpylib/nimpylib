@@ -66,7 +66,8 @@ func validStrLit(e: NimNode): bool =
     if e: return true
   let k = e.kind
   trueIf e.len == 0 and e.isStrLit
-  let actStr = e[0].strVal
+  var actStr: string
+  if e.len > 0: actStr = e[0].strVal
   trueIf k == nnkCallStrLit and
     actStr.toLowerAscii in ["f", "fr", "rf",  "b", "br", "rb",  "u"]
     # no need to worry "r"

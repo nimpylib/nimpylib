@@ -1,5 +1,6 @@
 
 import std/macros
+import ./decl
 
 template emptyn: NimNode = newEmptyNode()
 proc parseParams(
@@ -43,7 +44,12 @@ proc splitArrow(signature: NimNode; name_params, restype: var NimNode) =
   if signature.kind == nnkInfix:
     expectIdent(signature[0], "->")
     name_params = signature[1]
-    restype = signature[2]
+    let res = signature[2]
+    if restype.kind == nnkBracketExpr and restype[0].eqIdent("Future"):
+      # for async def, the restype is Future[xxx], unlike Python's type hint
+      restype[1] = res.ensureType
+    else:
+      restype = res
 
 
 func addGenericParam(generics: var NimNode, it: NimNode) =

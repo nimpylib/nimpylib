@@ -1,7 +1,13 @@
 
-import std/[asyncmacro, asyncfutures]
-export asyncmacro.async, asyncfutures.Future
-export asyncmacro.await
+when not defined(js):
+  import std/asyncmacro
+  import std/asyncdispatch
+else:
+  import std/asyncjs
+  proc await[T](f: Future[T]): T{.importjs: "(await #)".}
+export Future
+export await
+export async
 
 import std/macros
 import ./frame
@@ -49,5 +55,5 @@ proc asyncImpl(defsign, body: NimNode; parser: var PySyntaxProcesser;
   expectIdent(pre,"def")
   let
     apragma = newNimNode(nnkPragma).add(bindSym"async")
-    restype = newNimNode(nnkBracketExpr).add(bindSym"Future", ident"void")
+    restype = newNimNode(nnkBracketExpr).add(bindSym"Future", ident"auto")
   defImpl(signature, body, parser=parser, pragmas=apragma, deftype=restype, procType=procType)

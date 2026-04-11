@@ -37,14 +37,21 @@ proc isX(x: typedesc, typ: NimNode): bool =
 proc isLiteral(typId: NimNode): bool = isX(Literal, typId)
 proc isFinal(typId: NimNode): bool = isX(Final, typId)
 
-proc ensureType(typId: NimNode): NimNode =
+proc ensureType*(typId: NimNode): NimNode =
   if typId.kind in {nnkIdent, nnkSym, nnkClosedSymChoice} and typId.repr in ["int", "float"]:
     newDotExpr(ident"system", typId)
-  elif typId.kind == nnkBracketExpr and "Literal" == (
+  elif typId.kind == nnkBracketExpr:
+    let head = (
       if typId[0].kind == nnkDotExpr: typId[0][1]  # <module>.Literal
       else: typId[0]
-  ).strVal:
-    typId[0]
+    ).strVal
+    case head
+    of "Literal":
+      typId[0]
+    of "Future":
+      nnkBracketExpr.newTree(typId[0], ensureType(typId[1]))
+    else:
+      typId
   else:
     typId
 
