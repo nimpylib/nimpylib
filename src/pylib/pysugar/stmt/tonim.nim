@@ -137,6 +137,13 @@ proc parsePyStmt*(mparser; statement: NimNode): NimNode =
             mparser.parsePyBody i
           else: mparser.parsePyExpr i
       result.add cmd
+  of nnkYieldStmt:
+    mparser.curFrameHasYield = true
+    let e = statement[0]
+    result.add nnkYieldStmt.newTree(
+      if e.kind == nnkEmpty: ident"None"
+      else: mparser.parsePyExpr e
+    )
   of nnkRaiseStmt:
     result.add rewriteRaise statement
   of nnkPrefix:

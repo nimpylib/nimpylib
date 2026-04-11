@@ -50,7 +50,7 @@ macro define*(signature, body): untyped =
     define templ(a): a+1  # note template has no implicit `result` variable
     assert templ(3) == 4
   var parser = parserWithDefCfg()
-  defAux(signature, body, parser=parser, deftype=ident"untyped", procType=nnkTemplateDef)
+  defUnwareOfYield(signature, body, parser=parser, deftype=ident"untyped", procType=nnkTemplateDef)
 
 macro def*(signature, body): untyped =
   runnableExamples:

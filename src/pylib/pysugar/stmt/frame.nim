@@ -7,6 +7,7 @@ type
     of true: args*: seq[NimNode]
     of false: discard
   PyAsgnFrame* = ref object
+    hasYield: bool
     parent: PyAsgnFrame
     locals: seq[string]
     decorators: seq[Decorator]  # for Py's `@decorator` before `def`
@@ -32,6 +33,7 @@ proc newPyAsgnRewriter*(supportGenerics = false, dedentDoc = false,
 
 using mparser: var PyAsgnRewriter
 
+proc curFrameHasYield*(mparser): var bool = mparser.frame.hasYield
 proc decorators*(mparser): var seq[Decorator] =
   mparser.frame.decorators  
 
