@@ -1,5 +1,2 @@
-
-import ./private/trans_imp
-impExpCwd collections_abc, [
-  asyncs, iters, collections, generators,
-]
+import pkg/collections_abc
+export collections_abc

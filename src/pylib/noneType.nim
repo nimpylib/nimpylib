@@ -1,8 +1,2 @@
-
-type
-  NoneType* = distinct bool
-
-const
-  # Python-like boolean literals
-
-  None* = NoneType(false) ## Python-like None for special handling
+import pkg/collections_abc/private/noneType
+export noneType

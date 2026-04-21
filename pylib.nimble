@@ -47,6 +47,10 @@ pylib "pysimperr", " ^= 0.1.0"
 pylib "pyunittest", " ^= 0.1.0"
 pylib "auditfunc", " ^= 0.1.0"
 
+# Lib/n_os
+pylib "collections_abc", " ^= 0.1.0"
+
+
 import std/os
 const commentestPath = "./tools/tests/commentest"
 const gorgeExRemainTailingNL = (NimMajor, NimMinor, NimPatch) > (2, 3, 1)
