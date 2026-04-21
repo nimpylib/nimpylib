@@ -3,7 +3,7 @@
 import ./types
 import std/os
 when defined(js):
-  from ../os_impl/osJsPatch import fileExists, dirExists, symlinkExists
+  from pkg/posixos/osJsPatch import fileExists, dirExists, symlinkExists
 
 import std/strutils
 

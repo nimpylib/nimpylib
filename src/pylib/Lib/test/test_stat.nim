@@ -88,7 +88,7 @@ proc assertS_IS_impl(self: auto, name: static[PyStr], mode: auto) =
         else:
           self.assertFalse(res)
 
-from ../stat_impl/types import Mode
+from pkg/pystat/types import Mode
 proc get_st_mode(fname: string, lstat: bool): Mode =
   (
     if lstat: os.lstat(fname)

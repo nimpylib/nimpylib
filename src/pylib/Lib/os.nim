@@ -7,8 +7,8 @@
 import std/os as std_os
 export std_os
 
-import ./os_impl/private/platform_utils
-import ../pyconfig/bootstrap_hash
+import pkg/handy_sugars/platformMark
+import pkg/posixos/pyconfig/bootstrap_hash
 
 import ./n_os
 export n_os except scandir, DirEntry, urandom, getrandom, genUname, uname, uname_result,
@@ -33,7 +33,7 @@ proc getrandom*(size: int, flags = 0): PyBytes{.
     platformAvailWhen(linux, have_getrandom_syscall), pysince(3,6).} =
   bytes n_os.getrandom(size, flags)
 
-import ./os_impl/posix_like/sched
+import pkg/posixos/posix_like/sched
 when HAVE_SCHED_SETAFFINITY:
   from ./collections/abc import Iterable
   import ../builtins/set

@@ -1,6 +1,2 @@
-
-import ./resource_impl/[
-  funcs, consts, types
-]
-
-export funcs, consts, types
+import pkg/pyresource
+export pyresource

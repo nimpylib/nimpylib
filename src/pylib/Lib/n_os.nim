@@ -1,25 +1,5 @@
 
-import ../private/trans_imp
-impExpCwd os_impl, [
-  consts, posix_like, subp, utils, path, walkImpl, listdirx, randoms, waits,
-  have_functions, cpus,
-]
-
-when not defined(js):
-  import ./os_impl/[
-    term, inheritable]
-  export term, set_inheritable, get_inheritable
-
-when defined(posix):
-  import ./os_impl/only_posix
-  export only_posix
-
-genUname string
-import ./os_impl/posix_like/sched
-when HAVE_SCHED_SETAFFINITY:
-  proc sched_setaffinity*(pid: int, mask: openArray[int]) =
-    sched_setaffinityImpl(pid, mask)
-  proc sched_getaffinity*(pid: int): seq[int] =
-    sched_getaffinityImpl(pid) do (x: cint):
-      result.add int x
+import pkg/posixos
+export posixos
+#TODO:os pysince(3,3): st_ctime_ns, st_mtime_ns, st_atime_ns, SEEK_DATA, SEEK_HOLE
 

@@ -1,6 +1,6 @@
 
 import ./n_signal
-import ./signal_impl/valid_signals_impl
+import pkg/pysignal/valid_signals_impl
 
 import ../builtins/set
 import ../pystring/strimpl

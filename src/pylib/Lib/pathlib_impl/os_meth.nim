@@ -1,8 +1,8 @@
 ## rely pylib/Lib/nos
 
-import ../os_impl/touch as touchLib
-import ../os_impl/posix_like/unlink as unlinkLib
-import ../os_impl/posix_like/stat as statLib
+import pkg/posixos/touch as touchLib
+import pkg/posixos/posix_like/unlink as unlinkLib
+import pkg/posixos/posix_like/stat as statLib
 import ./types
 
 using self: Path

@@ -1,6 +1,6 @@
 
 import ./n_stat
-import ./stat_impl/types
+import pkg/pystat/types
 
 export n_stat except filemode
 
