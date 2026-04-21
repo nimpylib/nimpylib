@@ -6,6 +6,8 @@ import ./strimpl
 from ../pyerrors import TypeError
 import ../builtins/[reprImpl, asciiImpl]
 import pkg/nimpatch/abs
+import pkg/pystrbytes_decl
+export pystrbytes_decl.repr
 
 func reversed*(s: PyStr): PyStr =
   unicode.reversed s
@@ -41,13 +43,6 @@ func pyrepr*(s: StringLike): PyStr =
     # use pyrepr for any StringLike and returns a PyStr
     assert pyrepr("\"") == "'\"'"
   str pyreprImpl $s
-
-func repr*(x: PyStr): string =
-  ## Overwites `system.repr` for `PyStr`
-  ## 
-  ## The same as `proc ascii`_ except for unicode chars being remained AS-IS,
-  ## and returns Nim's `string`.
-  pyreprImpl $x
 
 func ascii*(us: string): PyStr =
   runnableExamples:

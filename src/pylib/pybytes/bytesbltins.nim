@@ -2,7 +2,8 @@
 from std/algorithm import reversed
 import ./bytesimpl
 from ../pyerrors import TypeError
-import ../builtins/reprImpl
+import pkg/pystrbytes_decl
+export pystrbytes_decl.repr
 
 func reversed*(s: PyBytes): PyBytes =
   pybytes reversed $s
@@ -16,10 +17,4 @@ proc ord*(a: PyBytes): int =
       raise newException(TypeError, 
         "TypeError: ord() expected a character, but string of length " & $ulen & " found")
   result = a[0]
-
-func repr*(x: PyBytes): string =
-  ## Overwites `system.repr` for `PyBytes`
-  ## 
-  ## minics Python's
-  pyreprbImpl $x
 

@@ -46,6 +46,9 @@ pylib "pymath", " ^= 0.1.0"
 pylib "pysimperr", " ^= 0.1.0"
 pylib "pyunittest", " ^= 0.1.0"
 pylib "auditfunc", " ^= 0.1.0"
+pylib "pyerrors", " ^= 0.1.0"
+pylib "pystrbytes_decl", " ^= 0.1.0"
+pylib "pyio_abc", " ^= 0.1.0"
 
 # Lib/n_os
 pylib "collections_abc", " ^= 0.1.0"

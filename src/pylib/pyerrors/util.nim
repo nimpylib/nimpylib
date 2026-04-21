@@ -1,3 +1,3 @@
 template impExp*(name) =
-  import pkg/pysimperr/name
+  import pkg/pyerrors/name
   export name
