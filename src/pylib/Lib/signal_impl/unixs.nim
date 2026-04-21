@@ -18,7 +18,7 @@ when HAVE_SIGSET_T:
   converter toSigset*(oa: openArray[int]): Sigset = result.fromIterable oa
 
 export siginfo_decl except fill_siginfo
-import ../../Python/pytime/[deadline, pytimeFromSeconds, pytimeAsTimeval]
+import pkg/pytime_utils/[deadline, pytimeFromSeconds, pytimeAsTimeval]
 
 proc mayUndefImpl(def: NimNode): NimNode =
   let cond = ident "HAVE_" & def.name.strVal

@@ -1,8 +1,8 @@
 
 import ../../pyerr, ../../obj_utils
 import ./calendar_utils
-import ../../../../Python/pytime/types as pytime_types
-import ../../../../Python/pytime/[units, rounds]
+import pkg/pytime_utils/types as pytime_types
+import pkg/pytime_utils/[units, rounds]
 export pytime_types
 export units, rounds
 

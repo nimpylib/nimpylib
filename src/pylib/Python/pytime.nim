@@ -1,9 +1,2 @@
-
-import ./pytime/[units, types,
-  pytimeFromSeconds, pytimeAsTimeval,
-  deadline, monotonic,
-  ]
-export types, units
-
-export pytimeFromSeconds, pytimeAsTimeval, deadline, monotonic
-
+import pkg/pytime_utils
+export pytime_utils

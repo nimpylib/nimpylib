@@ -50,6 +50,9 @@ pylib "pyerrors", " ^= 0.1.0"
 pylib "pystrbytes_decl", " ^= 0.1.0"
 pylib "pyio_abc", " ^= 0.1.0"
 
+# Lib/datetime
+pylib "pytime_utils", " ^= 0.1.0"
+
 # Lib/n_os
 pylib "collections_abc", " ^= 0.1.0"
 
