@@ -54,6 +54,8 @@ pylib "pyio_open", " ^= 0.1.0"
 pylib "pywarnings", " ^= 0.1.0"
 pylib "cstruct2namedtuple", " ^= 0.1.0"
 
+pylib "py_locale_utf8_encoding", " ^= 0.1.0"
+
 pylib "posixos", " ^= 0.1.0"
 
 pylib "pydatetime", " ^= 0.1.0"
