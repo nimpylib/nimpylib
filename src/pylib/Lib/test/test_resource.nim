@@ -54,15 +54,6 @@ an error.]#
                  f.write('X')
               try:
                 f.write('Y')
-                f.flushFile()
-                # On some systems (e.g., Ubuntu on hppa) the flush()
-                # doesn't always cause the exception, but the close()
-                # does eventually.  Try flushing several times in
-                # an attempt to ensure the file is really synced and
-                # the exception raised.
-                for i in 0..4:
-                  time.sleep(0.1) # 100ms
-                  f.flushFile()
               except OSError:
                 if not limit_set:
                   raise
