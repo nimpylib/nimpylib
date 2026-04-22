@@ -56,9 +56,7 @@ pylib "cstruct2namedtuple", " ^= 0.1.0"
 
 pylib "posixos", " ^= 0.1.0"
 
-# Lib/datetime
-pylib "pytime_utils", " ^= 0.1.0"
-
+pylib "pydatetime", " ^= 0.1.0"
 pylib "pytime", " ^= 0.1.0"
 
 # Lib/n_os
