@@ -1,5 +1,5 @@
 
-import ./apisTmpl
+import pkg/grp_pwd/apisTmpl
 import ../../pyerrors/oserr
 import ../../builtins/list
 import ../../pystring
