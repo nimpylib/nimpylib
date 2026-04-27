@@ -66,6 +66,7 @@ pylib "posixos", " ^= 0.1.0"
 pylib "collections_abc", " ^= 0.1.0"
 pylib "pyresource", " ^= 0.1.0"
 
+pylib "functools", " ^= 0.1.0"
 pylib "pypathlib", " ^= 0.1.0"
 pylib "pysignal", " ^= 0.1.0"
 pylib "pystat", " ^= 0.1.0"
