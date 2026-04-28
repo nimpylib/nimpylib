@@ -6,5 +6,6 @@ export asVersion
 import ./versionInfo
 export versionInfo
 
-gen_since py, PyMajor, PyMinor, PyPatch
+import pkg/py_version
+export py_version
 
