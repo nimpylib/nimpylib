@@ -1,7 +1,7 @@
 
 import std/sequtils  # toSeq
 import ./n_itertools
-import ../builtins/list
+import pkg/py_commontypes/list
 import ../private/iterGen
 import ../collections_abc
 

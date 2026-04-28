@@ -3,7 +3,7 @@ import std/macros
 import std/tables
 import ../pystring
 import ../noneType
-import ../builtins/[dict, list]
+import pkg/pybuiltins/[dict, list]
 export pystring, list
 import ./collections/abc
 

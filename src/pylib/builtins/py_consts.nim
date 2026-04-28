@@ -1,2 +1,0 @@
-import pkg/py_constants
-export py_constants

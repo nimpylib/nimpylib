@@ -2,8 +2,9 @@
 import std/macros
 import std/macrocache
 from std/strutils import toLowerAscii, normalize
-import ../../pystring/[strimpl, strprefix]
-import ../../builtins/[list_decl, set, dict, pyslice]
+import pkg/pystrbytes_decl/strimpl
+import pkg/pystrbyteslike_decl/strprefix
+import pkg/py_commontypes/[list_decl, set, dict, pyslice]
 import ./frame, ./chainCmp, ./comprehension, ./utils
 
 const CollectionSyms = CacheSeq"CollectionSyms"

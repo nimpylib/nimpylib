@@ -1,6 +1,5 @@
 
 import pylib/pysugar
-import pylib/builtins/list
 
 def f(x):
   ls = "sad"

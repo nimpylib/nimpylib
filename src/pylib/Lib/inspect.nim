@@ -7,7 +7,7 @@ from ./inspect_impl/sourcegetters import getsourcelinesImpl, getdocNoDedentImpl
 import ./inspect_impl/members
 export isX except markcoroutinefunction
 
-import ../builtins/list_decl
+import pkg/py_commontypes/list_decl
 export list_decl
 
 import ../pystring/strimpl

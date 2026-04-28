@@ -1,3 +1,0 @@
-
-import ../pyerrors
-export pyerrors

@@ -6,10 +6,10 @@ discard """
 """
 
 import pylib/pyimports
-import pylib/builtins # /[round, attr]
+import pylib/builtins # /[round, attr, complex]
 
 
-import pylib/builtins/[pyrange, complex, format]
+import pybuiltins/[pyrange, format]
 import pylib/numTypes/floats
 
 pyimportAll unittest, math, random, sys

@@ -6,7 +6,7 @@
 
 import ../version
 from ./collections/abc import Iterable
-from ../builtins/list_decl import `@`, list
+from pkg/py_commontypes/list_decl import `@`, list
 
 import ./n_math
 export nan

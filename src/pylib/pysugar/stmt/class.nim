@@ -2,9 +2,9 @@
 import std/macros
 import ./frame, ./funcSignature, ./decorator, ./types, ./decl
 import ./pydef
-import ../../noneType
-import ../../pystring/[strimpl]
-import ../../builtins/[list]
+import pkg/py_constants/noneType
+import pkg/pystrbytes_decl/strimpl
+import pkg/py_commontypes/[list]
 proc getNoneTypeNode: NimNode = bindSym"NoneType"
 template emptyn: NimNode = newEmptyNode()
 

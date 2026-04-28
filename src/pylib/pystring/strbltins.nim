@@ -4,7 +4,7 @@ from std/unicode import runeAt, utf8, runeLen, Rune, `$`
 import pkg/pyrepr as pyreprLib
 import ./strimpl
 from ../pyerrors import TypeError
-import ../builtins/[reprImpl, asciiImpl]
+import pkg/pybuiltins/[reprImpl, asciiImpl]
 import pkg/nimpatch/abs
 import pkg/pystrbytes_decl
 export pystrbytes_decl.repr

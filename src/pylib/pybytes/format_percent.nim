@@ -2,7 +2,7 @@
 import ./bytesimpl
 
 import ../stringlib/percent_format
-import ../builtins/asciiImpl
+import pkg/pybuiltins/asciiImpl
 
 template nimpylib_private_genByteLikePercentFormat*(Bytes){.dirty.} =
   ## export just for bytearray. internal use

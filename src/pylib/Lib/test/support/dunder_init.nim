@@ -1,6 +1,6 @@
 
 var verbose* = 1
-import ../../../builtins/print
+import pkg/pybuiltins/print
 import ./os_version
 export os_version
 

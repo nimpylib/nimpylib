@@ -4,7 +4,7 @@ discard """
 """
 import pylib/pystring
 import pylib/pybytes
-import pylib/builtins/dict
+import pybuiltins/dict
 
 from std/strutils import `%`  # test if causing conflict
 discard "$#" % "asd"

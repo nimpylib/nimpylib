@@ -2,7 +2,7 @@
 import ./n_signal
 import pkg/pysignal/valid_signals_impl
 
-import ../builtins/set
+import pkg/pybuiltins/set
 import ../pystring/strimpl
 import ./typing_impl/str_optional_obj
 expOptObjCvt()

@@ -13,7 +13,7 @@ import ../pybytes/bytesimpl
 func bytes*(self): PyBytes = os.fsencode($self)
 ]#
 
-import ../builtins/list
+import pkg/pybuiltins/list
 import ../version
 
 import ./n_pathlib

@@ -53,6 +53,7 @@ pylib "pystrbytes_decl", " ^= 0.1.0"
 pylib "pystrbyteslike_decl", " ^= 0.1.0"
 pylib "pyio_abc", " ^= 0.1.0"
 pylib "py_commontypes", " ^= 0.1.0"
+pylib "pybuiltins", " ^= 0.1.0"
 
 # builtins, sys
 pylib "py_sys_stdio", " ^= 0.1.0"

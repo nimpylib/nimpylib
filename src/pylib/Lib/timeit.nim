@@ -1,7 +1,7 @@
 
 import ./n_timeit
 import ../noneType
-import ../builtins/list
+import pkg/pybuiltins/list
 import ../version
 import ./sys
 export list, noneType

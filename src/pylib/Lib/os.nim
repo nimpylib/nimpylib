@@ -36,7 +36,7 @@ proc getrandom*(size: int, flags = 0): PyBytes{.
 import pkg/posixos/posix_like/sched
 when HAVE_SCHED_SETAFFINITY:
   from ./collections/abc import Iterable
-  import ../builtins/set
+  import pkg/pybuiltins/set
   proc sched_setaffinity*(pid: int, mask: Iterable[int]) =
     sched_setaffinityImpl(pid, mask)
   proc sched_getaffinity*(pid: int): PySet[int] =

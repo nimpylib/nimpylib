@@ -1,6 +1,6 @@
 
-import ../builtins/dict as dictLib
-import ../builtins/dict_decl
+import pkg/py_commontypes/dict as dictLib
+import pkg/py_commontypes/dict_decl
 import ../pystring/strimpl
 export strimpl
 export dictLib

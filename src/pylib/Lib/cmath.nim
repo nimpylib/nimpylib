@@ -1,8 +1,8 @@
 ## Lib/cmath
 ## 
-## complex math library for [Python's complex](../builtins/complex.html) 
+## complex math library for Python's complex
 
-import ../builtins/complex
+import pkg/pycomplex
 
 import std/complex as ncomplex except complex
 from std/math import ln

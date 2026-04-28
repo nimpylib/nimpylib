@@ -5,7 +5,7 @@
 ##   a.k.a. changing locale to user's configure,
 ##   just as CPython's initialization.
 
-import ../builtins/list
+import pkg/pybuiltins/list
 import ../noneType
 import ../pystring/strimpl
 import ../version as verionLib

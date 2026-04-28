@@ -1,6 +1,6 @@
 import std/macros
 import ./utils
-import ../../builtins/[list, set, dict]
+import pkg/py_commontypes/[list, set, dict]
 
 type
   ClauseKind = enum ckFor, ckIf

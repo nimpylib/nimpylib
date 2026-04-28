@@ -10,7 +10,7 @@ import std/options
 
 import ../version
 import ../noneType
-import ../builtins/list
+import pkg/pybuiltins/list
 import ../pybytes/bytesimpl
 import ./collections/abc
 

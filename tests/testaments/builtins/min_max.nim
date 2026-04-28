@@ -3,7 +3,7 @@
 #when (NimMajor, NimMajor, NimPatch) < (2, 3, 1): {.error: "".}
 
 import pylib/pyimports
-import pylib/builtins/[min_max
+import pybuiltins/[min_max
   ,list
   ,iters
   ,pytuple

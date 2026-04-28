@@ -4,7 +4,7 @@ discard """
 """
 import pylib/pystring
 
-import pylib/builtins/dict
+import pybuiltins/dict
 
 import std/unittest
 

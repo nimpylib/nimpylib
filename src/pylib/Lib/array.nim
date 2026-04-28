@@ -8,7 +8,7 @@
 ##   here we use Rune in std/unicode as its item type.
 
 import ../version
-import ../builtins/list
+import pkg/py_commontypes/list
 import ../mutSeqSliceOp
 import ./collections/abc
 import ./sys_impl/auditImpl/macrohelper
@@ -21,9 +21,9 @@ since_has_Py_UCS4:
   type Py_UCS4* = Rune  ## inner
   import ../pystring/strimpl
   from ../pyerrors/simperr import TypeError
-  from ../builtins/reprImpl import pyreprImpl
+  from pkg/pystrbytes_decl/reprImpl import pyreprImpl
 
-import ../pybytes/bytesimpl
+import pkg/pystrbytes_decl/bytesimpl
 import ../pybytearray
 export bytesimpl
 
