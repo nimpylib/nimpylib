@@ -7,34 +7,12 @@ import std/strutils
 import ./stringlib/percent_format
 import pkg/nimpatch/castChar
 # Begin impl
-type
-  PyByteArray* = ref object
-    data: string
-  BytesLike* = PyByteArray | PyBytes
-
-using self: PyByteArray
-using mself: PyByteArray
-
-func newPyByteArray*: PyByteArray{.inline.} = PyByteArray()
-func newPyByteArray*(s: sink string): PyByteArray{.inline.} = PyByteArray(data: s)
-func newPyByteArray*(len: int): PyByteArray{.inline.} = PyByteArray(data: newString(len))
-
-func bytes*(self: sink PyByteArray): PyBytes{.inline.} = bytes(self.data)
-
-template asNim(self: PyByteArray): string =
-  ## returns a mutable var
-  self.data
-converter toPyBytes*(self): PyBytes = bytes self.data
-# then all non-inplace method are dispatched to PyBytes
-
-func getCharPtr*(self; i: Natural|Natural): ptr char =
-  ## EXT.
-  ## unstable. 
-  ## used by Lib/array `frombytes` and `tobytes`.
-  self.data[i].addr
-
+import pkg/pystrbyteslike_decl/bytearray
+export bytearray except asNim
 # End impl
 
+using self: PyByteArray
+using mself: var PyByteArray
 template wrapCmp(op){.dirty.} =
   func op*(self; other: PyBytes): bool = op self.asNim, $other
   func op*(self; other: PyByteArray): bool = op self.asNim, other.asNim
@@ -120,8 +98,6 @@ func extend*(mself; other: BytesLike) = add mself.asNim, other.toNimString
 func `+=`*(mself; other: BytesLike) = mself.extend other
 
 
-func copy*(self): PyByteArray = newPyByteArray(self.data)
-
 # why system has no such a proc: `insert(string, char, i)`...
 
 func insert*(mself; i: int, val: int) =
@@ -153,7 +129,7 @@ func `*=`*(mself; n: int) =
     mself.clear()
     return
   if n == 1: return
-  mself += bytes mself.data.repeat n-1
+  mself += bytes mself.asNim.repeat n-1
 
 func getCharRef(mself; i: int): var char = mself.asNim[i]
 
