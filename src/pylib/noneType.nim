@@ -1,2 +1,2 @@
-import pkg/collections_abc/private/noneType
+import pkg/py_constants/noneType
 export noneType

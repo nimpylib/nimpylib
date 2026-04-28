@@ -47,6 +47,7 @@ pylib "pysimperr", " ^= 0.1.0"
 pylib "pyunittest", " ^= 0.1.0"
 pylib "auditfunc", " ^= 0.1.0"
 pylib "pyerrors", " ^= 0.1.0"
+pylib "py_constants", " ^= 0.1.0"
 pylib "pystrbytes_decl", " ^= 0.1.0"
 pylib "pyio_abc", " ^= 0.1.0"
 
