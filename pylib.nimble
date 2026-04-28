@@ -60,6 +60,7 @@ pylib "py_locale_utf8_encoding", " ^= 0.1.0"
 pylib "posixos", " ^= 0.1.0"
 pylib "grp_pwd", " ^= 0.1.0"
 pylib "py_winapi", " ^= 0.1.0"
+pylib "pytyping", " ^= 0.1.0"
 
 pylib "pydatetime", " ^= 0.1.0"
 pylib "pytime", " ^= 0.1.0"

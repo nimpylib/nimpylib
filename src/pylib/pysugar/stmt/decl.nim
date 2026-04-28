@@ -2,7 +2,7 @@
 
 import std/macros
 import std/typetraits
-import ../../Lib/typing_impl/easyImpl as typing
+import pkg/pytyping as typing
 
 proc toPyType(n: NimNode): NimNode =
   # XXX: a ugly workaround
