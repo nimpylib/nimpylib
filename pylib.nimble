@@ -50,6 +50,7 @@ pylib "pyerrors", " ^= 0.1.0"
 pylib "py_constants", " ^= 0.1.0"
 pylib "pystrbytes_decl", " ^= 0.1.0"
 pylib "pyio_abc", " ^= 0.1.0"
+pylib "py_commontypes", " ^= 0.1.0"
 
 pylib "pyio_open", " ^= 0.1.0"
 pylib "pywarnings", " ^= 0.1.0"
