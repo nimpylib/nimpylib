@@ -1,6 +1,6 @@
 
 import std/macros
-import ../private/inspect_cleandoc
+import pkg/pysugar/private/inspect_cleandoc
 import ./inspect_impl/[
     sourcegetters, isX, members, modulename
     ]

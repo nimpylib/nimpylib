@@ -39,7 +39,7 @@ template `is`(a, b: Path1ProcKind): bool = a == b
 template `is_not`(a, b: Path1ProcKind): bool = a != b
 #template `is`(a: DirEntry, b: NoneType): bool = a.isNone
 when use_fd_functions:
-  import ../../pysugar/pywith
+  import pkg/pysugar/pywith
   import std/sequtils
   type List[T] = seq[T]
   template append[T](s: seq[T]; e: T) = s.add e

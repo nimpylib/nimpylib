@@ -7,7 +7,7 @@ import std/registry
 when HasWMI:
   import std/[sugar,]
   import ../wmi
-import ../../pysugar/unpack
+import pkg/pysugar/unpack
 template `:=`(lhs: untyped, rhs) =
   rhs.unpackValues(lhs)
 import ../../private/envvarsCompat
