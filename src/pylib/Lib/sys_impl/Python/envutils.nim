@@ -4,7 +4,7 @@ when NimMajor > 1:
 else:
   import std/os
 
-import ./force_ascii_utils
+import pkg/py_locale_utf8_encoding/force_ascii_utils
 import ./localeutils
 
 proc setenvOverwrite*(key, val: string): bool =

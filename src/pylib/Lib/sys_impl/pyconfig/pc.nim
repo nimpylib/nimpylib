@@ -1,7 +1,5 @@
-
-
 when defined(windows):
-  import ./util
+  import pkg/autoconf_sugars/util
   const
     IMS_WINDOWS_DESKTOP =
       from_c_int(HAVE_BUILTIN_AVAILABLE, 0):
