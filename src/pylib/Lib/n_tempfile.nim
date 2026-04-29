@@ -3,7 +3,7 @@ import std/os except fileExists, dirExists
 import std/random
 import std/options
 
-import ../private/envvarsCompat
+import pkg/jscompat/envvars
 import ./n_os
 import ../pyerrors/oserr
 

@@ -10,7 +10,7 @@ when HasWMI:
 import pkg/pysugar/unpack
 template `:=`(lhs: untyped, rhs) =
   rhs.unpackValues(lhs)
-import ../../private/envvarsCompat
+import pkg/jscompat/envvars
 from ../../collections_abc/cmpOA import `<=`
 
 const HAS_SYS_GETWINDOWSVERSION = declared(sys.getwindowsversion)

@@ -2,7 +2,7 @@
 
 import std/os
 import std/strutils
-import ../private/envvarsCompat
+import pkg/jscompat/envvars
 
 using name: string
 func toAllUpper(name): string {.inline.} =
