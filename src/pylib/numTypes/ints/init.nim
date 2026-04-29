@@ -1,5 +1,6 @@
 
 import ./decl
+import ../private/hasindex
 import ../reimporter
 import ../utils/stripOpenArray
 from std/strutils import toLowerAscii
@@ -27,9 +28,6 @@ func int*(a: char): NimInt =
 template int*(a: bool): NimInt = (if a: 1 else: 0)
 template int*(f: float): NimInt = system.int(f)
 
-
-type HasIndex = concept self
-  self.index() is SomeInteger
 type HasTrunc = concept self
   self.trunc() is SomeInteger
 
