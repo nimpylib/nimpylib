@@ -8,14 +8,14 @@
 
 import std/options
 
-import ../version
-import ../noneType
-import pkg/pybuiltins/list
-import ../pybytes/bytesimpl
-import ./collections/abc
+import pkg/py_version
+import pkg/py_constants/noneType
+import pkg/py_commontypes/list
+import pkg/pystrbytes_decl/bytesimpl
+import pkg/collections_abc
 
 import ./n_random
-import ./random_impl/macroutils
+import pkg/pyrandom/macroutils
 
 using self: PyRandom
 
