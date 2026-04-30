@@ -56,6 +56,7 @@ pylib "py_commontypes", " ^= 0.1.0"
 pylib "pybuiltins", " ^= 0.1.0"
 pylib "pysugar", " ^= 0.1.0"
 pylib "py_version", " ^= 0.1.0"
+pylib "py_intfloat", " ^= 0.1.0"
 
 # builtins, sys
 pylib "py_sys_stdio", " ^= 0.1.0"

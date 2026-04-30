@@ -10,7 +10,7 @@ import pylib/builtins # /[round, attr, complex]
 
 
 import pybuiltins/[pyrange, format]
-import pylib/numTypes/floats
+import pkg/py_intfloat/floats
 
 pyimportAll unittest, math, random, sys
 import std/unittest as std_unittest

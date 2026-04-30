@@ -4,7 +4,7 @@
 
 #from ../noneType import NoneType
 import pkg/py_version
-import ../numTypes/private/hasindex
+import pkg/py_intfloat/private/hasindex
 
 import pkg/pycomplex
 export pycomplex

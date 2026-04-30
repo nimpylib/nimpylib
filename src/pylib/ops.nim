@@ -1,7 +1,7 @@
 
 import std/math
-from ./pyerrors/aritherr import ZeroDivisionError
-import ./numTypes/ints/bitops
+from pkg/pysimperr/aritherr import ZeroDivisionError
+import pkg/py_intfloat/ints/bitops
 import pkg/pybuiltins/private/pydivmod
 export pydivmod
 
