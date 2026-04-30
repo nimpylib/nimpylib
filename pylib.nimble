@@ -83,6 +83,8 @@ pylib "functools", " ^= 0.1.0"
 pylib "pypathlib", " ^= 0.1.0"
 pylib "pysignal", " ^= 0.1.0"
 pylib "pystat", " ^= 0.1.0"
+pylib "pybisect", " ^= 0.1.0"
+pylib "pyitertools", " ^= 0.1.0"
 
 
 import std/os
