@@ -72,6 +72,8 @@ pylib "grp_pwd", " ^= 0.1.0"
 pylib "py_winapi", " ^= 0.1.0"
 pylib "pytyping", " ^= 0.1.0"
 pylib "pyrandom", " ^= 0.1.0"
+pylib "pyshutil", " ^= 0.1.0"
+pylib "pytempfile", " ^= 0.1.0"
 
 pylib "pydatetime", " ^= 0.1.0"
 pylib "pytime", " ^= 0.1.0"
