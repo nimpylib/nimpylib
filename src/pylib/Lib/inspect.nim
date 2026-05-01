@@ -10,11 +10,11 @@ export isX except markcoroutinefunction
 import pkg/py_commontypes/list_decl
 export list_decl
 
-import ../pystring/strimpl
+import pkg/pystrbytes_decl/strimpl
 export strimpl
 import ./typing_impl/str_optional_obj
 expOptObjCvt()
-from ../pystring/strmeth import splitlines
+from pkg/pystr/strmeth import splitlines
 import ../version
 
 iterator getmembers*[T](obj: T): GetMemberType = members.getmembers(obj)

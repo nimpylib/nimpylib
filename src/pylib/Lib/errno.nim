@@ -1,7 +1,7 @@
 
 import pkg/py_commontypes/dict as dictLib
 import pkg/py_commontypes/dict_decl
-import ../pystring/strimpl
+import pkg/pystrbytes_decl/strimpl
 export strimpl
 export dictLib
 

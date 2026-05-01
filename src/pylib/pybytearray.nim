@@ -4,7 +4,7 @@ export pybytes except nimpylib_private_genByteLikePercentFormat
 import ./collections_abc, ./mutSeqSliceOp
 import std/strutils
 
-import ./stringlib/percent_format
+import pkg/pystrutils/percent_format
 import pkg/nimpatch/castChar
 # Begin impl
 import pkg/pystrbyteslike_decl/bytearray

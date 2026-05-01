@@ -1,2 +1,0 @@
-import pkg/translateEscape as pkg_translateEscape
-export pkg_translateEscape
