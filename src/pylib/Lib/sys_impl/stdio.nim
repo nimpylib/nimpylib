@@ -1,2 +1,0 @@
-import pkg/py_sys_stdio
-export py_sys_stdio

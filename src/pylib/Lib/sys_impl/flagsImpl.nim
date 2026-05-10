@@ -1,5 +1,0 @@
-
-
-import ./flagsImpl/values
-
-genFlagsObj()

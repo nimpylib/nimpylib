@@ -29,4 +29,3 @@ jobs:
         nim-version: devel
         nimble-doc-cmd: |
           nimble testDoc --hints:off --warnings:off --index:on --project ${{ env.git-url-arg }} --outdir:${{ env.deploy-dir }} -d:homepage="${{ github.event.repository.homepage }}"
-          nimble testLibDoc --hints:off --warnings:off ${{ env.git-url-arg }} --outdir:${{ env.lib-deploy-dir }}

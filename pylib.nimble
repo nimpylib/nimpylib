@@ -34,13 +34,11 @@ pylib "jscompat", " ^= 0.1.5"
 pylib "nimpatch", " ^= 0.1.1"
 pylib "handy_sugars", " ^= 0.1.0"
 pylib "autoconf_sugars", " ^= 0.1.0"
-pylib "errno", " ^= 0.1.0"
 pylib "intobject", " ^= 0.1.3"
 pylib "pycomplex", " ^= 0.1.0"
 pylib "since_version", " ^= 0.1.0"
 pylib "pymath", " ^= 0.1.0"
 pylib "pysimperr", " ^= 0.1.0"
-pylib "pyunittest", " ^= 0.1.0"
 pylib "auditfunc", " ^= 0.1.0"
 pylib "pyerrors", " ^= 0.1.0"
 pylib "py_constants", " ^= 0.1.0"
@@ -49,6 +47,7 @@ pylib "pystrbyteslike_decl", " ^= 0.1.0"
 pylib "pystr", " ^= 0.1.0"
 pylib "pybytes", " ^= 0.1.0"
 pylib "pyio_abc", " ^= 0.1.0"
+pylib "collections_abc", " ^= 0.1.0"
 pylib "py_commontypes", " ^= 0.1.0"
 pylib "pybuiltins", " ^= 0.1.0"
 pylib "pysugar", " ^= 0.1.0"
@@ -57,36 +56,17 @@ pylib "py_intfloat", " ^= 0.1.0"
 pylib "pyops", " ^= 0.1.0"
 
 # builtins, sys
-pylib "py_sys_stdio", " ^= 0.1.0"
-
-pylib "pyio_open", " ^= 0.1.0"
-pylib "pywarnings", " ^= 0.1.0"
 pylib "cstruct2namedtuple", " ^= 0.1.0"
-
 pylib "py_locale_utf8_encoding", " ^= 0.1.0"
 
-pylib "posixos", " ^= 0.1.0"
-pylib "grp_pwd", " ^= 0.1.0"
-pylib "py_winapi", " ^= 0.1.0"
-pylib "pytyping", " ^= 0.1.0"
-pylib "pyrandom", " ^= 0.1.0"
-pylib "pyshutil", " ^= 0.1.0"
-pylib "pytempfile", " ^= 0.1.0"
+# io
+pylib "pyio", " ^= 0.1.0"
 
-pylib "pydatetime", " ^= 0.1.0"
-pylib "pytime", " ^= 0.1.0"
+# some testaments
+pylib "pyunittest", " ^= 0.1.0"
 
-# Lib/n_os
-pylib "posixos", " ^= 0.1.0"
-pylib "collections_abc", " ^= 0.1.0"
-pylib "pyresource", " ^= 0.1.0"
 
-pylib "functools", " ^= 0.1.0"
-pylib "pypathlib", " ^= 0.1.0"
-pylib "pysignal", " ^= 0.1.0"
-pylib "pystat", " ^= 0.1.0"
-pylib "pybisect", " ^= 0.1.0"
-pylib "pyitertools", " ^= 0.1.0"
+pylib "pystdlib", " ^= 0.1.0"
 
 
 import std/os
@@ -152,9 +132,6 @@ taskWithArgs testExamples, "run tests for example":
   if targets.len == 0: targets = #["c js"]# "c"  # TODO
   runExamples targets.split ' '
 
-let
-  libDir = srcDir / "pylib/Lib"
-
 func getSArg(taskName: string): string = quoteShellCommand getArgs taskName
 
 func handledArgs(args: var seq[string], def_arg: string) =
@@ -182,33 +159,6 @@ mytask testDoc, "cmdargs: if the last is arg: " &
   let sargs = getHandledArg(taskName, def_arg)
   selfExec "doc --project --outdir:docs " & sargs
 
-
-const nimSuf = ".nim"
-
-proc testLib(fp: string, sargs: string) =
-  var cmd = "doc"
-  if fp.endsWith nimSuf:
-    if (fp[0..(fp.len - nimSuf.len-1)] & "_impl").dirExists:
-      cmd.add " --project"
-    selfExec cmd & " --outdir:docs/Lib " & sargs & ' ' & fp
-
-taskWithArgs testLibDoc, "Test doc-gen and runnableExamples, can pass several args":
-  let def = "ALL"
-  args.handledArgs def
-  let fpOrDef = args.pop()
-  let sargs = quoteShellCommand args
-  if fpOrDef == def:
-    for t in walkDir libDir:
-      if t.kind in {pcDir, pcLinkToDir}: continue
-      let fp = t.path
-      testLib fp, sargs
-  else:
-    testLib fpOrDef, sargs
-
-task testDocAll, "Test doc and Lib's doc":
-  testDocTask()
-  testLibDocTask()
-
 task testBackends, "Test C, Js, ..":
   # Test C
   testCTask()
@@ -219,7 +169,7 @@ task testBackends, "Test C, Js, ..":
 task test, "Runs the test suite":
   testBackendsTask()
   # Test all runnableExamples
-  testDocAllTask()
+  testDocTask()
 
 task rei, "reinstall, for dev only!":
   #[ if uninstalling in cwd, may failed with: 

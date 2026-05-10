@@ -3,7 +3,7 @@ import std/os as nos
 from std/strutils import splitLines, strip, endsWith
 
 import pylib
-import pylib/Lib/unittest
+import pkg/pyunittest
 
 when defined(js):
   const jsExclude = slurp("./skipJs.txt").strip(chars={'\n'}).splitLines()

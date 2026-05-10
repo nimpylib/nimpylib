@@ -2,7 +2,10 @@
 import std/macros
 
 func prefixPyLib(pymodule: NimNode): NimNode =
-  ident"pylib".infix("/", ident"Lib".infix("/", pymodule))
+  if pymodule.strVal in ["sys", "n_sys"]:
+    ident"pylib".infix("/", ident"Lib".infix("/", pymodule))
+  else:
+    ident"pkg".infix("/", ident"pystdlib".infix("/", pymodule))
 
 func slash(pre, suf: NimNode): NimNode = infix(pre, "/", suf)
 func dotToSlash(pymodule: NimNode): NimNode =
